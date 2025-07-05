@@ -6,8 +6,8 @@ on:
       - 'v*'
 
 env:
-  APP_NAME: helloworld
-  KUMA_APP: helloworld
+  APP_NAME: z15a
+  KUMA_APP: z15a
 
 jobs:
   deploy:
