@@ -1,35 +1,49 @@
-import { useEffect, useState } from 'react';
+import { Box, Tabs } from '@radix-ui/themes';
 
+import { useData } from './data/provider';
+import { CaretakersTable } from './tabs/caretakers/table';
+import { JobsTable } from './tabs/jobs/table';
+import { KidsTable } from './tabs/kids/table';
+import { LeavesTable } from './tabs/leaves/table';
+
+
+const enum Tab {
+    LEAVES = 'leaves',
+    KIDS = 'kids',
+    JOBS = 'jobs',
+    CARETAKERS = 'caretakers'
+}
 
 function App() {
-    const [response, setResponse] = useState('Idle');
-
-    useEffect(() => {
-        const fetchData = async () => {
-            setResponse('Loading');
-            try {
-                const res = await fetch('/api/hello');
-                if (!res.ok) {
-                    setResponse('Error: Network response was not ok');
-                    throw new Error('Network response was not ok');
-                }
-                const data = await res.text();
-                setResponse(data);
-            } catch (error) {
-                setResponse('Error');
-                // eslint-disable-next-line no-console
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        void fetchData();
-    }, []);
+    const { kids: { data: kids }, jobs: { data: jobs }, caretakers: { data: caretakers }, leaves: { data: leaves } } = useData();
 
     return (
-        <>
-            <div>Test</div>
-            <p>Response: {response}</p>
-        </>
+        <Tabs.Root defaultValue={Tab.LEAVES}>
+            <Tabs.List>
+                <Tabs.Trigger value={Tab.LEAVES}>Zwolnienia ({leaves.length})</Tabs.Trigger>
+                <Tabs.Trigger value={Tab.CARETAKERS}>Opiekunowie/rodzice ({caretakers.length})</Tabs.Trigger>
+                <Tabs.Trigger value={Tab.KIDS}>Dzieci ({kids.length})</Tabs.Trigger>
+                <Tabs.Trigger value={Tab.JOBS}>Płatnicy ZUS ({jobs.length})</Tabs.Trigger>
+            </Tabs.List>
+
+            <Box pt="3">
+                <Tabs.Content value={Tab.LEAVES}>
+                    <LeavesTable />
+                </Tabs.Content>
+
+                <Tabs.Content value={Tab.CARETAKERS}>
+                    <CaretakersTable />
+                </Tabs.Content>
+
+                <Tabs.Content value={Tab.KIDS}>
+                    <KidsTable />
+                </Tabs.Content>
+
+                <Tabs.Content value={Tab.JOBS}>
+                    <JobsTable />
+                </Tabs.Content>
+            </Box>
+        </Tabs.Root>
     );
 }
 App.displayName = 'App';

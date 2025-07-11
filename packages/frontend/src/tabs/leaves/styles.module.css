@@ -1,0 +1,8 @@
+.hackEllipsis {
+    max-width: 425px;
+    white-space: nowrap;
+}
+.hackEllipsis span {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}

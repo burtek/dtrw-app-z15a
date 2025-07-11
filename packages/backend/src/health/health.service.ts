@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import * as packageJson from '../package.json';
+import * as packageJson from '../../package.json';
 
 
 @Injectable()
