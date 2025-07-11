@@ -1,4 +1,4 @@
-import { Button, Flex, Separator, Table } from '@radix-ui/themes';
+import { Button, Flex, Link, Separator, Table } from '@radix-ui/themes';
 import { memo, useCallback, useState } from 'react';
 
 import { useData } from '../../data/provider';
@@ -63,6 +63,13 @@ const Component = () => {
                                         >
                                             Usuń
                                         </Button>
+                                        <Separator orientation="vertical" />
+                                        <Link
+                                            href={`/api/pdf/${leave.id}`}
+                                            download={`Wniosek Z-15A za ${kid?.name} ${kid?.surname} dla ${caretaker?.name} ${caretaker?.surname} za okres ${leave.from}${leave.from === leave.to ? '' : ` - ${leave.to}`}`}
+                                        >
+                                            Pobierz
+                                        </Link>
                                     </Flex>
                                 </Table.Cell>
                             </Table.Row>

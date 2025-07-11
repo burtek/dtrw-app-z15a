@@ -2,9 +2,9 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { Inject, Injectable } from '@nestjs/common';
+import * as fontkit from '@pdf-lib/fontkit';
 import { eq } from 'drizzle-orm';
 import { PDFDocument, PDFForm } from 'pdf-lib';
-
 import { rangesCollide } from 'src/dateRange/dateRange';
 
 import { leaves } from '../database/schemas';
@@ -20,6 +20,8 @@ type Job = NonNullable<Awaited<ReturnType<PdfService['getLeaveAndJobs']>>>[1][nu
 @Injectable()
 export class PdfService {
     private static readonly CURRENT_VERSION = '20250707';
+
+    private static readonly KEEP_MAX_PAGES = 5;
 
     // eslint-disable-next-line @typescript-eslint/member-ordering
     private static readonly ALL_FIELDS_MAP = {
@@ -196,11 +198,15 @@ export class PdfService {
             return {
                 [PdfService.ALL_FIELDS_MAP.otherParentAttestations.works.yes]: true,
                 [PdfService.ALL_FIELDS_MAP.otherParentAttestations.works.shiftNo]: true,
+                [PdfService.ALL_FIELDS_MAP.otherParentAttestations.tookLeave.yes]: prevDays > 0,
+                [PdfService.ALL_FIELDS_MAP.otherParentAttestations.tookLeave.no]: prevDays === 0,
                 [PdfService.ALL_FIELDS_MAP.otherParentAttestations.tookLeave.kidTo8Or14Check]: prevDays > 0,
-                [PdfService.ALL_FIELDS_MAP.otherParentAttestations.tookLeave.kidTo8Or14Days]: `${prevDays}`
+                [PdfService.ALL_FIELDS_MAP.otherParentAttestations.tookLeave.kidTo8Or14Days]: prevDays ? `${prevDays}` : ''
             };
         }
     };
+
+    private readonly font: Buffer;
 
     private readonly template: Buffer;
 
@@ -211,6 +217,9 @@ export class PdfService {
         this.template = readFileSync(
             resolve('src/assets', `Z-15A.${PdfService.CURRENT_VERSION}.pdf`)
         );
+        this.font = readFileSync(
+            resolve('src/assets', 'NotoSans-VariableFont_wdth,wght.ttf')
+        );
     }
 
     async generatePdf(leaveId: number) {
@@ -218,6 +227,9 @@ export class PdfService {
             this.getLeaveAndJobs(leaveId),
             PDFDocument.load(this.template)
         ]);
+
+        doc.registerFontkit(fontkit);
+        const font = await doc.embedFont(this.font);
 
         const form = doc.getForm();
 
@@ -229,6 +241,14 @@ export class PdfService {
                     this.fillField(form, fieldName, config[fieldName]);
                 }
             }
+        }
+
+        form.updateFieldAppearances(font);
+
+        form.flatten();
+
+        while (doc.getPageCount() > PdfService.KEEP_MAX_PAGES) {
+            doc.removePage(PdfService.KEEP_MAX_PAGES);
         }
 
         return await doc.save();

@@ -5,6 +5,8 @@
   "compilerOptions": {
     "assets": [{
       "include": "assets/*.pdf", "outDir": "dist/src", "watchAssets": true
+    }, {
+      "include": "assets/*.ttf", "outDir": "dist/src", "watchAssets": true
     }],
     "deleteOutDir": true
   }
