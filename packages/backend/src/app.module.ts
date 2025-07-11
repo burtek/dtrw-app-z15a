@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { CaretakersModule } from './caretakers/caretakers.module';
 import { validate } from './env.validation';
 import { HealthModule } from './health/health.module';
@@ -25,8 +24,7 @@ import { PdfModule } from './pdf/pdf.module';
         CaretakersModule,
         PdfModule
     ],
-    controllers: [AppController],
-    providers: [AppService]
+    controllers: [AppController]
 })
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class AppModule {
