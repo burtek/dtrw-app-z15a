@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/burtek/dtrw-app-z15a/compare/v1.2.0...v1.2.1) (2025-07-12)
+
+
+### Bug Fixes
+
+* **deploy:** add drizzle config to build output ([c6d6b10](https://github.com/burtek/dtrw-app-z15a/commit/c6d6b10973de9dfe732f5cd402fff067bc11ebc7))
+
 ## 1.2.0 (2025-07-12)
 
 
