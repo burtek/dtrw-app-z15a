@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://github.com/burtek/dtrw-app-z15a/compare/v1.2.1...v1.2.2) (2025-07-12)
+
+
+### Bug Fixes
+
+* **deploy:** rebuild/reinstall sqlite library on VPS ([67c570e](https://github.com/burtek/dtrw-app-z15a/commit/67c570e1cbe8155c8934ccddaf54f6abb678dbd1))
+
 ### [1.2.1](https://github.com/burtek/dtrw-app-z15a/compare/v1.2.0...v1.2.1) (2025-07-12)
 
 
