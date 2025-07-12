@@ -33,7 +33,7 @@ jobs:
         run: |
           yarn build
           cd packages/backend/dist
-          yarn install --production --no-lockfile --non-interactive
+          yarn install --production --non-interactive
 
       - name: Setup build envs
         run: |
@@ -98,6 +98,8 @@ jobs:
           script: |
             touch /apps/data/z15a_db/db.db
             cd /apps/${{ env.APP_NAME }}
+            docker compose run --rm backend yarn add better-sqlite3 --force
+            docker compose run --rm backend yarn migrate
             docker compose up -d --build
             docker exec nginx-proxy-manager nginx -s reload
 

@@ -19,9 +19,9 @@ services:
     container_name: z15a_backend
     working_dir: /app
     volumes:
-      - ./backend:/app:ro
+      - ./backend:/app
       - /apps/data/z15a_db/:/db
-    command: yarn migrate && yarn start:prod
+    command: yarn start:prod
     env_file:
       - docker/backend/env
     environment:
