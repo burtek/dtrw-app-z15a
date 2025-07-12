@@ -3,11 +3,18 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "assets": [{
-      "include": "assets/*.pdf", "outDir": "dist/src", "watchAssets": true
-    }, {
-      "include": "assets/*.ttf", "outDir": "dist/src", "watchAssets": true
-    }],
-    "deleteOutDir": true
+    "assets": [
+      {
+        "include": "assets/*.pdf", "outDir": "dist/src", "watchAssets": true
+      }, {
+        "include": "assets/*.ttf", "outDir": "dist/src", "watchAssets": true
+      }, {
+        "include": "../drizzle.config.ts", "outDir": "dist/drizzle.config.ts", "watchAssets": true
+      }, {
+        "include": "../drizzle/**/*", "outDir": "dist/drizzle", "watchAssets": true
+      }
+    ],
+    "deleteOutDir": true,
+    "tsConfigPath": "tsconfig.build.json"
   }
 }
