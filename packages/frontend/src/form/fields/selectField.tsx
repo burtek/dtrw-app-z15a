@@ -7,14 +7,15 @@ import { FieldWrapper } from './_wrapper';
 
 
 const Component = <T,>(
-    { label, error, items, renderItem, value, register }: Props<T>
+    { label, error, items, renderItem, value, register, parseIntValue }: Props<T>
 ) => {
     const { disabled, name, onChange, ref, required } = register;
 
     const handleChange = useCallback((newValue: string) => onChange({
         target: {
             name,
-            value: newValue ? parseInt(newValue, 10) : undefined
+            // eslint-disable-next-line no-nested-ternary
+            value: newValue ? (parseIntValue ? parseInt(newValue, 10) : newValue) : undefined
         },
         type: 'change'
     }), [name, onChange]);
@@ -29,6 +30,7 @@ const Component = <T,>(
                 disabled={disabled}
                 required={required}
                 value={value ?? ''}
+                name={name}
             >
                 <Select.Trigger
                     placeholder="Wybierz płatnika"
@@ -55,4 +57,5 @@ interface Props<T> extends FieldWrapperProps {
     renderItem: (item: T) => React.ReactElement;
     value: string | undefined;
     register: UseFormRegisterReturn;
+    parseIntValue?: boolean;
 }

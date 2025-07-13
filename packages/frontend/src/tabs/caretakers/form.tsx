@@ -65,7 +65,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 <Box flexGrow="1">
                                     <TextField
                                         label="Imię"
-                                        error={errors.name?.message ?? errors.name?.type}
+                                        error={errors.name}
                                         register={register('name', { required: true })}
                                         value={useWatch({ control, name: 'name' })}
                                     />
@@ -73,7 +73,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 <Box flexGrow="1">
                                     <TextField
                                         label="Nazwisko"
-                                        error={errors.surname?.message ?? errors.surname?.type}
+                                        error={errors.surname}
                                         register={register('surname', { required: true })}
                                         value={useWatch({ control, name: 'surname' })}
                                     />
@@ -82,7 +82,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
                             <TextField
                                 label="PESEL"
-                                error={errors.pesel?.message ?? errors.pesel?.type}
+                                error={errors.pesel}
                                 register={register('pesel', { required: true, minLength: 11, maxLength: 11 })}
                                 value={useWatch({ control, name: 'pesel' })}
                             />
@@ -91,7 +91,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
                             <TextField
                                 label="Ulica"
-                                error={errors.street?.message ?? errors.street?.type}
+                                error={errors.street}
                                 register={register('street', { required: true })}
                                 value={useWatch({ control, name: 'street' })}
                             />
@@ -100,7 +100,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 <Box flexGrow="1">
                                     <TextField
                                         label="Numer ulicy"
-                                        error={errors.streetNo?.message ?? errors.streetNo?.type}
+                                        error={errors.streetNo}
                                         register={register('streetNo', { required: true })}
                                         value={useWatch({ control, name: 'streetNo' })}
                                     />
@@ -108,7 +108,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 <Box flexGrow="1">
                                     <TextField
                                         label="Numer mieszkania"
-                                        error={errors.flatNo?.message ?? errors.flatNo?.type}
+                                        error={errors.flatNo}
                                         register={register('flatNo')}
                                         value={useWatch({ control, name: 'flatNo' })}
                                     />
@@ -119,7 +119,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 <Box flexGrow="1">
                                     <TextField
                                         label="Kod pocztowy"
-                                        error={errors.zipCode?.message ?? errors.zipCode?.type}
+                                        error={errors.zipCode}
                                         register={register('zipCode', {
                                             required: true,
                                             validate: (value?: string) => (/^\d\d-\d\d\d$/.test(value ?? '') ? true : 'Błędny format')
@@ -130,7 +130,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 <Box flexGrow="1">
                                     <TextField
                                         label="Miasto"
-                                        error={errors.city?.message ?? errors.city?.type}
+                                        error={errors.city}
                                         register={register('city', { required: true })}
                                         value={useWatch({ control, name: 'city' })}
                                     />
@@ -141,7 +141,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
                             <TextField
                                 label="Notatki"
-                                error={errors.notes?.message ?? errors.notes?.type}
+                                error={errors.notes}
                                 register={register('notes')}
                                 value={useWatch({ control, name: 'notes' })}
                             />

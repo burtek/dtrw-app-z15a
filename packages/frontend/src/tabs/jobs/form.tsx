@@ -82,21 +82,21 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                         >
                             <TextField
                                 label="Nazwa płatnika"
-                                error={errors.company?.message ?? errors.company?.type}
+                                error={errors.company}
                                 register={register('company', { minLength: 3 })}
                                 value={useWatch({ control, name: 'company' })}
                             />
 
                             <TextField
                                 label="NIP"
-                                error={errors.nip?.message ?? errors.nip?.type}
-                                register={register('nip', { minLength: 10, maxLength: 10 })}
+                                error={errors.nip}
+                                register={register('nip', { required: true, minLength: 10, maxLength: 10 })}
                                 value={useWatch({ control, name: 'nip' })}
                             />
 
                             <SelectField
                                 label="Pracownik"
-                                error={errors.caretakerId?.message ?? errors.caretakerId?.type}
+                                error={errors.caretakerId}
                                 register={register('caretakerId', { required: true })}
                                 items={caretakers}
                                 renderItem={renderCaretakerItem}
@@ -105,7 +105,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
                             <DateField
                                 label="Praca od"
-                                error={errors.from?.message ?? errors.from?.type}
+                                error={errors.from}
                                 register={register('from', {
                                     setValueAs: dateSaveAs,
                                     max: dateTo
@@ -113,7 +113,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             />
                             <DateField
                                 label="Praca do"
-                                error={errors.to?.message ?? errors.to?.type}
+                                error={errors.to}
                                 register={register('to', {
                                     setValueAs: dateSaveAs,
                                     min: dateFrom
@@ -122,7 +122,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
                             <TextField
                                 label="Notatki"
-                                error={errors.notes?.message ?? errors.notes?.type}
+                                error={errors.notes}
                                 register={register('notes')}
                                 value={useWatch({ control, name: 'notes' })}
                             />

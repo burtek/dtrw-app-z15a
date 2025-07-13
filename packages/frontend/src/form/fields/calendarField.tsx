@@ -56,8 +56,9 @@ const usePrevious = <T,>(value: T) => {
 
 const monthFormatter = new Intl.DateTimeFormat('pl', { month: 'long' });
 
-const Component = ({ label, error, dateFrom, dateTo, ...register }: UseFormRegisterReturn & FieldWrapperProps & Props) => {
-    const { value = [], disabled, name, onChange, required } = register; // ref unused!
+const DEFAULT_VALUE: NonNullable<Props['value']> = [];
+const Component = ({ value = DEFAULT_VALUE, label, error, dateFrom, dateTo, register }: Props) => {
+    const { disabled, name, onChange, required } = register; // ref unused!
 
     const dateRange = useMemo(() => getDateRange(dateFrom, dateTo), [dateFrom, dateTo]);
     const previousDateRange = usePrevious(dateRange);
@@ -151,8 +152,9 @@ Component.displayName = 'CalendarField';
 
 export const CalendarField = memo(Component);
 
-interface Props {
+interface Props extends FieldWrapperProps {
     dateFrom?: string;
     dateTo?: string;
     value?: string[];
+    register: UseFormRegisterReturn;
 }

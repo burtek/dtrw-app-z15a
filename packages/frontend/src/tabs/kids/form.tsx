@@ -79,7 +79,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 <Box flexGrow="1">
                                     <TextField
                                         label="Imię"
-                                        error={errors.name?.message ?? errors.name?.type}
+                                        error={errors.name}
                                         register={register('name', { required: true })}
                                         value={useWatch({ control, name: 'name' })}
                                     />
@@ -87,7 +87,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 <Box flexGrow="1">
                                     <TextField
                                         label="Nazwisko"
-                                        error={errors.surname?.message ?? errors.surname?.type}
+                                        error={errors.surname}
                                         register={register('surname', { required: true })}
                                         value={useWatch({ control, name: 'surname' })}
                                     />
@@ -96,14 +96,14 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
                             <TextField
                                 label="PESEL"
-                                error={errors.pesel?.message ?? errors.pesel?.type}
+                                error={errors.pesel}
                                 register={register('pesel', { required: true, minLength: 11, maxLength: 11 })}
                                 value={useWatch({ control, name: 'pesel' })}
                             />
 
                             <CheckboxField
                                 label="Niepełnosprawność"
-                                error={errors.disabled?.message ?? errors.disabled?.type}
+                                error={errors.disabled}
                                 register={register('disabled')}
                                 checked={useWatch({ control, name: 'disabled' })}
                             />
@@ -112,7 +112,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 <Box flexGrow="1">
                                     <SelectField
                                         label="Matka"
-                                        error={errors.motherId?.message ?? errors.motherId?.type}
+                                        error={errors.motherId}
                                         register={register('motherId', { required: true })}
                                         items={caretakers}
                                         renderItem={renderCaretakerItem}
@@ -122,7 +122,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 <Box flexGrow="1">
                                     <SelectField
                                         label="Ojciec"
-                                        error={errors.fatherId?.message ?? errors.fatherId?.type}
+                                        error={errors.fatherId}
                                         register={register('fatherId', { required: true })}
                                         items={caretakers}
                                         renderItem={renderCaretakerItem}
@@ -133,7 +133,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
                             <TextField
                                 label="Notatki"
-                                error={errors.notes?.message ?? errors.notes?.type}
+                                error={errors.notes}
                                 register={register('notes')}
                                 value={useWatch({ control, name: 'notes' })}
                             />

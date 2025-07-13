@@ -1,6 +1,15 @@
 import { Flex, Text } from '@radix-ui/themes';
 import type { PropsWithChildren } from 'react';
+import type { FieldError } from 'react-hook-form';
 
+
+export function getErrorMessage(error: FieldError) {
+    if (error.message) {
+        return error.message;
+    }
+
+    return `Błąd walidacji: ${error.type}`;
+}
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const FieldWrapper = ({ as: Wrapper = 'label', children, error, label, row = false }: PropsWithChildren<FieldWrapperProps>) => (
@@ -22,7 +31,7 @@ export const FieldWrapper = ({ as: Wrapper = 'label', children, error, label, ro
                         size="2"
                         color="red"
                     >
-                        {error}
+                        {getErrorMessage(error)}
                     </Text>
                 )
                 : null}
@@ -32,7 +41,7 @@ export const FieldWrapper = ({ as: Wrapper = 'label', children, error, label, ro
 FieldWrapper.displayName = 'FieldWrapper';
 
 export interface FieldWrapperProps {
-    error?: string;
+    error?: FieldError;
     label: string;
     as?: 'div' | 'label';
     row?: boolean;

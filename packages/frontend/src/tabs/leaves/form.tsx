@@ -1,6 +1,6 @@
 import { Box, Button, Dialog, Flex, Select, Separator } from '@radix-ui/themes';
 import { memo, useCallback, useMemo } from 'react';
-import type { SubmitHandler } from 'react-hook-form';
+import type { FieldError, SubmitHandler } from 'react-hook-form';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { ApiEndpoint, usePost } from '../../data/apiHooks';
@@ -101,7 +101,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                         >
                             <SelectField
                                 label="Pracownik / Płatnik ZUS"
-                                error={errors.jobId?.message ?? errors.jobId?.type}
+                                error={errors.jobId}
                                 register={register('jobId', { required: true })}
                                 items={jobs}
                                 renderItem={renderJobItem}
@@ -112,7 +112,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 <Box flexGrow="1">
                                     <TextField
                                         label="Numer ZLA"
-                                        error={errors.zla?.message ?? errors.zla?.type}
+                                        error={errors.zla}
                                         register={register('zla', {
                                             minLength: 9,
                                             maxLength: 9
@@ -123,7 +123,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 <Box flexGrow="1">
                                     <SelectField
                                         label="Dziecko"
-                                        error={errors.kidId?.message ?? errors.kidId?.type}
+                                        error={errors.kidId}
                                         register={register('kidId', { required: true })}
                                         items={kids}
                                         renderItem={renderKidItem}
@@ -136,7 +136,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
                             <DateField
                                 label="Zwolnienie od"
-                                error={errors.from?.message ?? errors.from?.type}
+                                error={errors.from}
                                 register={register('from', {
                                     required: true,
                                     setValueAs: dateSaveAs,
@@ -145,7 +145,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             />
                             <DateField
                                 label="Zwolnienie do"
-                                error={errors.to?.message ?? errors.to?.type}
+                                error={errors.to}
                                 register={register('to', {
                                     required: true,
                                     setValueAs: dateSaveAs,
@@ -155,8 +155,9 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
                             <CalendarField
                                 label="Dni nieobecności"
-                                error={errors.daysTaken?.message ?? errors.daysTaken?.type}
-                                {...register('daysTaken', { validate: value => (value && value.length > 0 ? true : 'Wybierz przynajmniej jeden dzień') })}
+                                // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+                                error={errors.daysTaken as FieldError}
+                                register={register('daysTaken', { validate: value => (value && value.length > 0 ? true : 'Wybierz przynajmniej jeden dzień') })}
                                 dateFrom={dateFrom}
                                 dateTo={dateTo}
                                 value={daysTaken}
@@ -166,13 +167,13 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
                             <TextField
                                 label="Uwagi w Z-15A"
-                                error={errors.z15aNotes?.message ?? errors.z15aNotes?.type}
+                                error={errors.z15aNotes}
                                 register={register('z15aNotes')}
                                 value={useWatch({ control, name: 'z15aNotes' })}
                             />
                             <TextField
                                 label="Notatki"
-                                error={errors.notes?.message ?? errors.notes?.type}
+                                error={errors.notes}
                                 register={register('notes')}
                                 value={useWatch({ control, name: 'notes' })}
                             />
