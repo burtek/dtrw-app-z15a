@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Res } from '@nestjs/common';
+import type { Response } from 'express';
 
 import { JobDto } from './job.dto';
 import { JobsService } from './jobs.service';
@@ -10,8 +11,18 @@ export class JobsController {
     }
 
     @Post()
-    create(@Body() job: JobDto) {
-        return this.jobsService.create(job);
+    async create(@Body() job: JobDto, @Res() response: Response) {
+        try {
+            response.send(await this.jobsService.create(job));
+        } catch (error) {
+            if (error instanceof Error) {
+                response.status(400);
+                response.send({ message: [error.message] });
+            } else {
+                response.status(500);
+                console.error(error);
+            }
+        }
     }
 
     @Get()
@@ -25,7 +36,17 @@ export class JobsController {
     }
 
     @Post(':id')
-    modify(@Param('id', ParseIntPipe) id: number, @Body() job: JobDto) {
-        return this.jobsService.update(id, job);
+    async modify(@Param('id', ParseIntPipe) id: number, @Body() job: JobDto, @Res() response: Response) {
+        try {
+            response.send(await this.jobsService.update(id, job));
+        } catch (error) {
+            if (error instanceof Error) {
+                response.status(400);
+                response.send({ message: [error.message] });
+            } else {
+                response.status(500);
+                console.error(error);
+            }
+        }
     }
 }

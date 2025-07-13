@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Res } from '@nestjs/common';
+import type { Response } from 'express';
 
 import { LeaveDto } from './leave.dto';
 import { LeavesService } from './leaves.service';
@@ -10,8 +11,18 @@ export class LeavesController {
     }
 
     @Post()
-    create(@Body() leave: LeaveDto) {
-        return this.leavesService.create(leave);
+    async create(@Body() leave: LeaveDto, @Res() response: Response) {
+        try {
+            response.send(await this.leavesService.create(leave));
+        } catch (error) {
+            if (error instanceof Error) {
+                response.status(400);
+                response.send({ message: [error.message] });
+            } else {
+                response.status(500);
+                console.error(error);
+            }
+        }
     }
 
     @Get()
@@ -25,7 +36,17 @@ export class LeavesController {
     }
 
     @Post(':id')
-    modify(@Param('id', ParseIntPipe) id: number, @Body() leave: LeaveDto) {
-        return this.leavesService.update(id, leave);
+    async modify(@Param('id', ParseIntPipe) id: number, @Body() leave: LeaveDto, @Res() response: Response) {
+        try {
+            response.send(await this.leavesService.update(id, leave));
+        } catch (error) {
+            if (error instanceof Error) {
+                response.status(400);
+                response.send({ message: [error.message] });
+            } else {
+                response.status(500);
+                console.error(error);
+            }
+        }
     }
 }

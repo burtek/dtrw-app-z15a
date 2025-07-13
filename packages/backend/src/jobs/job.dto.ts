@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
+import { Transform } from 'class-transformer';
 import { IsInt, IsNotEmpty, IsString, Min, ValidateIf } from 'class-validator';
 
 import { DateRange } from '../dateRange/dateRange';
@@ -22,11 +23,15 @@ export class JobDto implements DateRange {
     @IsPlainDateValid()
     @IsString()
     @ValidateIf((o: JobDto) => !!o.from)
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    @Transform(({ value }: { value: string | null | undefined }) => value || undefined)
     from: PlainDate | null | undefined;
 
     @IsPlainDateValid()
     @IsString()
     @ValidateIf((o: JobDto) => !!o.to)
+    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+    @Transform(({ value }: { value: string | null | undefined }) => value || undefined)
     to: PlainDate | null | undefined;
 
     @IsString()

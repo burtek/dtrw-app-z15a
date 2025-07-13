@@ -12,7 +12,6 @@ export const rangesCollide = (range1: DateRange, range2: DateRange, edgesCollide
     const start2 = range2.from ?? '0000-01-01';
     const end2 = range2.to ?? '9999-12-31';
 
-
     return edgesCollides
         ? !(end1 < start2 || end2 < start1)
         : !(end1 <= start2 || end2 <= start1);

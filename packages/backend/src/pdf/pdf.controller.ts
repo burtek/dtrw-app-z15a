@@ -1,4 +1,3 @@
-/* eslint-disable n/no-extraneous-import */
 import { Controller, Param, Get, Res } from '@nestjs/common';
 import type { Response } from 'express';
 
@@ -11,13 +10,18 @@ export class PdfController {
     }
 
     @Get(':id')
-    async modify(@Param('id') id: string, @Res() res: Response) {
-        const data = await this.pdfService.generatePdf(parseInt(id, 10));
+    async modify(@Param('id') id: string, @Res() response: Response) {
+        try {
+            const data = await this.pdfService.generatePdf(parseInt(id, 10));
 
-        res.set({
-            'Content-Type': 'application/pdf',
-            'Content-Disposition': 'attachment; filename="file.pdf"'
-        });
-        res.send(data);
+            response.set({
+                'Content-Type': 'application/pdf',
+                'Content-Disposition': 'attachment; filename="file.pdf"'
+            });
+            response.send(data);
+        } catch (error) {
+            response.status(500);
+            console.error(error);
+        }
     }
 }

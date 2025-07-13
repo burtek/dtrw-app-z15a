@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Res } from '@nestjs/common';
+import type { Response } from 'express';
 
 import { CaretakerDto } from './caretaker.dto';
 import { CaretakersService } from './caretakers.service';
@@ -10,8 +11,18 @@ export class CaretakersController {
     }
 
     @Post()
-    create(@Body() caretaker: CaretakerDto) {
-        return this.caretakersService.create(caretaker);
+    async create(@Body() caretaker: CaretakerDto, @Res() response: Response) {
+        try {
+            response.send(await this.caretakersService.create(caretaker));
+        } catch (error) {
+            if (error instanceof Error) {
+                response.status(400);
+                response.send({ message: [error.message] });
+            } else {
+                response.status(500);
+                console.error(error);
+            }
+        }
     }
 
     @Get()
@@ -25,7 +36,17 @@ export class CaretakersController {
     }
 
     @Post(':id')
-    modify(@Param('id', ParseIntPipe) id: number, @Body() caretaker: CaretakerDto) {
-        return this.caretakersService.update(id, caretaker);
+    async modify(@Param('id', ParseIntPipe) id: number, @Body() caretaker: CaretakerDto, @Res() response: Response) {
+        try {
+            response.send(await this.caretakersService.update(id, caretaker));
+        } catch (error) {
+            if (error instanceof Error) {
+                response.status(400);
+                response.send({ message: [error.message] });
+            } else {
+                response.status(500);
+                console.error(error);
+            }
+        }
     }
 }

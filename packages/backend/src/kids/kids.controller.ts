@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Res } from '@nestjs/common';
+import type { Response } from 'express';
 
 import { KidDto } from './kid.dto';
 import { KidsService } from './kids.service';
@@ -10,8 +11,18 @@ export class KidsController {
     }
 
     @Post()
-    create(@Body() kid: KidDto) {
-        return this.kidsService.create(kid);
+    async create(@Body() kid: KidDto, @Res() response: Response) {
+        try {
+            response.send(await this.kidsService.create(kid));
+        } catch (error) {
+            if (error instanceof Error) {
+                response.status(400);
+                response.send({ message: [error.message] });
+            } else {
+                response.status(500);
+                console.error(error);
+            }
+        }
     }
 
     @Get()
@@ -25,7 +36,17 @@ export class KidsController {
     }
 
     @Post(':id')
-    modify(@Param('id', ParseIntPipe) id: number, @Body() kid: KidDto) {
-        return this.kidsService.update(id, kid);
+    async modify(@Param('id', ParseIntPipe) id: number, @Body() kid: KidDto, @Res() response: Response) {
+        try {
+            response.send(await this.kidsService.update(id, kid));
+        } catch (error) {
+            if (error instanceof Error) {
+                response.status(400);
+                response.send({ message: [error.message] });
+            } else {
+                response.status(500);
+                console.error(error);
+            }
+        }
     }
 }
