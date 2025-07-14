@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.4.0...v1.5.0) (2025-07-14)
+
+
+### Features
+
+* add email field for caretaker ([d7926dc](https://github.com/burtek/dtrw-app-z15a/commit/d7926dccff7a470ebc2e5da4ceeac8597be8036e))
+
+
+### Bug Fixes
+
+* **backend/pdf:** don't force filename ([e899fc7](https://github.com/burtek/dtrw-app-z15a/commit/e899fc7815ebf2fbd40a4e28fd8350a38117aea1))
+
 ## [1.4.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.3.4...v1.4.0) (2025-07-14)
 
 
