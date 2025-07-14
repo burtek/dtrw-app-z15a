@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.1](https://github.com/burtek/dtrw-app-z15a/compare/v1.5.0...v1.5.1) (2025-07-14)
+
+
+### Bug Fixes
+
+* **deploy:** healthcheck ([be83705](https://github.com/burtek/dtrw-app-z15a/commit/be83705c481e323e5039a6ff11d5c3a86c53452b))
+
 ## [1.5.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.4.0...v1.5.0) (2025-07-14)
 
 
