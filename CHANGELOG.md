@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.5.2](https://github.com/burtek/dtrw-app-z15a/compare/v1.5.1...v1.5.2) (2025-07-14)
+
+
+### Bug Fixes
+
+* **backend:** saving caretaker's email ([ce46d6f](https://github.com/burtek/dtrw-app-z15a/commit/ce46d6f02590e081b55ac7f336a2e5188168511a))
+
 ### [1.5.1](https://github.com/burtek/dtrw-app-z15a/compare/v1.5.0...v1.5.1) (2025-07-14)
 
 
