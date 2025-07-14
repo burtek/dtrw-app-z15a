@@ -1,13 +1,14 @@
-import { Button, Dialog, Flex, Select } from '@radix-ui/themes';
-import { memo, useCallback, useMemo } from 'react';
+import { Button, Dialog, Flex, Select, Text } from '@radix-ui/themes';
+import { memo, useCallback, useMemo, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, useWatch } from 'react-hook-form';
 
+import { DateField } from '../../components/form/fields/dateField';
+import { SelectField } from '../../components/form/fields/selectField';
+import { TextField } from '../../components/form/fields/textField';
+import { withErrorBoundary } from '../../components/withErrorBoundary';
 import { ApiEndpoint, usePost } from '../../data/apiHooks';
 import { useData } from '../../data/provider';
-import { DateField } from '../../form/fields/dateField';
-import { SelectField } from '../../form/fields/selectField';
-import { TextField } from '../../form/fields/textField';
 import type { Caretaker, Job, WithId } from '../../types';
 
 
@@ -17,21 +18,19 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
         jobs: { data: jobs, update: storeJob }
     } = useData();
 
-    const {
-        control,
-        register,
-        handleSubmit,
-        formState: { errors }
-    } = useForm<Partial<Job>>({
+    const { control, handleSubmit } = useForm<Partial<Job>>({
         defaultValues: useMemo(
             () => jobs.find(job => job.id === id),
             []
         )
     });
 
+    const [errorsFromApi, setErrorsFromApi] = useState<string[]>();
+
     const { create, update, isSaving } = usePost(ApiEndpoint.JOBS);
 
     const onSubmit: SubmitHandler<Partial<Job>> = async data => {
+        setErrorsFromApi(undefined);
         const response = await (id === null ? create(data) : update(id, data));
 
         if (response.ok) {
@@ -41,11 +40,12 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                 storeJob(result);
             }
             close();
+        } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+            const result = await response.json() as { message: string[] };
+            setErrorsFromApi(result.message);
         }
     };
-
-    const dateFrom = useWatch({ control, name: 'from' }) ?? undefined;
-    const dateTo = useWatch({ control, name: 'to' }) ?? undefined;
 
     const handleClose = useCallback((newState: boolean) => {
         if (!newState) {
@@ -62,98 +62,106 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
         </Select.Item>
     ), []);
 
-    const dateSaveAs = useCallback((date: string) => (date ? new Date(date).toISOString().split('T')[0] : ''), []);
-
     return (
-        <div>
-            <Dialog.Root
-                open
-                onOpenChange={handleClose}
-            >
-                <Dialog.Content maxWidth="450px">
-                    <Dialog.Title>{id === null ? 'Nowy płatnik' : 'Edycja płatnika'}</Dialog.Title>
+        <Dialog.Root
+            open
+            onOpenChange={handleClose}
+        >
+            <Dialog.Content maxWidth="450px">
+                <Dialog.Title>{id === null ? 'Nowy płatnik' : 'Edycja płatnika'}</Dialog.Title>
 
-                    <Dialog.Description mb="4">Wprowadź dane płatnika.</Dialog.Description>
+                <Dialog.Description mb="4">Wprowadź dane płatnika.</Dialog.Description>
 
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <Flex
-                            direction="column"
-                            gap="3"
+                {errorsFromApi?.length
+                    ? (
+                        <Text
+                            color="red"
+                            mb="4"
+                            size="2"
+                            style={{ display: 'inline-block' }}
                         >
-                            <TextField
-                                label="Nazwa płatnika"
-                                error={errors.company}
-                                register={register('company', { minLength: 3 })}
-                                value={useWatch({ control, name: 'company' })}
-                            />
+                            Znaleziono błędy:
+                            <ul>
+                                {errorsFromApi.map(text => <li key={text}>{text}</li>)}
+                            </ul>
+                        </Text>
+                    )
+                    : null}
 
-                            <TextField
-                                label="NIP"
-                                error={errors.nip}
-                                register={register('nip', { required: true, minLength: 10, maxLength: 10 })}
-                                value={useWatch({ control, name: 'nip' })}
-                            />
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <Flex
+                        direction="column"
+                        gap="3"
+                    >
+                        <TextField
+                            label="Nazwa płatnika"
+                            control={control}
+                            name="company"
+                            rules={{ minLength: 3 }}
+                        />
 
-                            <SelectField
-                                label="Pracownik"
-                                error={errors.caretakerId}
-                                register={register('caretakerId', { required: true })}
-                                items={caretakers}
-                                renderItem={renderCaretakerItem}
-                                value={useWatch({ control, name: 'caretakerId' })?.toString()}
-                            />
+                        <TextField
+                            label="NIP"
+                            control={control}
+                            name="nip"
+                            rules={{ required: true, minLength: 10, maxLength: 10 }}
+                        />
 
-                            <DateField
-                                label="Praca od"
-                                error={errors.from}
-                                register={register('from', {
-                                    setValueAs: dateSaveAs,
-                                    max: dateTo
-                                })}
-                            />
-                            <DateField
-                                label="Praca do"
-                                error={errors.to}
-                                register={register('to', {
-                                    setValueAs: dateSaveAs,
-                                    min: dateFrom
-                                })}
-                            />
+                        <SelectField
+                            label="Pracownik"
+                            items={caretakers}
+                            renderItem={renderCaretakerItem}
+                            control={control}
+                            name="caretakerId"
+                            rules={{ required: true }}
+                            parseIntValue
+                        />
 
-                            <TextField
-                                label="Notatki"
-                                error={errors.notes}
-                                register={register('notes')}
-                                value={useWatch({ control, name: 'notes' })}
-                            />
+                        <DateField
+                            label="Praca od"
+                            control={control}
+                            name="from"
+                            rules={{ max: useWatch({ control, name: 'to' }) ?? undefined }}
+                        />
+                        <DateField
+                            label="Praca do"
+                            control={control}
+                            name="to"
+                            rules={{ min: useWatch({ control, name: 'from' }) ?? undefined }}
+                        />
 
-                            <Flex
-                                gap="3"
-                                justify="end"
+                        <TextField
+                            label="Notatki"
+                            control={control}
+                            name="notes"
+                        />
+
+                        <Flex
+                            gap="3"
+                            justify="end"
+                        >
+                            <Button
+                                loading={isSaving}
+                                type="submit"
                             >
-                                <Button
-                                    loading={isSaving}
-                                    type="submit"
-                                >
-                                    Zapisz
-                                </Button>
-                                <Button
-                                    onClick={close}
-                                    type="button"
-                                    variant="soft"
-                                    disabled={isSaving}
-                                >
-                                    Anuluj
-                                </Button>
-                            </Flex>
+                                Zapisz
+                            </Button>
+                            <Button
+                                onClick={close}
+                                type="button"
+                                variant="soft"
+                                disabled={isSaving}
+                            >
+                                Anuluj
+                            </Button>
                         </Flex>
-                    </form>
+                    </Flex>
+                </form>
 
-                </Dialog.Content>
-            </Dialog.Root>
-        </div>
+            </Dialog.Content>
+        </Dialog.Root>
     );
 };
 Component.displayName = 'JobFormDialog';
 
-export const JobFormDialog = memo(Component);
+export const JobFormDialog = memo(withErrorBoundary(Component));

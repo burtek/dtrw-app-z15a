@@ -1,12 +1,12 @@
 import { Checkbox } from '@radix-ui/themes';
-import { memo, useEffect, useMemo, useRef } from 'react';
-import type { UseFormRegisterReturn } from 'react-hook-form';
+import { memo, useEffect, useMemo } from 'react';
+import type { Control, Validate } from 'react-hook-form';
+import { useController } from 'react-hook-form';
 
-import type { FieldWrapperProps } from './_wrapper';
 import { FieldWrapper } from './_wrapper';
 
 
-function getDateRange(from?: string, to?: string): string[] {
+export function getDateRange(from?: string, to?: string): string[] {
     if (!from || !to) {
         return [];
     }
@@ -46,47 +46,56 @@ const useCalendar = (dateRange: string[]) => useMemo(() => {
     }, []);
 }, [dateRange]);
 
-const usePrevious = <T,>(value: T) => {
-    const ref = useRef(value);
-    useEffect(() => {
-        ref.current = value;
-    }, [value]);
-    return ref.current;
-};
+function checkValueType(value: unknown): asserts value is Record<string, boolean> | undefined {
+    if (!['object', 'undefined'].includes(typeof value)) {
+        throw new TypeError(`value should be object|undefined, ${typeof value} given instead`);
+    }
+}
 
 const monthFormatter = new Intl.DateTimeFormat('pl', { month: 'long' });
-
-const DEFAULT_VALUE: NonNullable<Props['value']> = [];
-const Component = ({ value = DEFAULT_VALUE, label, error, dateFrom, dateTo, register }: Props) => {
-    const { disabled, name, onChange, required } = register; // ref unused!
+const Component = <C extends Control>({ label, control, name, rules, dateFrom, dateTo }: Props<C>) => {
+    const {
+        field: { value: v, onChange, disabled }, // ref unused!
+        fieldState: { error },
+        formState: { isSubmitting }
+    } = useController({ control, name, rules });
+    const value = v as unknown;
+    checkValueType(value);
 
     const dateRange = useMemo(() => getDateRange(dateFrom, dateTo), [dateFrom, dateTo]);
-    const previousDateRange = usePrevious(dateRange);
     const calendar = useCalendar(dateRange);
 
     useEffect(() => {
-        const newDays = dateRange.filter(d => !previousDateRange.includes(d));
-        if (newDays.length === 0 || disabled) {
+        const newValue = { ...value };
+        let changed: boolean = false;
+        Object.keys(newValue).forEach(key => {
+            if (!dateRange.includes(key)) {
+                delete newValue[key];
+                changed = true;
+            }
+        });
+        dateRange.forEach(key => {
+            if (!(key in newValue)) {
+                newValue[key] = true;
+                changed = true;
+            }
+        });
+
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- false positive
+        if (!changed || isSubmitting || disabled) {
             return;
         }
-        void onChange({
-            target: {
-                name,
-                value: [...value, ...newDays].sort()
-            },
-            type: 'change'
-        });
-    }, [dateRange]);
+        onChange(newValue);
+    }, [dateRange, disabled, isSubmitting, onChange, value]);
 
-    const handleChange = (date: string, checked: boolean) => onChange({
-        target: {
-            name,
-            value: checked
-                ? [...new Set([...value, date])].sort()
-                : value.filter(d => d !== date)
-        },
-        type: 'change'
-    });
+    const handleChange = (date: string, checked: boolean) => {
+        if (dateRange.includes(date)) {
+            onChange({
+                ...value,
+                [date]: checked
+            });
+        }
+    };
 
     const renderWeekDay = (date: string, index: number) => {
         if (!date) {
@@ -101,11 +110,13 @@ const Component = ({ value = DEFAULT_VALUE, label, error, dateFrom, dateTo, regi
                     {new Date(date).getDate()}
                     {' '}
                     <Checkbox
-                        required={required}
-                        disabled={disabled}
-                        checked={value.includes(date)}
+                        required={rules?.required}
+                        disabled={isSubmitting || disabled}
+                        checked={value?.[date] ?? false}
                         // eslint-disable-next-line react/jsx-no-bind
-                        onCheckedChange={checked => handleChange(date, checked === true)}
+                        onCheckedChange={checked => {
+                            handleChange(date, checked === true);
+                        }}
                     />
                 </span>
             </td>
@@ -152,9 +163,16 @@ Component.displayName = 'CalendarField';
 
 export const CalendarField = memo(Component);
 
-interface Props extends FieldWrapperProps {
+interface Props<C extends Control> {
     dateFrom?: string;
     dateTo?: string;
-    value?: string[];
-    register: UseFormRegisterReturn;
+
+    label: string;
+
+    control: C;
+    name: C extends Control<infer Values> ? keyof Values : string;
+    rules?: {
+        required?: boolean;
+        validate?: C extends Control<infer Values> ? Validate<string | undefined, Values> : never;
+    };
 }

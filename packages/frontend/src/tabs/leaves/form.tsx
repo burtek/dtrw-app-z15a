@@ -1,17 +1,20 @@
 import { Box, Button, Dialog, Flex, Select, Separator } from '@radix-ui/themes';
 import { memo, useCallback, useMemo } from 'react';
-import type { FieldError, SubmitHandler } from 'react-hook-form';
+import type { SubmitHandler } from 'react-hook-form';
 import { useForm, useWatch } from 'react-hook-form';
 
+import { CalendarField } from '../../components/form/fields/calendarField';
+import { DateField } from '../../components/form/fields/dateField';
+import { SelectField } from '../../components/form/fields/selectField';
+import { TextField } from '../../components/form/fields/textField';
+import { withErrorBoundary } from '../../components/withErrorBoundary';
 import { ApiEndpoint, usePost } from '../../data/apiHooks';
 import { useData } from '../../data/provider';
-import { CalendarField } from '../../form/fields/calendarField';
-import { DateField } from '../../form/fields/dateField';
-import { SelectField } from '../../form/fields/selectField';
-import { TextField } from '../../form/fields/textField';
 import type { Job, Kid, Leave, WithId } from '../../types';
 
 import styles from './styles.module.css';
+import type { FormLeave } from './transform';
+import { leaveTransformer } from './transform';
 
 
 const Component = ({ close, id }: { close: () => void; id: number | null }) => {
@@ -22,22 +25,23 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
         leaves: { data: leaves, update: storeLeave }
     } = useData();
 
-    const {
-        control,
-        register,
-        handleSubmit,
-        formState: { errors }
-    } = useForm<Partial<Leave>>({
+    const { control, handleSubmit } = useForm<Partial<FormLeave>>({
         defaultValues: useMemo(
-            () => leaves.find(leave => leave.id === id) ?? { daysTaken: [] },
+            () => {
+                const leave = leaves.find(l => l.id === id);
+                return leave ? leaveTransformer.fromApi(leave) : { daysTaken: {} };
+            },
             []
         )
     });
 
     const { create, update, isSaving } = usePost(ApiEndpoint.LEAVES);
 
-    const onSubmit: SubmitHandler<Partial<Leave>> = async data => {
-        const response = await (id === null ? create(data) : update(id, data));
+    const onSubmit: SubmitHandler<Partial<FormLeave>> = async data => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+        const parsedData = leaveTransformer.toApi(data as FormLeave);
+
+        const response = await (id === null ? create(parsedData) : update(id, parsedData));
 
         if (response.ok) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
@@ -51,7 +55,6 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
     const dateFrom = useWatch({ control, name: 'from' });
     const dateTo = useWatch({ control, name: 'to' });
-    const daysTaken = useWatch({ control, name: 'daysTaken' });
 
     const handleClose = useCallback((newState: boolean) => {
         if (!newState) {
@@ -81,130 +84,116 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
         </Select.Item>
     ), []);
 
-    const dateSaveAs = useCallback((date: string) => (date ? new Date(date).toISOString().split('T')[0] : ''), []);
-
     return (
-        <div>
-            <Dialog.Root
-                open
-                onOpenChange={handleClose}
-            >
-                <Dialog.Content maxWidth="450px">
-                    <Dialog.Title>{id === null ? 'Nowe zwolnienie' : 'Edycja zwolnienia'}</Dialog.Title>
+        <Dialog.Root
+            open
+            onOpenChange={handleClose}
+        >
+            <Dialog.Content maxWidth="450px">
+                <Dialog.Title>{id === null ? 'Nowe zwolnienie' : 'Edycja zwolnienia'}</Dialog.Title>
 
-                    <Dialog.Description mb="4">Wprowadź dane zwolnienia.</Dialog.Description>
+                <Dialog.Description mb="4">Wprowadź dane zwolnienia.</Dialog.Description>
 
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <Flex
-                            direction="column"
-                            gap="3"
-                        >
-                            <SelectField
-                                label="Pracownik / Płatnik ZUS"
-                                error={errors.jobId}
-                                register={register('jobId', { required: true })}
-                                items={jobs}
-                                renderItem={renderJobItem}
-                                value={useWatch({ control, name: 'jobId' })?.toString()}
-                            />
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <Flex
+                        direction="column"
+                        gap="3"
+                    >
+                        <SelectField
+                            label="Pracownik / Płatnik ZUS"
+                            items={jobs}
+                            renderItem={renderJobItem}
+                            control={control}
+                            name="jobId"
+                            rules={{ required: true }}
+                            parseIntValue
+                        />
 
-                            <Flex gap="3">
-                                <Box flexGrow="1">
-                                    <TextField
-                                        label="Numer ZLA"
-                                        error={errors.zla}
-                                        register={register('zla', {
-                                            minLength: 9,
-                                            maxLength: 9
-                                        })}
-                                        value={useWatch({ control, name: 'zla' })}
-                                    />
-                                </Box>
-                                <Box flexGrow="1">
-                                    <SelectField
-                                        label="Dziecko"
-                                        error={errors.kidId}
-                                        register={register('kidId', { required: true })}
-                                        items={kids}
-                                        renderItem={renderKidItem}
-                                        value={useWatch({ control, name: 'kidId' })?.toString()}
-                                    />
-                                </Box>
-                            </Flex>
-
-                            <Separator size="4" />
-
-                            <DateField
-                                label="Zwolnienie od"
-                                error={errors.from}
-                                register={register('from', {
-                                    required: true,
-                                    setValueAs: dateSaveAs,
-                                    max: dateTo
-                                })}
-                            />
-                            <DateField
-                                label="Zwolnienie do"
-                                error={errors.to}
-                                register={register('to', {
-                                    required: true,
-                                    setValueAs: dateSaveAs,
-                                    min: dateFrom
-                                })}
-                            />
-
-                            <CalendarField
-                                label="Dni nieobecności"
-                                // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-                                error={errors.daysTaken as FieldError}
-                                register={register('daysTaken', { validate: value => (value && value.length > 0 ? true : 'Wybierz przynajmniej jeden dzień') })}
-                                dateFrom={dateFrom}
-                                dateTo={dateTo}
-                                value={daysTaken}
-                            />
-
-                            <Separator size="4" />
-
-                            <TextField
-                                label="Uwagi w Z-15A"
-                                error={errors.z15aNotes}
-                                register={register('z15aNotes')}
-                                value={useWatch({ control, name: 'z15aNotes' })}
-                            />
-                            <TextField
-                                label="Notatki"
-                                error={errors.notes}
-                                register={register('notes')}
-                                value={useWatch({ control, name: 'notes' })}
-                            />
-
-                            <Flex
-                                gap="3"
-                                justify="end"
-                            >
-                                <Button
-                                    loading={isSaving}
-                                    type="submit"
-                                >
-                                    Zapisz
-                                </Button>
-                                <Button
-                                    onClick={close}
-                                    type="button"
-                                    variant="soft"
-                                    disabled={isSaving}
-                                >
-                                    Anuluj
-                                </Button>
-                            </Flex>
+                        <Flex gap="3">
+                            <Box flexGrow="1">
+                                <TextField
+                                    label="Numer ZLA"
+                                    control={control}
+                                    name="zla"
+                                    rules={{ minLength: 9, maxLength: 9 }}
+                                />
+                            </Box>
+                            <Box flexGrow="1">
+                                <SelectField
+                                    label="Dziecko"
+                                    items={kids}
+                                    renderItem={renderKidItem}
+                                    control={control}
+                                    name="kidId"
+                                    rules={{ required: true }}
+                                    parseIntValue
+                                />
+                            </Box>
                         </Flex>
-                    </form>
 
-                </Dialog.Content>
-            </Dialog.Root>
-        </div>
+                        <Separator size="4" />
+
+                        <DateField
+                            label="Zwolnienie od"
+                            control={control}
+                            name="from"
+                            rules={{ required: true, max: dateTo }}
+                        />
+                        <DateField
+                            label="Zwolnienie do"
+                            control={control}
+                            name="to"
+                            rules={{ required: true, min: dateFrom }}
+                        />
+
+                        <CalendarField
+                            label="Dni nieobecności"
+                            dateFrom={dateFrom}
+                            dateTo={dateTo}
+                            control={control}
+                            name="daysTaken"
+                            rules={{ validate: value => (value && value.length > 0 ? true : 'Wybierz przynajmniej jeden dzień') }}
+                        />
+
+                        <Separator size="4" />
+
+                        <TextField
+                            label="Uwagi w Z-15A"
+                            control={control}
+                            name="z15aNotes"
+                        />
+                        <TextField
+                            label="Notatki"
+                            control={control}
+                            name="notes"
+                        />
+
+                        <Flex
+                            gap="3"
+                            justify="end"
+                        >
+                            <Button
+                                loading={isSaving}
+                                type="submit"
+                            >
+                                Zapisz
+                            </Button>
+                            <Button
+                                onClick={close}
+                                type="button"
+                                variant="soft"
+                                disabled={isSaving}
+                            >
+                                Anuluj
+                            </Button>
+                        </Flex>
+                    </Flex>
+                </form>
+
+            </Dialog.Content>
+        </Dialog.Root>
     );
 };
 Component.displayName = 'LeaveFormDialog';
 
-export const LeaveFormDialog = memo(Component);
+export const LeaveFormDialog = memo(withErrorBoundary(Component));

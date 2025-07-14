@@ -1,13 +1,14 @@
 import { Box, Button, Dialog, Flex, Select } from '@radix-ui/themes';
 import { memo, useCallback, useMemo } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
+import { CheckboxField } from '../../components/form/fields/checkboxField';
+import { SelectField } from '../../components/form/fields/selectField';
+import { TextField } from '../../components/form/fields/textField';
+import { withErrorBoundary } from '../../components/withErrorBoundary';
 import { ApiEndpoint, usePost } from '../../data/apiHooks';
 import { useData } from '../../data/provider';
-import { CheckboxField } from '../../form/fields/checkboxField';
-import { SelectField } from '../../form/fields/selectField';
-import { TextField } from '../../form/fields/textField';
 import type { Caretaker, Kid, WithId } from '../../types';
 
 
@@ -17,12 +18,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
         caretakers: { data: caretakers }
     } = useData();
 
-    const {
-        control,
-        register,
-        handleSubmit,
-        formState: { errors }
-    } = useForm<Partial<Kid>>({
+    const { control, handleSubmit } = useForm<Partial<Kid>>({
         defaultValues: useMemo(
             () => kids.find(kid => kid.id === id),
             []
@@ -60,111 +56,109 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
     ), []);
 
     return (
-        <div>
-            <Dialog.Root
-                open
-                onOpenChange={handleClose}
-            >
-                <Dialog.Content maxWidth="450px">
-                    <Dialog.Title>{id === null ? 'Nowe dziecko' : 'Edycja dziecka'}</Dialog.Title>
+        <Dialog.Root
+            open
+            onOpenChange={handleClose}
+        >
+            <Dialog.Content maxWidth="450px">
+                <Dialog.Title>{id === null ? 'Nowe dziecko' : 'Edycja dziecka'}</Dialog.Title>
 
-                    <Dialog.Description mb="4">Wprowadź dane dziecka.</Dialog.Description>
+                <Dialog.Description mb="4">Wprowadź dane dziecka.</Dialog.Description>
 
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <Flex
-                            direction="column"
-                            gap="3"
-                        >
-                            <Flex gap="3">
-                                <Box flexGrow="1">
-                                    <TextField
-                                        label="Imię"
-                                        error={errors.name}
-                                        register={register('name', { required: true })}
-                                        value={useWatch({ control, name: 'name' })}
-                                    />
-                                </Box>
-                                <Box flexGrow="1">
-                                    <TextField
-                                        label="Nazwisko"
-                                        error={errors.surname}
-                                        register={register('surname', { required: true })}
-                                        value={useWatch({ control, name: 'surname' })}
-                                    />
-                                </Box>
-                            </Flex>
-
-                            <TextField
-                                label="PESEL"
-                                error={errors.pesel}
-                                register={register('pesel', { required: true, minLength: 11, maxLength: 11 })}
-                                value={useWatch({ control, name: 'pesel' })}
-                            />
-
-                            <CheckboxField
-                                label="Niepełnosprawność"
-                                error={errors.disabled}
-                                register={register('disabled')}
-                                checked={useWatch({ control, name: 'disabled' })}
-                            />
-
-                            <Flex gap="3">
-                                <Box flexGrow="1">
-                                    <SelectField
-                                        label="Matka"
-                                        error={errors.motherId}
-                                        register={register('motherId', { required: true })}
-                                        items={caretakers}
-                                        renderItem={renderCaretakerItem}
-                                        value={useWatch({ control, name: 'motherId' })?.toString()}
-                                    />
-                                </Box>
-                                <Box flexGrow="1">
-                                    <SelectField
-                                        label="Ojciec"
-                                        error={errors.fatherId}
-                                        register={register('fatherId', { required: true })}
-                                        items={caretakers}
-                                        renderItem={renderCaretakerItem}
-                                        value={useWatch({ control, name: 'fatherId' })?.toString()}
-                                    />
-                                </Box>
-                            </Flex>
-
-                            <TextField
-                                label="Notatki"
-                                error={errors.notes}
-                                register={register('notes')}
-                                value={useWatch({ control, name: 'notes' })}
-                            />
-
-                            <Flex
-                                gap="3"
-                                justify="end"
-                            >
-                                <Button
-                                    loading={isSaving}
-                                    type="submit"
-                                >
-                                    Zapisz
-                                </Button>
-                                <Button
-                                    onClick={close}
-                                    type="button"
-                                    variant="soft"
-                                    disabled={isSaving}
-                                >
-                                    Anuluj
-                                </Button>
-                            </Flex>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <Flex
+                        direction="column"
+                        gap="3"
+                    >
+                        <Flex gap="3">
+                            <Box flexGrow="1">
+                                <TextField
+                                    label="Imię"
+                                    control={control}
+                                    name="name"
+                                    rules={{ required: true }}
+                                />
+                            </Box>
+                            <Box flexGrow="1">
+                                <TextField
+                                    label="Nazwisko"
+                                    control={control}
+                                    name="surname"
+                                    rules={{ required: true }}
+                                />
+                            </Box>
                         </Flex>
-                    </form>
 
-                </Dialog.Content>
-            </Dialog.Root>
-        </div>
+                        <TextField
+                            label="PESEL"
+                            control={control}
+                            name="pesel"
+                            rules={{ required: true, minLength: 11, maxLength: 11 }}
+                        />
+
+                        <CheckboxField
+                            label="Niepełnosprawność"
+                            control={control}
+                            name="disabled"
+                        />
+
+                        <Flex gap="3">
+                            <Box flexGrow="1">
+                                <SelectField
+                                    label="Matka"
+                                    items={caretakers}
+                                    renderItem={renderCaretakerItem}
+                                    control={control}
+                                    name="motherId"
+                                    rules={{ required: true }}
+                                    parseIntValue
+                                />
+                            </Box>
+                            <Box flexGrow="1">
+                                <SelectField
+                                    label="Ojciec"
+                                    items={caretakers}
+                                    renderItem={renderCaretakerItem}
+                                    control={control}
+                                    name="fatherId"
+                                    rules={{ required: true }}
+                                    parseIntValue
+                                />
+                            </Box>
+                        </Flex>
+
+                        <TextField
+                            label="Notatki"
+                            control={control}
+                            name="notes"
+                        />
+
+                        <Flex
+                            gap="3"
+                            justify="end"
+                        >
+                            <Button
+                                loading={isSaving}
+                                type="submit"
+                            >
+                                Zapisz
+                            </Button>
+                            <Button
+                                onClick={close}
+                                type="button"
+                                variant="soft"
+                                disabled={isSaving}
+                            >
+                                Anuluj
+                            </Button>
+                        </Flex>
+                    </Flex>
+                </form>
+
+            </Dialog.Content>
+        </Dialog.Root>
     );
 };
 Component.displayName = 'KidFormDialog';
 
-export const KidFormDialog = memo(Component);
+export const KidFormDialog = memo(withErrorBoundary(Component));

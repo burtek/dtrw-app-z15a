@@ -1,23 +1,19 @@
 import { Box, Button, Dialog, Flex, Separator } from '@radix-ui/themes';
 import { memo, useCallback, useMemo } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
+import { TextField } from '../../components/form/fields/textField';
+import { withErrorBoundary } from '../../components/withErrorBoundary';
 import { ApiEndpoint, usePost } from '../../data/apiHooks';
 import { useData } from '../../data/provider';
-import { TextField } from '../../form/fields/textField';
 import type { Caretaker, WithId } from '../../types';
 
 
 const Component = ({ close, id }: { close: () => void; id: number | null }) => {
     const { caretakers: { data: caretakers, update: storeCaretaker } } = useData();
 
-    const {
-        control,
-        register,
-        handleSubmit,
-        formState: { errors }
-    } = useForm<Partial<Caretaker>>({
+    const { control, handleSubmit } = useForm<Partial<Caretaker>>({
         defaultValues: useMemo(
             () => caretakers.find(caretaker => caretaker.id === id),
             []
@@ -46,133 +42,129 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
     }, [close]);
 
     return (
-        <div>
-            <Dialog.Root
-                open
-                onOpenChange={handleClose}
-            >
-                <Dialog.Content maxWidth="450px">
-                    <Dialog.Title>{id === null ? 'Nowy opiekun' : 'Edycja opiekuna'}</Dialog.Title>
+        <Dialog.Root
+            open
+            onOpenChange={handleClose}
+        >
+            <Dialog.Content maxWidth="450px">
+                <Dialog.Title>{id === null ? 'Nowy opiekun' : 'Edycja opiekuna'}</Dialog.Title>
 
-                    <Dialog.Description mb="4">Wprowadź dane opiekuna.</Dialog.Description>
+                <Dialog.Description mb="4">Wprowadź dane opiekuna.</Dialog.Description>
 
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <Flex
-                            direction="column"
-                            gap="3"
-                        >
-                            <Flex gap="3">
-                                <Box flexGrow="1">
-                                    <TextField
-                                        label="Imię"
-                                        error={errors.name}
-                                        register={register('name', { required: true })}
-                                        value={useWatch({ control, name: 'name' })}
-                                    />
-                                </Box>
-                                <Box flexGrow="1">
-                                    <TextField
-                                        label="Nazwisko"
-                                        error={errors.surname}
-                                        register={register('surname', { required: true })}
-                                        value={useWatch({ control, name: 'surname' })}
-                                    />
-                                </Box>
-                            </Flex>
-
-                            <TextField
-                                label="PESEL"
-                                error={errors.pesel}
-                                register={register('pesel', { required: true, minLength: 11, maxLength: 11 })}
-                                value={useWatch({ control, name: 'pesel' })}
-                            />
-
-                            <Separator size="4" />
-
-                            <TextField
-                                label="Ulica"
-                                error={errors.street}
-                                register={register('street', { required: true })}
-                                value={useWatch({ control, name: 'street' })}
-                            />
-
-                            <Flex gap="3">
-                                <Box flexGrow="1">
-                                    <TextField
-                                        label="Numer ulicy"
-                                        error={errors.streetNo}
-                                        register={register('streetNo', { required: true })}
-                                        value={useWatch({ control, name: 'streetNo' })}
-                                    />
-                                </Box>
-                                <Box flexGrow="1">
-                                    <TextField
-                                        label="Numer mieszkania"
-                                        error={errors.flatNo}
-                                        register={register('flatNo')}
-                                        value={useWatch({ control, name: 'flatNo' })}
-                                    />
-                                </Box>
-                            </Flex>
-
-                            <Flex gap="3">
-                                <Box flexGrow="1">
-                                    <TextField
-                                        label="Kod pocztowy"
-                                        error={errors.zipCode}
-                                        register={register('zipCode', {
-                                            required: true,
-                                            validate: (value?: string) => (/^\d\d-\d\d\d$/.test(value ?? '') ? true : 'Błędny format')
-                                        })}
-                                        value={useWatch({ control, name: 'zipCode' })}
-                                    />
-                                </Box>
-                                <Box flexGrow="1">
-                                    <TextField
-                                        label="Miasto"
-                                        error={errors.city}
-                                        register={register('city', { required: true })}
-                                        value={useWatch({ control, name: 'city' })}
-                                    />
-                                </Box>
-                            </Flex>
-
-                            <Separator size="4" />
-
-                            <TextField
-                                label="Notatki"
-                                error={errors.notes}
-                                register={register('notes')}
-                                value={useWatch({ control, name: 'notes' })}
-                            />
-
-                            <Flex
-                                gap="3"
-                                justify="end"
-                            >
-                                <Button
-                                    loading={isSaving}
-                                    type="submit"
-                                >
-                                    Zapisz
-                                </Button>
-                                <Button
-                                    onClick={close}
-                                    type="button"
-                                    variant="soft"
-                                    disabled={isSaving}
-                                >
-                                    Anuluj
-                                </Button>
-                            </Flex>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <Flex
+                        direction="column"
+                        gap="3"
+                    >
+                        <Flex gap="3">
+                            <Box flexGrow="1">
+                                <TextField
+                                    label="Imię"
+                                    control={control}
+                                    name="name"
+                                    rules={{ required: true }}
+                                />
+                            </Box>
+                            <Box flexGrow="1">
+                                <TextField
+                                    label="Nazwisko"
+                                    control={control}
+                                    name="surname"
+                                    rules={{ required: true }}
+                                />
+                            </Box>
                         </Flex>
-                    </form>
 
-                </Dialog.Content>
-            </Dialog.Root>
-        </div>
+                        <TextField
+                            label="PESEL"
+                            control={control}
+                            name="pesel"
+                            rules={{ required: true, minLength: 11, maxLength: 11 }}
+                        />
+
+                        <Separator size="4" />
+
+                        <TextField
+                            label="Ulica"
+                            control={control}
+                            name="street"
+                            rules={{ required: true }}
+                        />
+
+                        <Flex gap="3">
+                            <Box flexGrow="1">
+                                <TextField
+                                    label="Numer ulicy"
+                                    control={control}
+                                    name="streetNo"
+                                    rules={{ required: true }}
+                                />
+                            </Box>
+                            <Box flexGrow="1">
+                                <TextField
+                                    label="Numer mieszkania"
+                                    control={control}
+                                    name="flatNo"
+                                />
+                            </Box>
+                        </Flex>
+
+                        <Flex gap="3">
+                            <Box flexGrow="1">
+                                <TextField
+                                    label="Kod pocztowy"
+                                    control={control}
+                                    name="zipCode"
+                                    rules={{
+                                        required: true,
+                                        validate: (value?: string) => (/^\d\d-\d\d\d$/.test(value ?? '') ? true : 'Błędny format')
+                                    }}
+                                />
+                            </Box>
+                            <Box flexGrow="1">
+                                <TextField
+                                    label="Miasto"
+                                    control={control}
+                                    name="city"
+                                    rules={{ required: true }}
+                                />
+                            </Box>
+                        </Flex>
+
+                        <Separator size="4" />
+
+                        <TextField
+                            label="Notatki"
+                            control={control}
+                            name="notes"
+                        />
+
+                        <Flex
+                            gap="3"
+                            justify="end"
+                        >
+                            <Button
+                                loading={isSaving}
+                                type="submit"
+                            >
+                                Zapisz
+                            </Button>
+                            <Button
+                                onClick={close}
+                                type="button"
+                                variant="soft"
+                                disabled={isSaving}
+                            >
+                                Anuluj
+                            </Button>
+                        </Flex>
+                    </Flex>
+                </form>
+
+            </Dialog.Content>
+        </Dialog.Root>
     );
 };
 Component.displayName = 'CaretakerFormDialog';
 
-export const CaretakerFormDialog = memo(Component);
+export const CaretakerFormDialog = memo(withErrorBoundary(Component));
