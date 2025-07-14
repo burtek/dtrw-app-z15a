@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.3.4...v1.4.0) (2025-07-14)
+
+
+### Features
+
+* **ui/tables:** show leave days count ([30fb3a4](https://github.com/burtek/dtrw-app-z15a/commit/30fb3a4a1f3ce850bb9ff0e23b5ddef11adae9b5))
+
+
+### Bug Fixes
+
+* **deploy:** healthcheck ([b915714](https://github.com/burtek/dtrw-app-z15a/commit/b91571469b9558004f41890d7a012785a0ee2acf))
+* **ui/forms:** don't allow more than 30 days on leave - app might hang ([0f82505](https://github.com/burtek/dtrw-app-z15a/commit/0f825051910dee86f934bcf425b6deff0c382a9f))
+* **ui/forms:** select placeholder ([07d2630](https://github.com/burtek/dtrw-app-z15a/commit/07d2630f03de5bfbf16dcf4a99a84d1c0930756d))
+
 ### [1.3.4](https://github.com/burtek/dtrw-app-z15a/compare/v1.3.3...v1.3.4) (2025-07-14)
 
 
