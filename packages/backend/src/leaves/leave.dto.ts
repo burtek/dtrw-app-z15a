@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { ArrayMinSize, IsArray, IsInt, IsString, Length, Min, ValidateIf } from 'class-validator';
+import { ArrayMinSize, IsArray, IsInt, IsOptional, IsString, Length, Min, ValidateIf } from 'class-validator';
 
 import { DateRange } from '../dateRange/dateRange';
 import { IsPlainDateValid, PlainDate } from '../validators/plainDate';
@@ -34,8 +34,10 @@ export class LeaveDto implements DateRange<true> {
     daysTaken: string[];
 
     @IsString()
+    @IsOptional()
     z15aNotes: string;
 
     @IsString()
+    @IsOptional()
     notes: string;
 }

@@ -20,7 +20,9 @@ export const drizzleProvider = [
                 const path = configService.get<string>('DB_FILE_NAME', '');
                 database = new Database(path);
             }
-            return drizzle(database, { schema });
+            const db = drizzle(database, { schema });
+            console.log('Database open');
+            return db;
         }
     }
 ] satisfies [Provider] | Provider[];

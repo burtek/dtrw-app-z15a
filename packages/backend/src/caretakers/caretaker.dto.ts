@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 import { IsPeselValid } from '../validators/pesel';
 
@@ -37,5 +37,6 @@ export class CaretakerDto {
     city: string;
 
     @IsString()
+    @IsOptional()
     notes: string;
 }

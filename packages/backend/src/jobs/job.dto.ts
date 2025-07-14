@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/member-ordering */
 import { Transform } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsString, Min, ValidateIf } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, Min, ValidateIf } from 'class-validator';
 
 import { DateRange } from '../dateRange/dateRange';
 import { IsNipValid } from '../validators/nip';
@@ -35,5 +35,6 @@ export class JobDto implements DateRange {
     to: PlainDate | null | undefined;
 
     @IsString()
+    @IsOptional()
     notes: string;
 }
