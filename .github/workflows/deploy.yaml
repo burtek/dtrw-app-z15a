@@ -74,7 +74,7 @@ jobs:
           passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
           script: |
             cd /apps/${{ env.APP_NAME }}
-            docker compose run --rm backend rm -r node_modules/.bin node_modules/*
+            docker compose run --rm backend rm -r /app/node_modules
 
       - name: Deploy backend
         uses: appleboy/scp-action@v1
