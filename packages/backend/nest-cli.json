@@ -12,6 +12,8 @@
         "include": "../drizzle.config.ts", "outDir": "dist/drizzle.config.ts", "watchAssets": true
       }, {
         "include": "../drizzle/**/*", "outDir": "dist/drizzle", "watchAssets": true
+      }, {
+        "include": "../scripts/**/*", "outDir": "dist/scripts", "watchAssets": true
       }
     ],
     "deleteOutDir": true,
