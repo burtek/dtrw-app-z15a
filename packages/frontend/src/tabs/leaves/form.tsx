@@ -152,7 +152,11 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             dateTo={dateTo}
                             control={control}
                             name="daysTaken"
-                            rules={{ validate: value => (value && value.length > 0 ? true : 'Wybierz przynajmniej jeden dzień') }}
+                            rules={{
+                                validate(value = {}) {
+                                    return Object.keys(value).some(key => value[key]) || 'Wybierz przynajmniej jeden dzień';
+                                }
+                            }}
                         />
 
                         <Separator size="4" />

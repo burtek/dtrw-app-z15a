@@ -173,6 +173,6 @@ interface Props<C extends Control> {
     name: C extends Control<infer Values> ? keyof Values : string;
     rules?: {
         required?: boolean;
-        validate?: C extends Control<infer Values> ? Validate<string | undefined, Values> : never;
+        validate?: C extends Control<infer Values> ? Validate<Record<string, boolean> | undefined, Values> : never;
     };
 }
