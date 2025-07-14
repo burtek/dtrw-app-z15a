@@ -96,6 +96,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
           script: |
+            set -e
             touch /apps/data/z15a_db/db.db
             cd /apps/${{ env.APP_NAME }}
             docker compose run --rm backend yarn migrate
