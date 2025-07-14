@@ -18,9 +18,15 @@ export function getDateRange(from?: string, to?: string): string[] {
     }
 
     const dates = [];
+    let count = 0;
     // eslint-disable-next-line no-unmodified-loop-condition -- false positive
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
         dates.push(d.toISOString().split('T')[0]);
+        if (count++ > 30) {
+            // eslint-disable-next-line no-console
+            console.error('Range too big - wrong dates?');
+            return [];
+        }
     }
     return dates;
 }
