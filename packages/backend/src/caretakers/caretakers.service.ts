@@ -54,6 +54,7 @@ export class CaretakersService {
             flatNo: caretaker.flatNo,
             zipCode: caretaker.zipCode,
             city: caretaker.city,
+            email: caretaker.email,
             notes: caretaker.notes
         };
     }
