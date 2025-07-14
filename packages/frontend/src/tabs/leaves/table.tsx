@@ -44,7 +44,10 @@ const Component = () => {
                                 <Table.Cell>{kid?.name} {kid?.surname}</Table.Cell>
                                 <Table.Cell>{caretaker?.name} {caretaker?.surname}</Table.Cell>
                                 <Table.Cell>{leave.zla}</Table.Cell>
-                                <Table.Cell>{leave.from === leave.to ? leave.from : `${leave.from} - ${leave.to}`}</Table.Cell>
+                                <Table.Cell>
+                                    {leave.from === leave.to ? leave.from : `${leave.from} - ${leave.to}`}
+                                    {` (${leave.daysTaken.length} dni)`}
+                                </Table.Cell>
                                 <Table.Cell>
                                     <Flex gap="2">
                                         <Button
