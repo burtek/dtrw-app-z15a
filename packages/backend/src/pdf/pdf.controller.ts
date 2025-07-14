@@ -14,10 +14,7 @@ export class PdfController {
         try {
             const data = await this.pdfService.generatePdf(parseInt(id, 10));
 
-            response.set({
-                'Content-Type': 'application/pdf',
-                'Content-Disposition': 'attachment; filename="file.pdf"'
-            });
+            response.set({ 'Content-Type': 'application/pdf' });
             response.send(data);
         } catch (error) {
             response.status(500);
