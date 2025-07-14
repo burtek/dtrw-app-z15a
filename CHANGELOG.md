@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.3](https://github.com/burtek/dtrw-app-z15a/compare/v1.2.2...v1.2.3) (2025-07-14)
+
+
+### Bug Fixes
+
+* **backend:** dto fixes ([8787455](https://github.com/burtek/dtrw-app-z15a/commit/87874553b8f2264201385b1b8996b417d73016af))
+* **backend:** proper error handling ([0b11a0d](https://github.com/burtek/dtrw-app-z15a/commit/0b11a0df5f77c53c9bba1f73e76275863a80d0a4))
+* **ui/forms:** fix jobs form ([3ccf26b](https://github.com/burtek/dtrw-app-z15a/commit/3ccf26bd88165494fe049f443dee107a01bd9d03))
+* **ui/forms:** small props rework ([36880f0](https://github.com/burtek/dtrw-app-z15a/commit/36880f0f073d3e5b87c9a401fcc3053d3c552449))
+
 ### [1.2.2](https://github.com/burtek/dtrw-app-z15a/compare/v1.2.1...v1.2.2) (2025-07-12)
 
 
