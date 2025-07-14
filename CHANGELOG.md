@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.4](https://github.com/burtek/dtrw-app-z15a/compare/v1.3.3...v1.3.4) (2025-07-14)
+
+
+### Bug Fixes
+
+* calendar field validation ([a1f26c8](https://github.com/burtek/dtrw-app-z15a/commit/a1f26c8e5659da185d569ad70b286dfbe96936dd))
+* **deploy:** healthcheck + cleanup ([60da1b6](https://github.com/burtek/dtrw-app-z15a/commit/60da1b6c29dcb729bff808b6a1620bb66fa27bac))
+
 ### [1.3.3](https://github.com/burtek/dtrw-app-z15a/compare/v1.3.2...v1.3.3) (2025-07-14)
 
 
