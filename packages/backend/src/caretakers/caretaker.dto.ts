@@ -39,4 +39,8 @@ export class CaretakerDto {
     @IsString()
     @IsOptional()
     notes: string;
+
+    @IsString()
+    @IsOptional()
+    email: string;
 }

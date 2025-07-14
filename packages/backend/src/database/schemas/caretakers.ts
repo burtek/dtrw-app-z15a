@@ -11,7 +11,8 @@ export const caretakers = table('caretakers', {
     flatNo: text('flat_no'),
     zipCode: text('zip_code').notNull(),
     city: text('city').notNull(),
-    notes: text('notes')
+    notes: text('notes'),
+    email: text('email')
 });
 
 export type Caretaker = typeof caretakers.$inferSelect;

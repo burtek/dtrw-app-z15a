@@ -73,6 +73,13 @@ const Component = () => {
                                         >
                                             Pobierz
                                         </Link>
+                                        <Separator orientation="vertical" />
+                                        <Button
+                                            variant="ghost"
+                                            disabled
+                                        >
+                                            Wyślij
+                                        </Button>
                                     </Flex>
                                 </Table.Cell>
                             </Table.Row>

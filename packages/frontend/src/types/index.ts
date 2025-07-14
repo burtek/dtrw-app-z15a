@@ -8,6 +8,7 @@ export interface Caretaker {
     zipCode: string;
     city: string;
     notes: string;
+    email: string;
 }
 
 export interface Job {

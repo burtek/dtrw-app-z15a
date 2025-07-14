@@ -27,6 +27,7 @@ const Component = () => {
                         <Table.ColumnHeaderCell>ID</Table.ColumnHeaderCell>
                         <Table.ColumnHeaderCell>Imię i nazwisko</Table.ColumnHeaderCell>
                         <Table.ColumnHeaderCell>PESEL</Table.ColumnHeaderCell>
+                        <Table.ColumnHeaderCell>E-mail</Table.ColumnHeaderCell>
                         <Table.ColumnHeaderCell>Obecny płatnik</Table.ColumnHeaderCell>
                         <Table.ColumnHeaderCell />
                         <Table.ColumnHeaderCell />
@@ -47,6 +48,7 @@ const Component = () => {
                                 <Table.RowHeaderCell>{caretaker.id}</Table.RowHeaderCell>
                                 <Table.Cell style={{ whiteSpace: 'nowrap' }}>{caretaker.name} {caretaker.surname}</Table.Cell>
                                 <Table.Cell style={{ whiteSpace: 'nowrap' }}>{caretaker.pesel}</Table.Cell>
+                                <Table.Cell style={{ whiteSpace: 'nowrap' }}>{caretaker.email}</Table.Cell>
                                 <Table.Cell>{job?.company ?? 'brak'}</Table.Cell>
                                 <Table.Cell>
                                     <Flex gap="2">

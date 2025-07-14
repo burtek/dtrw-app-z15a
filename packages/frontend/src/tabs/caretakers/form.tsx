@@ -82,6 +82,13 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             rules={{ required: true, minLength: 11, maxLength: 11 }}
                         />
 
+                        <TextField
+                            label="E-Mail"
+                            control={control}
+                            name="email"
+                            // rules={{ required: true, minLength: 11, maxLength: 11 }} // TODO
+                        />
+
                         <Separator size="4" />
 
                         <TextField
