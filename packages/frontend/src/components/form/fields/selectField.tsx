@@ -14,7 +14,7 @@ function checkValueType(value: unknown): asserts value is string | number | unde
 }
 
 const Component = <T, C extends Control>(
-    { label, items, renderItem, parseIntValue, control, name, rules }: Props<T, C>
+    { label, items, renderItem, parseIntValue, control, name, rules, placeholder }: Props<T, C>
 ) => {
     const {
         field: { value: v, onChange, onBlur, disabled, ref },
@@ -68,7 +68,7 @@ const Component = <T, C extends Control>(
                 onOpenChange={handleOpenStateChange}
             >
                 <Select.Trigger
-                    placeholder="Wybierz płatnika"
+                    placeholder={placeholder}
                     variant="soft"
                     color={error ? 'red' : undefined}
                 />
@@ -100,6 +100,7 @@ interface Props<T, C extends Control> {
     parseIntValue?: boolean;
 
     label: string;
+    placeholder: string;
 
     control: C;
     name: C extends Control<infer Values> ? keyof Values : string;

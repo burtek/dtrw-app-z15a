@@ -109,6 +109,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
                         <SelectField
                             label="Pracownik"
+                            placeholder="Wybierz osobę"
                             items={caretakers}
                             renderItem={renderCaretakerItem}
                             control={control}

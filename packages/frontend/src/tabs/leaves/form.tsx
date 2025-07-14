@@ -101,6 +101,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                     >
                         <SelectField
                             label="Pracownik / Płatnik ZUS"
+                            placeholder="Wybierz"
                             items={jobs}
                             renderItem={renderJobItem}
                             control={control}
@@ -121,6 +122,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             <Box flexGrow="1">
                                 <SelectField
                                     label="Dziecko"
+                                    placeholder="Wybierz dziecko"
                                     items={kids}
                                     renderItem={renderKidItem}
                                     control={control}

@@ -106,6 +106,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             <Box flexGrow="1">
                                 <SelectField
                                     label="Matka"
+                                    placeholder="Wybierz osobę"
                                     items={caretakers}
                                     renderItem={renderCaretakerItem}
                                     control={control}
@@ -117,6 +118,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             <Box flexGrow="1">
                                 <SelectField
                                     label="Ojciec"
+                                    placeholder="Wybierz osobę"
                                     items={caretakers}
                                     renderItem={renderCaretakerItem}
                                     control={control}
