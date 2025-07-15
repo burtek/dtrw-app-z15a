@@ -1,5 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { eq, sql } from 'drizzle-orm';
+import { BadRequestException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { and, eq, ne, sql } from 'drizzle-orm';
 
 import { jobs, leaves } from '../database/schemas';
 import { rangesCollide } from '../dateRange/dateRange';
@@ -17,36 +17,29 @@ export class LeavesService {
     ) {
     }
 
-    async create(leave: LeaveDto) {
-        await this.validateLeaveRange(leave);
+    async create(leave: LeaveDto, user: string) {
+        await this.validateData(leave, user);
 
         const [newLeave] = await this.db
             .insert(leaves)
-            .values(this.fromDtoToSchema(leave))
+            .values(this.fromDtoToSchema(leave, user))
             .returning();
         return newLeave;
     }
 
-    findAll() {
-        return this.db.query.leaves.findMany();
+    findAll(user: string) {
+        return this.db.query.leaves
+            .findMany({ where: (t, u) => u.eq(t.userId, sql.placeholder('user')) })
+            .prepare()
+            .execute({ user });
     }
 
-    findOne(id: number) {
-        return this.db.query.leaves.findFirst({
-            where: (t, u) => u.eq(t.id, sql.placeholder('id')),
-            with: {
-                job: { with: { caretaker: true } },
-                kid: true
-            }
-        }).prepare().execute({ id });
-    }
-
-    async update(id: number, leave: LeaveDto) {
-        await this.validateLeaveRange(leave, id);
+    async update(id: number, leave: LeaveDto, user: string) {
+        await this.validateData(leave, user, id);
 
         const [updated] = await this.db
             .update(leaves)
-            .set(this.fromDtoToSchema(leave))
+            .set(this.fromDtoToSchema(leave, user))
             .where(eq(leaves.id, id))
             .returning();
 
@@ -60,7 +53,7 @@ export class LeavesService {
         return input;
     }
 
-    private fromDtoToSchema(leave: LeaveDto): typeof leaves.$inferInsert {
+    private fromDtoToSchema(leave: LeaveDto, userId: string): typeof leaves.$inferInsert {
         return {
             zla: leave.zla,
             jobId: leave.jobId,
@@ -69,27 +62,51 @@ export class LeavesService {
             to: this.assertPlainDate(leave.to),
             daysTaken: leave.daysTaken.map(this.assertPlainDate),
             z15aNotes: leave.z15aNotes,
-            notes: leave.notes
+            notes: leave.notes,
+            userId
         };
     }
 
-    private async validateLeaveRange(leave: LeaveDto, id?: number) {
+    private async validateData(leave: LeaveDto, user: string, id?: number) {
+        const [job, kid] = await Promise.all([
+            this.db.query.jobs.findFirst({
+                where: (t, u) => u.eq(t.id, leave.jobId),
+                with: { caretaker: true }
+            }),
+            this.db.query.kids.findFirst({
+                where: (t, u) => u.eq(t.id, leave.kidId),
+                with: {
+                    mother: true,
+                    father: true
+                }
+            })
+        ]);
+
+        if (job?.userId !== user || kid?.userId !== user) {
+            throw new ForbiddenException('Not your data');
+        }
+
+        if (![kid.motherId, kid.fatherId].includes(job.caretakerId)) {
+            throw new BadRequestException('Child is not employee\'s child');
+        }
+
         if (leave.from > leave.to) {
             [leave.from, leave.to] = [leave.to, leave.from];
         }
 
-        const leaveJob = await this.db.query.jobs.findFirst({ where: eq(jobs.id, leave.jobId) });
-        if (!leaveJob) {
-            throw new Error('cannot find job for leave');
-        }
-        const allLeaves = await this.db.query.leaves
-            .findMany({
-                with: { job: true },
-                where: (t, u) => u.ne(t.id, id ?? -1)
-            });
-        const allCaretakerLeaves = allLeaves.filter(thisLeave => thisLeave.job.caretakerId === leaveJob.caretakerId);
+        const caretakerLeaves = await this.db
+            .select({
+                from: leaves.from,
+                to: leaves.to
+            })
+            .from(leaves)
+            .innerJoin(jobs, eq(leaves.jobId, jobs.id))
+            .where(and(
+                eq(jobs.caretakerId, job.caretakerId),
+                ne(leaves.id, id ?? -1)
+            ));
 
-        if (allCaretakerLeaves.some(
+        if (caretakerLeaves.some(
             currentLeave => rangesCollide(currentLeave, leave, true)
         )) {
             throw new Error('leaves for caretaker overlap');

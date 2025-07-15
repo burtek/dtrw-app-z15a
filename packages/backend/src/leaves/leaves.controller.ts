@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Res } from '@nestjs/common';
-import type { Response } from 'express';
+import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+
+import { AutheliaAuthInfo, AuthUser } from '../auth/auth-user.decorator';
 
 import { LeaveDto } from './leave.dto';
 import { LeavesService } from './leaves.service';
@@ -11,42 +12,24 @@ export class LeavesController {
     }
 
     @Post()
-    async create(@Body() leave: LeaveDto, @Res() response: Response) {
-        try {
-            response.send(await this.leavesService.create(leave));
-        } catch (error) {
-            if (error instanceof Error) {
-                response.status(400);
-                response.send({ message: [error.message] });
-            } else {
-                response.status(500);
-                console.error(error);
-            }
-        }
+    async create(
+        @Body() leave: LeaveDto,
+        @AuthUser() user: AutheliaAuthInfo
+    ) {
+        return await this.leavesService.create(leave, user.username);
     }
 
     @Get()
-    findAll() {
-        return this.leavesService.findAll();
-    }
-
-    @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.leavesService.findOne(id);
+    findAll(@AuthUser() user: AutheliaAuthInfo) {
+        return this.leavesService.findAll(user.username);
     }
 
     @Post(':id')
-    async modify(@Param('id', ParseIntPipe) id: number, @Body() leave: LeaveDto, @Res() response: Response) {
-        try {
-            response.send(await this.leavesService.update(id, leave));
-        } catch (error) {
-            if (error instanceof Error) {
-                response.status(400);
-                response.send({ message: [error.message] });
-            } else {
-                response.status(500);
-                console.error(error);
-            }
-        }
+    async modify(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() leave: LeaveDto,
+        @AuthUser() user: AutheliaAuthInfo
+    ) {
+        return await this.leavesService.update(id, leave, user.username);
     }
 }

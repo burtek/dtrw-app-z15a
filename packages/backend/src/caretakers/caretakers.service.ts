@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 
 import { caretakers } from '../database/schemas/caretakers';
 import { DrizzleAsyncProvider, DrizzleDb } from '../drizzle/drizzle.provider';
@@ -15,36 +15,32 @@ export class CaretakersService {
     ) {
     }
 
-    async create(caretaker: CaretakerDto) {
+    async create(caretaker: CaretakerDto, user: string) {
         const [newCaretaker] = await this.db
             .insert(caretakers)
-            .values(this.fromDtoToSchema(caretaker))
+            .values(this.fromDtoToSchema(caretaker, user))
             .returning();
         return newCaretaker;
     }
 
-    findAll() {
-        return this.db.query.caretakers.findMany();
+    findAll(user: string) {
+        return this.db.query.caretakers
+            .findMany({ where: (t, u) => u.eq(t.userId, sql.placeholder('user')) })
+            .prepare()
+            .execute({ user });
     }
 
-    findOne(id: number) {
-        return this.db.query.caretakers.findFirst({
-            where: (t, u) => u.eq(t.id, sql.placeholder('id')),
-            with: { jobs: true }
-        }).prepare().execute({ id });
-    }
-
-    async update(id: number, caretaker: CaretakerDto) {
+    async update(id: number, caretaker: CaretakerDto, user: string) {
         const [updated] = await this.db
             .update(caretakers)
-            .set(this.fromDtoToSchema(caretaker))
-            .where(eq(caretakers.id, id))
+            .set(this.fromDtoToSchema(caretaker, user))
+            .where(and(eq(caretakers.id, id), eq(caretakers.userId, user)))
             .returning();
 
         return updated;
     }
 
-    private fromDtoToSchema(caretaker: CaretakerDto): typeof caretakers.$inferInsert {
+    private fromDtoToSchema(caretaker: CaretakerDto, userId: string): typeof caretakers.$inferInsert {
         return {
             pesel: caretaker.pesel,
             name: caretaker.name,
@@ -55,7 +51,8 @@ export class CaretakersService {
             zipCode: caretaker.zipCode,
             city: caretaker.city,
             email: caretaker.email,
-            notes: caretaker.notes
+            notes: caretaker.notes,
+            userId
         };
     }
 }

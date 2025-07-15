@@ -18,7 +18,9 @@ export const leaves = table('leaves', {
     daysTaken: text('days_taken', { mode: 'json' }).$type<PlainDate[]>().notNull(),
 
     z15aNotes: text('z15a_notes'),
-    notes: text('notes')
+    notes: text('notes'),
+
+    userId: text('userId').notNull().default('--unassigned--')
 });
 
 export type Leave = typeof leaves.$inferSelect;

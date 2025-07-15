@@ -1,13 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import * as fontkit from '@pdf-lib/fontkit';
 import { eq } from 'drizzle-orm';
 import { PDFDocument, PDFForm } from 'pdf-lib';
-import { rangesCollide } from 'src/dateRange/dateRange';
 
 import { leaves } from '../database/schemas';
+import { rangesCollide } from '../dateRange/dateRange';
 import { DrizzleAsyncProvider, DrizzleDb } from '../drizzle/drizzle.provider';
 import { PlainDate } from '../validators/plainDate';
 
@@ -222,9 +222,9 @@ export class PdfService {
         );
     }
 
-    async generatePdf(leaveId: number) {
+    async generatePdf(leaveId: number, user: string) {
         const [[leave, jobs], doc] = await Promise.all([
-            this.getLeaveAndJobs(leaveId),
+            this.getLeaveAndJobs(leaveId, user),
             PDFDocument.load(this.template)
         ]);
 
@@ -276,7 +276,7 @@ export class PdfService {
         }
     }
 
-    private async getLeaveAndJobs(leaveId: number) {
+    private async getLeaveAndJobs(leaveId: number, userId: string) {
         const [leave, jobs] = await Promise.all([
             this.db.query.leaves.findFirst({
                 where: eq(leaves.id, leaveId),
@@ -293,8 +293,8 @@ export class PdfService {
             this.db.query.jobs.findMany({ with: { leaves: true } })
         ]);
 
-        if (!leave) {
-            throw new Error('Leave with given id not found');
+        if (leave?.userId !== userId) {
+            throw new BadRequestException('Leave with given id not found');
         }
 
         return [leave, jobs] as const;

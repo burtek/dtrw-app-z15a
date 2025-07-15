@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Res } from '@nestjs/common';
-import type { Response } from 'express';
+import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+
+import { AutheliaAuthInfo, AuthUser } from '../auth/auth-user.decorator';
 
 import { CaretakerDto } from './caretaker.dto';
 import { CaretakersService } from './caretakers.service';
@@ -11,42 +12,24 @@ export class CaretakersController {
     }
 
     @Post()
-    async create(@Body() caretaker: CaretakerDto, @Res() response: Response) {
-        try {
-            response.send(await this.caretakersService.create(caretaker));
-        } catch (error) {
-            if (error instanceof Error) {
-                response.status(400);
-                response.send({ message: [error.message] });
-            } else {
-                response.status(500);
-                console.error(error);
-            }
-        }
+    async create(
+        @Body() caretaker: CaretakerDto,
+        @AuthUser() user: AutheliaAuthInfo
+    ) {
+        return await this.caretakersService.create(caretaker, user.username);
     }
 
     @Get()
-    findAll() {
-        return this.caretakersService.findAll();
-    }
-
-    @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.caretakersService.findOne(id);
+    async findAll(@AuthUser() user: AutheliaAuthInfo) {
+        return await this.caretakersService.findAll(user.username);
     }
 
     @Post(':id')
-    async modify(@Param('id', ParseIntPipe) id: number, @Body() caretaker: CaretakerDto, @Res() response: Response) {
-        try {
-            response.send(await this.caretakersService.update(id, caretaker));
-        } catch (error) {
-            if (error instanceof Error) {
-                response.status(400);
-                response.send({ message: [error.message] });
-            } else {
-                response.status(500);
-                console.error(error);
-            }
-        }
+    async modify(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() caretaker: CaretakerDto,
+        @AuthUser() user: AutheliaAuthInfo
+    ) {
+        return await this.caretakersService.update(id, caretaker, user.username);
     }
 }

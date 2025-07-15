@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Res } from '@nestjs/common';
-import type { Response } from 'express';
+import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+
+import { AutheliaAuthInfo, AuthUser } from '../auth/auth-user.decorator';
 
 import { KidDto } from './kid.dto';
 import { KidsService } from './kids.service';
@@ -11,42 +12,24 @@ export class KidsController {
     }
 
     @Post()
-    async create(@Body() kid: KidDto, @Res() response: Response) {
-        try {
-            response.send(await this.kidsService.create(kid));
-        } catch (error) {
-            if (error instanceof Error) {
-                response.status(400);
-                response.send({ message: [error.message] });
-            } else {
-                response.status(500);
-                console.error(error);
-            }
-        }
+    async create(
+        @Body() kid: KidDto,
+        @AuthUser() user: AutheliaAuthInfo
+    ) {
+        return await this.kidsService.create(kid, user.username);
     }
 
     @Get()
-    findAll() {
-        return this.kidsService.findAll();
-    }
-
-    @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.kidsService.findOne(id);
+    async findAll(@AuthUser() user: AutheliaAuthInfo) {
+        return await this.kidsService.findAll(user.username);
     }
 
     @Post(':id')
-    async modify(@Param('id', ParseIntPipe) id: number, @Body() kid: KidDto, @Res() response: Response) {
-        try {
-            response.send(await this.kidsService.update(id, kid));
-        } catch (error) {
-            if (error instanceof Error) {
-                response.status(400);
-                response.send({ message: [error.message] });
-            } else {
-                response.status(500);
-                console.error(error);
-            }
-        }
+    async modify(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() kid: KidDto,
+        @AuthUser() user: AutheliaAuthInfo
+    ) {
+        return await this.kidsService.update(id, kid, user.username);
     }
 }

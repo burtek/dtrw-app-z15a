@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { eq, sql } from 'drizzle-orm';
-import { rangesCollide } from 'src/dateRange/dateRange';
+import { BadRequestException, Inject, Injectable, ForbiddenException } from '@nestjs/common';
+import { and, eq, sql } from 'drizzle-orm';
 
 import { jobs } from '../database/schemas/jobs';
+import { rangesCollide } from '../dateRange/dateRange';
 import { DrizzleAsyncProvider, DrizzleDb } from '../drizzle/drizzle.provider';
 import { IsPlainDateValidConstraint, PlainDate } from '../validators/plainDate';
 
@@ -17,37 +17,36 @@ export class JobsService {
     ) {
     }
 
-    async create(job: JobDto) {
-        await this.validateJobRange(job);
+    async create(job: JobDto, user: string) {
+        await Promise.all([
+            this.validateJobRange(job),
+            this.validateAccess(job, user)
+        ]);
 
         const [newJob] = await this.db
             .insert(jobs)
-            .values(this.fromDtoToSchema(job))
+            .values(this.fromDtoToSchema(job, user))
             .returning();
         return newJob;
     }
 
-    findAll() {
-        return this.db.query.jobs.findMany();
+    findAll(user: string) {
+        return this.db.query.jobs
+            .findMany({ where: (t, u) => u.eq(t.userId, sql.placeholder('user')) })
+            .prepare()
+            .execute({ user });
     }
 
-    findOne(id: number) {
-        return this.db.query.jobs.findFirst({
-            where: (t, u) => u.eq(t.id, sql.placeholder('id')),
-            with: {
-                caretaker: true,
-                leaves: { with: { kid: true } }
-            }
-        }).prepare().execute({ id });
-    }
-
-    async update(id: number, job: JobDto) {
-        await this.validateJobRange(job, id);
+    async update(id: number, job: JobDto, user: string) {
+        await Promise.all([
+            this.validateJobRange(job, id),
+            this.validateAccess(job, user)
+        ]);
 
         const [updated] = await this.db
             .update(jobs)
-            .set(this.fromDtoToSchema(job))
-            .where(eq(jobs.id, id))
+            .set(this.fromDtoToSchema(job, user))
+            .where(and(eq(jobs.id, id), eq(jobs.userId, user)))
             .returning();
 
         return updated;
@@ -55,20 +54,30 @@ export class JobsService {
 
     private assertPlainDate(input: string): PlainDate {
         if (!new IsPlainDateValidConstraint().validate(input)) {
-            throw new TypeError('input is not a date');
+            throw new BadRequestException('input is not a date');
         }
         return input;
     }
 
-    private fromDtoToSchema(job: JobDto): typeof jobs.$inferInsert {
+    private fromDtoToSchema(job: JobDto, userId: string): typeof jobs.$inferInsert {
         return {
             caretakerId: job.caretakerId,
             company: job.company,
             nip: job.nip,
             from: job.from ? this.assertPlainDate(job.from) : null,
             to: job.to ? this.assertPlainDate(job.to) : null,
-            notes: job.notes
+            notes: job.notes,
+            userId
         };
+    }
+
+    private async validateAccess(job: JobDto, user: string) {
+        const caretaker = await this.db.query.caretakers
+            .findFirst({ where: (t, u) => u.eq(t.id, job.caretakerId) });
+
+        if (caretaker?.userId !== user) {
+            throw new ForbiddenException('Foreign caretaker');
+        }
     }
 
     private async validateJobRange(job: JobDto, id?: number) {
@@ -90,7 +99,7 @@ export class JobsService {
             });
 
         if (allJobs.some(currentJob => rangesCollide(currentJob, job, false))) {
-            throw new Error('jobs for caretaker overlap');
+            throw new BadRequestException('jobs for caretaker overlap');
         }
     }
 }

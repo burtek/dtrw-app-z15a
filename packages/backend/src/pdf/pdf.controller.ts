@@ -1,5 +1,6 @@
-import { Controller, Param, Get, Res } from '@nestjs/common';
-import type { Response } from 'express';
+import { Controller, Param, Get, Header, ParseIntPipe } from '@nestjs/common';
+
+import { AutheliaAuthInfo, AuthUser } from '../auth/auth-user.decorator';
 
 import { PdfService } from './pdf.service';
 
@@ -10,15 +11,11 @@ export class PdfController {
     }
 
     @Get(':id')
-    async modify(@Param('id') id: string, @Res() response: Response) {
-        try {
-            const data = await this.pdfService.generatePdf(parseInt(id, 10));
-
-            response.set({ 'Content-Type': 'application/pdf' });
-            response.send(data);
-        } catch (error) {
-            response.status(500);
-            console.error(error);
-        }
+    @Header('Content-Type', 'application/pdf')
+    generate(
+        @Param('id', ParseIntPipe) id: number,
+        @AuthUser() user: AutheliaAuthInfo
+    ) {
+        return this.pdfService.generatePdf(id, user.username);
     }
 }

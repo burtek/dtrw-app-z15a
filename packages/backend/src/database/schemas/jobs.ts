@@ -12,7 +12,9 @@ export const jobs = table('jobs', {
     nip: text('nip').notNull(),
     from: text('form').$type<PlainDate>(),
     to: text('to').$type<PlainDate>(),
-    notes: text('notes')
+    notes: text('notes'),
+
+    userId: text('userId').notNull().default('--unassigned--')
 });
 
 export type Job = typeof jobs.$inferSelect;

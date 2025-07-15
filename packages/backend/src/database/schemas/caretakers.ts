@@ -12,7 +12,9 @@ export const caretakers = table('caretakers', {
     zipCode: text('zip_code').notNull(),
     city: text('city').notNull(),
     notes: text('notes'),
-    email: text('email')
+    email: text('email'),
+
+    userId: text('userId').notNull().default('--unassigned--')
 });
 
 export type Caretaker = typeof caretakers.$inferSelect;

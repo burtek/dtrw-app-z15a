@@ -3,7 +3,7 @@ import type { PlainDate } from '../validators/plainDate';
 
 export interface DateRange<Required extends boolean = false> {
     from: Required extends true ? PlainDate : PlainDate | null | undefined;
-    to?: Required extends true ? PlainDate : PlainDate | null | undefined;
+    to: Required extends true ? PlainDate : PlainDate | null | undefined;
 }
 
 export const rangesCollide = (range1: DateRange, range2: DateRange, edgesCollides: boolean) => {

@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Res } from '@nestjs/common';
-import type { Response } from 'express';
+import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+
+import { AutheliaAuthInfo, AuthUser } from '../auth/auth-user.decorator';
 
 import { JobDto } from './job.dto';
 import { JobsService } from './jobs.service';
@@ -11,42 +12,24 @@ export class JobsController {
     }
 
     @Post()
-    async create(@Body() job: JobDto, @Res() response: Response) {
-        try {
-            response.send(await this.jobsService.create(job));
-        } catch (error) {
-            if (error instanceof Error) {
-                response.status(400);
-                response.send({ message: [error.message] });
-            } else {
-                response.status(500);
-                console.error(error);
-            }
-        }
+    async create(
+        @Body() job: JobDto,
+        @AuthUser() user: AutheliaAuthInfo
+    ) {
+        return await this.jobsService.create(job, user.username);
     }
 
     @Get()
-    findAll() {
-        return this.jobsService.findAll();
-    }
-
-    @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id: number) {
-        return this.jobsService.findOne(id);
+    async findAll(@AuthUser() user: AutheliaAuthInfo) {
+        return await this.jobsService.findAll(user.username);
     }
 
     @Post(':id')
-    async modify(@Param('id', ParseIntPipe) id: number, @Body() job: JobDto, @Res() response: Response) {
-        try {
-            response.send(await this.jobsService.update(id, job));
-        } catch (error) {
-            if (error instanceof Error) {
-                response.status(400);
-                response.send({ message: [error.message] });
-            } else {
-                response.status(500);
-                console.error(error);
-            }
-        }
+    async modify(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() job: JobDto,
+        @AuthUser() user: AutheliaAuthInfo
+    ) {
+        return await this.jobsService.update(id, job, user.username);
     }
 }
