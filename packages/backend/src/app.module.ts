@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
 
 import { AppController } from './app.controller';
-import { Z15aGuard } from './auth/z15a.guard';
 import { CaretakersModule } from './caretakers/caretakers.module';
 import { validate } from './env.validation';
 import { HealthModule } from './health/health.module';
@@ -26,14 +24,7 @@ import { PdfModule } from './pdf/pdf.module';
         CaretakersModule,
         PdfModule
     ],
-    controllers: [AppController],
-    providers: [
-        {
-            provide: APP_GUARD,
-            useClass: Z15aGuard
-        }
-    ]
-
+    controllers: [AppController]
 })
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class AppModule {

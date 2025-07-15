@@ -9,7 +9,6 @@ export const baseQuery = fetchBaseQuery({
             const params = new URLSearchParams(hash.replace(/^#/, '?'));
             if (params.has('user')) {
                 headers.set('Remote-User', params.get('user') ?? '');
-                headers.set('Remote-Groups', 'z15a');
             }
         }
         return headers;
