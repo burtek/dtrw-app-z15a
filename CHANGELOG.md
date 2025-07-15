@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.5.2...v1.6.0) (2025-07-15)
+
+
+### Features
+
+* **backend:** allow multiple users ([eb6092b](https://github.com/burtek/dtrw-app-z15a/commit/eb6092bb691b34a43418424633723732cc27c83e))
+* **ui:** move to RTK Query ([c6f4640](https://github.com/burtek/dtrw-app-z15a/commit/c6f46405595ad3a0cd9a137f9903354a85a9c9cf))
+
+
+### Bug Fixes
+
+* **tests:** fix UI tests ([249a3f3](https://github.com/burtek/dtrw-app-z15a/commit/249a3f3fce90b31af75b2bf0fb13e426b3d0725d))
+
 ### [1.5.2](https://github.com/burtek/dtrw-app-z15a/compare/v1.5.1...v1.5.2) (2025-07-14)
 
 
