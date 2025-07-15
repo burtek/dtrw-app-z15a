@@ -49,7 +49,8 @@ export const jobsApi = createApi({
                 } catch {
                     // optional: handle rollback or toast error
                 }
-            }
+            },
+            extraOptions: { maxRetries: 0 }
         })
     })
 });
