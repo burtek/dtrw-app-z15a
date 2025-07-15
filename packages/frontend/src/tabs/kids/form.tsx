@@ -7,36 +7,34 @@ import { CheckboxField } from '../../components/form/fields/checkboxField';
 import { SelectField } from '../../components/form/fields/selectField';
 import { TextField } from '../../components/form/fields/textField';
 import { withErrorBoundary } from '../../components/withErrorBoundary';
-import { ApiEndpoint, usePost } from '../../data/apiHooks';
-import { useData } from '../../data/provider';
+import { useGetCaretakersState } from '../../redux/apis/caretakers';
+import { useGetKidsState, useSaveKidMutation } from '../../redux/apis/kids';
 import type { Caretaker, Kid, WithId } from '../../types';
 
 
 const Component = ({ close, id }: { close: () => void; id: number | null }) => {
-    const {
-        kids: { data: kids, update: storeKid },
-        caretakers: { data: caretakers }
-    } = useData();
+    const { data: kids = [] } = useGetKidsState();
+    const { data: caretakers = [] } = useGetCaretakersState();
 
-    const { control, handleSubmit } = useForm<Partial<Kid>>({
+    const [saveKid, { isLoading }] = useSaveKidMutation();
+
+    const { control, handleSubmit, setError } = useForm<Partial<Kid>>({
         defaultValues: useMemo(
             () => kids.find(kid => kid.id === id),
             []
         )
     });
 
-    const { create, update, isSaving } = usePost(ApiEndpoint.KIDS);
-
     const onSubmit: SubmitHandler<Partial<Kid>> = async data => {
-        const response = await (id === null ? create(data) : update(id, data));
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+        const response = await saveKid({ id, ...data as Kid });
 
-        if (response.ok) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-            const result = await response.json() as WithId<Kid>;
-            if (result.id) {
-                storeKid(result);
-            }
+        if (response.data) {
             close();
+        } else if ('status' in response.error) {
+            setError('name', { message: String(response.error.data) });
+        } else {
+            setError('name', { message: String(response.error.message ?? response.error.name) });
         }
     };
 
@@ -140,7 +138,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             justify="end"
                         >
                             <Button
-                                loading={isSaving}
+                                loading={isLoading}
                                 type="submit"
                             >
                                 Zapisz
@@ -149,7 +147,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 onClick={close}
                                 type="button"
                                 variant="soft"
-                                disabled={isSaving}
+                                disabled={isLoading}
                             >
                                 Anuluj
                             </Button>

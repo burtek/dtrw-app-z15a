@@ -1,13 +1,21 @@
 import { Button, Flex, Link, Separator, Table } from '@radix-ui/themes';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 
-import { useData } from '../../data/provider';
+import { DataTable } from '../../components/table';
+import { useGetCaretakersState } from '../../redux/apis/caretakers';
+import { useGetJobsState } from '../../redux/apis/jobs';
+import { useGetKidsState } from '../../redux/apis/kids';
+import { useGetLeavesState } from '../../redux/apis/leaves';
+import type { Leave, WithId } from '../../types';
 
 import { LeaveFormDialog } from './form';
 
 
 const Component = () => {
-    const { kids: { data: kids }, jobs: { data: jobs }, caretakers: { data: caretakers }, leaves: { data: leaves } } = useData();
+    const { data: leaves = [], error, isLoading } = useGetLeavesState();
+    const { data: kids = [] } = useGetKidsState();
+    const { data: jobs = [] } = useGetJobsState();
+    const { data: caretakers = [] } = useGetCaretakersState();
 
     const [dialogId, setDialogId] = useState<number | null | false>(false);
 
@@ -18,91 +26,70 @@ const Component = () => {
         setDialogId(null);
     }, []);
 
+    const renderLeave = useCallback((leave: WithId<Leave>) => {
+        const kid = kids.find(k => k.id === leave.kidId);
+        const job = jobs.find(j => j.id === leave.jobId);
+        const caretaker = caretakers.find(c => c.id === job?.caretakerId);
+
+        return (
+            <Table.Row key={leave.id}>
+                <Table.RowHeaderCell>{leave.id}</Table.RowHeaderCell>
+                <Table.Cell>{kid?.name} {kid?.surname}</Table.Cell>
+                <Table.Cell>{caretaker?.name} {caretaker?.surname}</Table.Cell>
+                <Table.Cell>{leave.zla}</Table.Cell>
+                <Table.Cell>
+                    {leave.from === leave.to ? leave.from : `${leave.from} - ${leave.to}`}
+                    {` (${leave.daysTaken.length} dni)`}
+                </Table.Cell>
+                <Table.Cell>
+                    <Flex gap="2">
+                        <Button
+                            variant="ghost"
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onClick={() => {
+                                setDialogId(leave.id);
+                            }}
+                        >
+                            Edytuj
+                        </Button>
+                        <Separator orientation="vertical" />
+                        <Button
+                            variant="ghost"
+                            disabled
+                        >
+                            Usuń
+                        </Button>
+                        <Separator orientation="vertical" />
+                        <Link
+                            href={`/api/pdf/${leave.id}`}
+                            download={`Wniosek Z-15A za ${kid?.name} ${kid?.surname} dla ${caretaker?.name} ${caretaker?.surname} za okres ${leave.from}${leave.from === leave.to ? '' : ` - ${leave.to}`}`}
+                        >
+                            Pobierz
+                        </Link>
+                        <Separator orientation="vertical" />
+                        <Button
+                            variant="ghost"
+                            disabled
+                        >
+                            Wyślij
+                        </Button>
+                    </Flex>
+                </Table.Cell>
+            </Table.Row>
+        );
+    }, [caretakers, jobs, kids]);
+
     return (
         <>
-            <Table.Root>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.ColumnHeaderCell>ID</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Dziecko</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Opiekun</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>ZLA</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell>Okres</Table.ColumnHeaderCell>
-                        <Table.ColumnHeaderCell />
-                    </Table.Row>
-                </Table.Header>
-
-                <Table.Body>
-                    {leaves.map(leave => {
-                        const kid = kids.find(k => k.id === leave.kidId);
-                        const job = jobs.find(j => j.id === leave.jobId);
-                        const caretaker = caretakers.find(c => c.id === job?.caretakerId);
-
-                        return (
-                            <Table.Row key={leave.id}>
-                                <Table.RowHeaderCell>{leave.id}</Table.RowHeaderCell>
-                                <Table.Cell>{kid?.name} {kid?.surname}</Table.Cell>
-                                <Table.Cell>{caretaker?.name} {caretaker?.surname}</Table.Cell>
-                                <Table.Cell>{leave.zla}</Table.Cell>
-                                <Table.Cell>
-                                    {leave.from === leave.to ? leave.from : `${leave.from} - ${leave.to}`}
-                                    {` (${leave.daysTaken.length} dni)`}
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <Flex gap="2">
-                                        <Button
-                                            variant="ghost"
-                                            // eslint-disable-next-line react/jsx-no-bind
-                                            onClick={() => {
-                                                setDialogId(leave.id);
-                                            }}
-                                        >
-                                            Edytuj
-                                        </Button>
-                                        <Separator orientation="vertical" />
-                                        <Button
-                                            variant="ghost"
-                                            disabled
-                                        >
-                                            Usuń
-                                        </Button>
-                                        <Separator orientation="vertical" />
-                                        <Link
-                                            href={`/api/pdf/${leave.id}`}
-                                            download={`Wniosek Z-15A za ${kid?.name} ${kid?.surname} dla ${caretaker?.name} ${caretaker?.surname} za okres ${leave.from}${leave.from === leave.to ? '' : ` - ${leave.to}`}`}
-                                        >
-                                            Pobierz
-                                        </Link>
-                                        <Separator orientation="vertical" />
-                                        <Button
-                                            variant="ghost"
-                                            disabled
-                                        >
-                                            Wyślij
-                                        </Button>
-                                    </Flex>
-                                </Table.Cell>
-                            </Table.Row>
-                        );
-                    })}
-                </Table.Body>
-
-                <tfoot>
-                    <Table.Row>
-                        <Table.RowHeaderCell
-                            colSpan={6}
-                            justify="center"
-                        >
-                            <Button
-                                variant="ghost"
-                                onClick={openNewDialog}
-                            >
-                                Dodaj nowe zwolnienie
-                            </Button>
-                        </Table.RowHeaderCell>
-                    </Table.Row>
-                </tfoot>
-            </Table.Root>
+            <DataTable
+                isLoading={isLoading}
+                error={error}
+                headers={useMemo(() => ['ID', 'Dziecko', 'Opiekun', 'ZLA', 'Okres', ''], [])}
+                data={leaves}
+                renderDataRow={renderLeave}
+                onNewClick={openNewDialog}
+                newLabel="Dodaj nowe zwolnienie"
+            />
             {dialogId !== false && (
                 <LeaveFormDialog
                     id={dialogId}

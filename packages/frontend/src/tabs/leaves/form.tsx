@@ -8,9 +8,11 @@ import { DateField } from '../../components/form/fields/dateField';
 import { SelectField } from '../../components/form/fields/selectField';
 import { TextField } from '../../components/form/fields/textField';
 import { withErrorBoundary } from '../../components/withErrorBoundary';
-import { ApiEndpoint, usePost } from '../../data/apiHooks';
-import { useData } from '../../data/provider';
-import type { Job, Kid, Leave, WithId } from '../../types';
+import { useGetCaretakersState } from '../../redux/apis/caretakers';
+import { useGetJobsState } from '../../redux/apis/jobs';
+import { useGetKidsState } from '../../redux/apis/kids';
+import { useGetLeavesState, useSaveLeaveMutation } from '../../redux/apis/leaves';
+import type { Job, Kid, WithId } from '../../types';
 
 import styles from './styles.module.css';
 import type { FormLeave } from './transform';
@@ -18,14 +20,14 @@ import { leaveTransformer } from './transform';
 
 
 const Component = ({ close, id }: { close: () => void; id: number | null }) => {
-    const {
-        kids: { data: kids },
-        jobs: { data: jobs },
-        caretakers: { data: caretakers },
-        leaves: { data: leaves, update: storeLeave }
-    } = useData();
+    const { data: leaves = [] } = useGetLeavesState();
+    const { data: kids = [] } = useGetKidsState();
+    const { data: jobs = [] } = useGetJobsState();
+    const { data: caretakers = [] } = useGetCaretakersState();
 
-    const { control, handleSubmit } = useForm<Partial<FormLeave>>({
+    const [saveLeave, { isLoading }] = useSaveLeaveMutation();
+
+    const { control, handleSubmit, setError } = useForm<Partial<FormLeave>>({
         defaultValues: useMemo(
             () => {
                 const leave = leaves.find(l => l.id === id);
@@ -35,21 +37,18 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
         )
     });
 
-    const { create, update, isSaving } = usePost(ApiEndpoint.LEAVES);
-
     const onSubmit: SubmitHandler<Partial<FormLeave>> = async data => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
         const parsedData = leaveTransformer.toApi(data as FormLeave);
 
-        const response = await (id === null ? create(parsedData) : update(id, parsedData));
+        const response = await saveLeave({ id, ...parsedData });
 
-        if (response.ok) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-            const result = await response.json() as WithId<Leave>;
-            if (result.id) {
-                storeLeave(result);
-            }
+        if (response.data) {
             close();
+        } else if ('status' in response.error) {
+            setError('zla', { message: String(response.error.data) });
+        } else {
+            setError('zla', { message: String(response.error.message ?? response.error.name) });
         }
     };
 
@@ -179,7 +178,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             justify="end"
                         >
                             <Button
-                                loading={isSaving}
+                                loading={isLoading}
                                 type="submit"
                             >
                                 Zapisz
@@ -188,7 +187,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 onClick={close}
                                 type="button"
                                 variant="soft"
-                                disabled={isSaving}
+                                disabled={isLoading}
                             >
                                 Anuluj
                             </Button>

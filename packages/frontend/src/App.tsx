@@ -1,6 +1,9 @@
 import { Box, Tabs } from '@radix-ui/themes';
 
-import { useData } from './data/provider';
+import { useGetCaretakersQuery } from './redux/apis/caretakers';
+import { useGetJobsQuery } from './redux/apis/jobs';
+import { useGetKidsQuery } from './redux/apis/kids';
+import { useGetLeavesQuery } from './redux/apis/leaves';
 import { CaretakersTable } from './tabs/caretakers/table';
 import { JobsTable } from './tabs/jobs/table';
 import { KidsTable } from './tabs/kids/table';
@@ -14,16 +17,40 @@ const enum Tab {
     CARETAKERS = 'caretakers'
 }
 
+const TinySpinner = () => (
+    <span style={{
+        display: 'inline-block',
+        width: 12,
+        height: 12,
+        border: '2px solid rgba(0,0,0,0.2)',
+        borderTopColor: 'rgba(0,0,0,0.6)',
+        borderRadius: '50%',
+        animation: 'spin 1s linear infinite',
+        verticalAlign: 'middle'
+    }}
+    />
+);
+TinySpinner.displayName = 'TinySpinner';
+
 function App() {
-    const { kids: { data: kids }, jobs: { data: jobs }, caretakers: { data: caretakers }, leaves: { data: leaves } } = useData();
+    const { data: kids } = useGetKidsQuery();
+    const { data: jobs } = useGetJobsQuery();
+    const { data: caretakers } = useGetCaretakersQuery();
+    const { data: leaves } = useGetLeavesQuery();
 
     return (
         <Tabs.Root defaultValue={Tab.LEAVES}>
+            <style>{`
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            `}
+            </style>
             <Tabs.List>
-                <Tabs.Trigger value={Tab.LEAVES}>Zwolnienia ({leaves.length})</Tabs.Trigger>
-                <Tabs.Trigger value={Tab.CARETAKERS}>Opiekunowie/rodzice ({caretakers.length})</Tabs.Trigger>
-                <Tabs.Trigger value={Tab.KIDS}>Dzieci ({kids.length})</Tabs.Trigger>
-                <Tabs.Trigger value={Tab.JOBS}>Płatnicy ZUS ({jobs.length})</Tabs.Trigger>
+                <Tabs.Trigger value={Tab.LEAVES}>Zwolnienia ({leaves?.length ?? <TinySpinner />})</Tabs.Trigger>
+                <Tabs.Trigger value={Tab.CARETAKERS}>Opiekunowie/rodzice ({caretakers?.length ?? <TinySpinner />})</Tabs.Trigger>
+                <Tabs.Trigger value={Tab.KIDS}>Dzieci ({kids?.length ?? <TinySpinner />})</Tabs.Trigger>
+                <Tabs.Trigger value={Tab.JOBS}>Płatnicy ZUS ({jobs?.length ?? <TinySpinner />})</Tabs.Trigger>
             </Tabs.List>
 
             <Box pt="3">

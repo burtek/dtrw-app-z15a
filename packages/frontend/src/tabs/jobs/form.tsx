@@ -1,5 +1,5 @@
-import { Button, Dialog, Flex, Select, Text } from '@radix-ui/themes';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { Button, Dialog, Flex, Select } from '@radix-ui/themes';
+import { memo, useCallback, useMemo } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, useWatch } from 'react-hook-form';
 
@@ -7,43 +7,34 @@ import { DateField } from '../../components/form/fields/dateField';
 import { SelectField } from '../../components/form/fields/selectField';
 import { TextField } from '../../components/form/fields/textField';
 import { withErrorBoundary } from '../../components/withErrorBoundary';
-import { ApiEndpoint, usePost } from '../../data/apiHooks';
-import { useData } from '../../data/provider';
+import { useGetCaretakersState } from '../../redux/apis/caretakers';
+import { useGetJobsState, useSaveJobMutation } from '../../redux/apis/jobs';
 import type { Caretaker, Job, WithId } from '../../types';
 
 
 const Component = ({ close, id }: { close: () => void; id: number | null }) => {
-    const {
-        caretakers: { data: caretakers },
-        jobs: { data: jobs, update: storeJob }
-    } = useData();
+    const { data: jobs = [] } = useGetJobsState();
+    const { data: caretakers = [] } = useGetCaretakersState();
 
-    const { control, handleSubmit } = useForm<Partial<Job>>({
+    const [saveJob, { isLoading }] = useSaveJobMutation();
+
+    const { control, handleSubmit, setError } = useForm<Partial<Job>>({
         defaultValues: useMemo(
             () => jobs.find(job => job.id === id),
             []
         )
     });
 
-    const [errorsFromApi, setErrorsFromApi] = useState<string[]>();
-
-    const { create, update, isSaving } = usePost(ApiEndpoint.JOBS);
-
     const onSubmit: SubmitHandler<Partial<Job>> = async data => {
-        setErrorsFromApi(undefined);
-        const response = await (id === null ? create(data) : update(id, data));
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+        const response = await saveJob({ id, ...data as Job });
 
-        if (response.ok) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-            const result = await response.json() as WithId<Job>;
-            if (result.id) {
-                storeJob(result);
-            }
+        if (response.data) {
             close();
+        } else if ('status' in response.error) {
+            setError('company', { message: String(response.error.data) });
         } else {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-            const result = await response.json() as { message: string[] };
-            setErrorsFromApi(result.message);
+            setError('company', { message: String(response.error.message ?? response.error.name) });
         }
     };
 
@@ -71,22 +62,6 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                 <Dialog.Title>{id === null ? 'Nowy płatnik' : 'Edycja płatnika'}</Dialog.Title>
 
                 <Dialog.Description mb="4">Wprowadź dane płatnika.</Dialog.Description>
-
-                {errorsFromApi?.length
-                    ? (
-                        <Text
-                            color="red"
-                            mb="4"
-                            size="2"
-                            style={{ display: 'inline-block' }}
-                        >
-                            Znaleziono błędy:
-                            <ul>
-                                {errorsFromApi.map(text => <li key={text}>{text}</li>)}
-                            </ul>
-                        </Text>
-                    )
-                    : null}
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <Flex
@@ -142,7 +117,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             justify="end"
                         >
                             <Button
-                                loading={isSaving}
+                                loading={isLoading}
                                 type="submit"
                             >
                                 Zapisz
@@ -151,7 +126,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 onClick={close}
                                 type="button"
                                 variant="soft"
-                                disabled={isSaving}
+                                disabled={isLoading}
                             >
                                 Anuluj
                             </Button>

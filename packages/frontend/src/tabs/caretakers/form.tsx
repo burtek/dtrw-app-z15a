@@ -5,33 +5,32 @@ import { useForm } from 'react-hook-form';
 
 import { TextField } from '../../components/form/fields/textField';
 import { withErrorBoundary } from '../../components/withErrorBoundary';
-import { ApiEndpoint, usePost } from '../../data/apiHooks';
-import { useData } from '../../data/provider';
-import type { Caretaker, WithId } from '../../types';
+import { useGetCaretakersState, useSaveCaretakerMutation } from '../../redux/apis/caretakers';
+import type { Caretaker } from '../../types';
 
 
 const Component = ({ close, id }: { close: () => void; id: number | null }) => {
-    const { caretakers: { data: caretakers, update: storeCaretaker } } = useData();
+    const { data: caretakers = [] } = useGetCaretakersState();
 
-    const { control, handleSubmit } = useForm<Partial<Caretaker>>({
+    const [saveCaretaker, { isLoading }] = useSaveCaretakerMutation();
+
+    const { control, handleSubmit, setError } = useForm<Partial<Caretaker>>({
         defaultValues: useMemo(
             () => caretakers.find(caretaker => caretaker.id === id),
             []
         )
     });
 
-    const { create, update, isSaving } = usePost(ApiEndpoint.CARETAKERS);
-
     const onSubmit: SubmitHandler<Partial<Caretaker>> = async data => {
-        const response = await (id === null ? create(data) : update(id, data));
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+        const response = await saveCaretaker({ id, ...data as Caretaker });
 
-        if (response.ok) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-            const result = await response.json() as WithId<Caretaker>;
-            if (result.id) {
-                storeCaretaker(result);
-            }
+        if (response.data) {
             close();
+        } else if ('status' in response.error) {
+            setError('name', { message: String(response.error.data) });
+        } else {
+            setError('name', { message: String(response.error.message ?? response.error.name) });
         }
     };
 
@@ -151,7 +150,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             justify="end"
                         >
                             <Button
-                                loading={isSaving}
+                                loading={isLoading}
                                 type="submit"
                             >
                                 Zapisz
@@ -160,7 +159,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                                 onClick={close}
                                 type="button"
                                 variant="soft"
-                                disabled={isSaving}
+                                disabled={isLoading}
                             >
                                 Anuluj
                             </Button>

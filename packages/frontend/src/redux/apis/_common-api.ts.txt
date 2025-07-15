@@ -1,0 +1,59 @@
+import { createApi } from '@reduxjs/toolkit/query/react';
+
+import type { WithId } from '../../types';
+
+import { baseQuery } from './_base-query';
+
+
+export const makeCommonApi = <Entity extends object>() => <Tag extends string, ReducerPath extends string>(
+    type: Tag,
+    endpoint: string,
+    reducerPath: ReducerPath
+) => {
+    const api = createApi({
+        reducerPath,
+        baseQuery,
+        tagTypes: [type],
+        endpoints: builder => ({
+            // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+            getData: builder.query<WithId<Entity>[], void>({
+                query: () => endpoint,
+                providesTags: (result): Array<{ type: Tag; id: number | 'LIST' }> => (result
+                    ? [
+                        ...result.map(({ id }) => ({ type, id } as const)),
+                        { type, id: 'LIST' }
+                    ]
+                    : [{ type, id: 'LIST' }])
+            }),
+            saveEntity: builder.mutation<WithId<Entity>, Entity & Partial<WithId<unknown>>>({
+                query: ({ id, ...body }) => ({ url: id ? `${endpoint}/${id}` : endpoint, method: 'POST', body }),
+                invalidatesTags: result => (result ? [{ type, id: 'LIST' }, { type, id: result.id }] : []),
+                onQueryStarted: async (_arg, { dispatch, queryFulfilled }) => {
+                    try {
+                        const { data: returnedData } = await queryFulfilled;
+
+                        dispatch(
+                            api.util.updateQueryData(
+                                // @ts-expect-error -- TypeScript can't guarantee that 'getData'
+                                // is a valid endpoint key for all possible ReducerPath values, so it complains
+                                'getData',
+                                undefined,
+                                (draft: WithId<Entity>[]) => {
+                                    const index = draft.findIndex(d => d.id === returnedData.id);
+                                    if (index === -1) {
+                                        draft.push(returnedData);
+                                    } else {
+                                        draft[index] = returnedData;
+                                    }
+                                }
+                            )
+                        );
+                    } catch {
+                        // optional: handle rollback or toast error
+                    }
+                }
+            })
+        })
+    });
+    return api;
+};
