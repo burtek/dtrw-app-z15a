@@ -1,23 +1,54 @@
+import { Theme } from '@radix-ui/themes';
 import { render, screen } from '@testing-library/react';
-import { Fragment } from 'react/jsx-runtime';
+import { http, HttpResponse, delay } from 'msw';
+import { setupServer } from 'msw/node';
+import { Provider } from 'react-redux';
 
 import App from './App';
+import { store } from './redux/store';
 
 
-vitest.mock(import('./data/provider'), _importOriginal => ({
-    // eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-unsafe-type-assertion
-    DataProvider: Fragment as unknown as Awaited<ReturnType<typeof _importOriginal>>['DataProvider'],
-    useData: () => ({
-        kids: { data: [], update: vitest.fn(), reload: vitest.fn() },
-        jobs: { data: [], update: vitest.fn(), reload: vitest.fn() },
-        caretakers: { data: [], update: vitest.fn(), reload: vitest.fn() },
-        leaves: { data: [], update: vitest.fn(), reload: vitest.fn() }
+const handlers = [
+    http.get('/api/leaves', async () => {
+        await delay(150);
+        return HttpResponse.json([]);
+    }),
+    http.get('/api/kids', async () => {
+        await delay(150);
+        return HttpResponse.json([]);
+    }),
+    http.get('/api/caretakers', async () => {
+        await delay(150);
+        return HttpResponse.json([]);
+    }),
+    http.get('/api/jobs', async () => {
+        await delay(150);
+        return HttpResponse.json([]);
     })
-}));
+];
 
+const server = setupServer(...handlers);
+
+beforeAll(() => {
+    server.listen();
+});
+
+afterEach(() => {
+    server.resetHandlers();
+});
 
 test('App renders', () => {
-    const { container } = render(<App />);
+    const { container } = render(<App />, {
+        wrapper({ children }) {
+            return (
+                <Theme>
+                    <Provider store={store}>
+                        {children}
+                    </Provider>
+                </Theme>
+            );
+        }
+    });
 
     expect(container).not.toBeEmptyDOMElement();
 
