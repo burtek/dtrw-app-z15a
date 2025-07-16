@@ -31,6 +31,8 @@ const Component = () => {
         const job = jobs.find(j => j.id === leave.jobId);
         const caretaker = caretakers.find(c => c.id === job?.caretakerId);
 
+        const downloadName = `${caretaker?.surname} ${caretaker?.name} - Z-15A za ${kid?.name} ${kid?.surname} za okres ${leave.from}${leave.from === leave.to ? '' : ` - ${leave.to}`}.pdf`;
+
         return (
             <Table.Row key={leave.id}>
                 <Table.RowHeaderCell>{leave.id}</Table.RowHeaderCell>
@@ -61,8 +63,8 @@ const Component = () => {
                         </Button>
                         <Separator orientation="vertical" />
                         <Link
-                            href={`/api/pdf/${leave.id}`}
-                            download={`Wniosek Z-15A za ${kid?.name} ${kid?.surname} dla ${caretaker?.name} ${caretaker?.surname} za okres ${leave.from}${leave.from === leave.to ? '' : ` - ${leave.to}`}`}
+                            href={`/api/pdf/${leave.id}?title=${encodeURIComponent(downloadName)}`}
+                            download={downloadName}
                         >
                             Pobierz
                         </Link>

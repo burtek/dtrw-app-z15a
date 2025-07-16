@@ -222,7 +222,7 @@ export class PdfService {
         );
     }
 
-    async generatePdf(leaveId: number, user: string) {
+    async generatePdf(leaveId: number, user: string, title?: string) {
         const [[leave, jobs], doc] = await Promise.all([
             this.getLeaveAndJobs(leaveId, user),
             PDFDocument.load(this.template)
@@ -251,7 +251,11 @@ export class PdfService {
             doc.removePage(PdfService.KEEP_MAX_PAGES);
         }
 
-        return await doc.save();
+        if (title) {
+            doc.setTitle(title, { showInWindowTitleBar: true });
+        }
+
+        return Buffer.from(await doc.save());
     }
 
     private fillField(form: PDFForm, fieldName: string, value: string | boolean) {
