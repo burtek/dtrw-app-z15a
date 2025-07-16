@@ -37,8 +37,18 @@ export const HealthStatus = () => {
         const uiSha = import.meta.env.COMMIT as string | undefined;
         return (
             <>
-                <Text size="1">Wersja API: {data?.version ?? '-'}/{data?.commit.substring(0, 7) ?? '-'}</Text>
-                <Text size="1">Wersja UI: {packageJson.version}/{uiSha?.substring(0, 7)}</Text>
+                <Text
+                    size="1"
+                    as="div"
+                >
+                    Wersja API: {data?.version ?? '-'}/{data?.commit.substring(0, 7) ?? '-'}
+                </Text>
+                <Text
+                    size="1"
+                    as="div"
+                >
+                    Wersja UI: {packageJson.version}/{uiSha?.substring(0, 7)}
+                </Text>
             </>
         );
     };
@@ -54,7 +64,8 @@ export const HealthStatus = () => {
                     size="2"
                 >
                     Status API: {lastStatus === QueryStatus.rejected ? 'brak połączenia' : data?.status ?? 'nieznany'}
-                    Wersja: {data?.version ?? '?'}/{packageJson.version}
+                    {'. '}
+                    Wersja: {packageJson.version}
                 </Badge>
             </Tooltip>
         </>
