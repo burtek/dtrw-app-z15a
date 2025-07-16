@@ -183,20 +183,19 @@ export class PdfService {
 
             const otherParentJobs = jobs
                 .filter(job => job.caretakerId === otherParent.id)
-                .filter(job => rangesCollide(job, leave, true));
+                .filter(job => (job.from ?? '0000-00-00') < leave.to);
 
-            if (otherParentJobs.length === 0) {
-                return { [PdfService.ALL_FIELDS_MAP.otherParentAttestations.works.no]: true };
-            }
+            const works = otherParentJobs.some(job => rangesCollide(job, leave, true));
 
             const prevDays = otherParentJobs
                 .flatMap(job => job.leaves)
                 .flatMap(jobLeave => jobLeave.daysTaken)
-                .filter(date => date.startsWith(currentYear))
+                .filter(date => date.startsWith(currentYear) && date < leave.from)
                 .length;
 
             return {
-                [PdfService.ALL_FIELDS_MAP.otherParentAttestations.works.yes]: true,
+                [PdfService.ALL_FIELDS_MAP.otherParentAttestations.works.yes]: works,
+                [PdfService.ALL_FIELDS_MAP.otherParentAttestations.works.no]: !works,
                 [PdfService.ALL_FIELDS_MAP.otherParentAttestations.works.shiftNo]: true,
                 [PdfService.ALL_FIELDS_MAP.otherParentAttestations.tookLeave.yes]: prevDays > 0,
                 [PdfService.ALL_FIELDS_MAP.otherParentAttestations.tookLeave.no]: prevDays === 0,
