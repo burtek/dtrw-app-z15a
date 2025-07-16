@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.6.2...v1.7.0) (2025-07-16)
+
+
+### Features
+
+* **mail:** allow sending forms via email ([257fb32](https://github.com/burtek/dtrw-app-z15a/commit/257fb321fdf57fc7b6ae74fe5b0ba14c1b0eecd4))
+
 ### [1.6.2](https://github.com/burtek/dtrw-app-z15a/compare/v1.6.1...v1.6.2) (2025-07-16)
 
 
