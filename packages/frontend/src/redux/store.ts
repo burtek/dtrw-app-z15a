@@ -9,6 +9,12 @@ import { kidsApi } from './apis/kids';
 import { leavesApi } from './apis/leaves';
 
 
+declare global {
+    interface Window {
+        forceLog?: boolean;
+    }
+}
+
 export const store = configureStore({
     devTools: true,
     reducer: combineSlices(leavesApi, caretakersApi, jobsApi, kidsApi, apiHealthApi),
@@ -19,7 +25,11 @@ export const store = configureStore({
             jobsApi.middleware,
             kidsApi.middleware,
             apiHealthApi.middleware,
-            createLogger({})
+            createLogger({
+                predicate() {
+                    return !import.meta.env.PROD || !!window.forceLog;
+                }
+            })
         )
 });
 
