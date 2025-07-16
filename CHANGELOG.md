@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.1](https://github.com/burtek/dtrw-app-z15a/compare/v1.8.0...v1.8.1) (2025-07-16)
+
+
+### Bug Fixes
+
+* **ui:** api health badge tooltip ([eccdf7c](https://github.com/burtek/dtrw-app-z15a/commit/eccdf7cb84a97310fa7a491b304748c606f0a0bc))
+* **ui:** fix TS/eslint issues ([55dd67e](https://github.com/burtek/dtrw-app-z15a/commit/55dd67e245da25f3a1ee82ee65fee39b4aa471df))
+
 ## [1.8.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.7.0...v1.8.0) (2025-07-16)
 
 
