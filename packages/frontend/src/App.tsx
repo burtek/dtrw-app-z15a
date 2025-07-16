@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, Strong, Tabs, Text } from '@radix-ui/themes';
+import { Box, Flex, Strong, Tabs, Text } from '@radix-ui/themes';
 
 import styles from './App.module.css';
 import { HealthStatus } from './components/healthCheck';
