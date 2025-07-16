@@ -23,7 +23,7 @@ export const leavesApi = createApi({
                         { type: TYPE, id: 'LIST' }
                     ]
                     : [{ type: TYPE, id: 'LIST' }]),
-            onQueryStarted: async (arg, { queryFulfilled }) => {
+            onQueryStarted: async (_arg, { queryFulfilled }) => {
                 try {
                     await queryFulfilled;
                 } catch {
@@ -71,7 +71,7 @@ export const leavesApi = createApi({
                 method: 'GET'
             }),
             extraOptions: { maxRetries: 0 },
-            onQueryStarted: async (arg, { queryFulfilled }) => {
+            onQueryStarted: async (_arg, { queryFulfilled }) => {
                 const toastId = toast.info(
                     'Zlecam wysyłkę maila...',
                     { autoClose: false }

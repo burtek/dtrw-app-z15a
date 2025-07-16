@@ -23,7 +23,7 @@ export const caretakersApi = createApi({
                         { type: TYPE, id: 'LIST' }
                     ]
                     : [{ type: TYPE, id: 'LIST' }]),
-            onQueryStarted: async (arg, { queryFulfilled }) => {
+            onQueryStarted: async (_arg, { queryFulfilled }) => {
                 try {
                     await queryFulfilled;
                 } catch {
