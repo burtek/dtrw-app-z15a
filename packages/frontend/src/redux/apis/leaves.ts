@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { createApi } from '@reduxjs/toolkit/query/react';
+import { toast } from 'react-toastify';
 
 import type { Leave, MaybeWithId, WithId } from '../../types';
 
@@ -21,7 +22,17 @@ export const leavesApi = createApi({
                         ...result.map(({ id }) => ({ type: TYPE, id } as const)),
                         { type: TYPE, id: 'LIST' }
                     ]
-                    : [{ type: TYPE, id: 'LIST' }])
+                    : [{ type: TYPE, id: 'LIST' }]),
+            onQueryStarted: async (arg, { queryFulfilled }) => {
+                try {
+                    await queryFulfilled;
+                } catch {
+                    toast.error(
+                        'Zapytanie do API o zwolnienia się nie powiodło. Odśwież stronę lub uderz do admina',
+                        { autoClose: false }
+                    );
+                }
+            }
         }),
         saveLeave: builder.mutation<WithId<Leave>, MaybeWithId<Leave>>({
             query: ({ id, ...body }) => ({
@@ -46,8 +57,10 @@ export const leavesApi = createApi({
                             }
                         })
                     );
+
+                    toast.success('Dane zapisane');
                 } catch {
-                    // optional: handle rollback or toast error
+                    toast.error('Zapisanie danych się nie powiodło, zweryfikuj poprawność danych lub uderz do admina');
                 }
             },
             extraOptions: { maxRetries: 0 }
@@ -57,7 +70,25 @@ export const leavesApi = createApi({
                 url: `pdf/${id}/mail`,
                 method: 'GET'
             }),
-            extraOptions: { maxRetries: 0 }
+            extraOptions: { maxRetries: 0 },
+            onQueryStarted: async (arg, { queryFulfilled }) => {
+                const toastId = toast.info(
+                    'Zlecam wysyłkę maila...',
+                    { autoClose: false }
+                );
+                try {
+                    await queryFulfilled;
+                    toast.success(
+                        'Mail został wysłany',
+                        { toastId, autoClose: 5000 }
+                    );
+                } catch {
+                    toast.error(
+                        'Zapytanie do API o zwolnienia się nie powiodło. Odśwież stronę lub uderz do admina',
+                        { toastId, autoClose: 5000 }
+                    );
+                }
+            }
         })
     })
 });

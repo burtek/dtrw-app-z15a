@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { createApi } from '@reduxjs/toolkit/query/react';
+import { toast } from 'react-toastify';
 
 import type { Job, MaybeWithId, WithId } from '../../types';
 
@@ -21,7 +22,17 @@ export const jobsApi = createApi({
                         ...result.map(({ id }) => ({ type: TYPE, id } as const)),
                         { type: TYPE, id: 'LIST' }
                     ]
-                    : [{ type: TYPE, id: 'LIST' }])
+                    : [{ type: TYPE, id: 'LIST' }]),
+            onQueryStarted: async (arg, { queryFulfilled }) => {
+                try {
+                    await queryFulfilled;
+                } catch {
+                    toast.error(
+                        'Zapytanie do API o płatników ZUS się nie powiodło. Odśwież stronę lub uderz do admina',
+                        { autoClose: false }
+                    );
+                }
+            }
         }),
         saveJob: builder.mutation<WithId<Job>, MaybeWithId<Job>>({
             query: ({ id, ...body }) => ({
@@ -46,8 +57,10 @@ export const jobsApi = createApi({
                             }
                         })
                     );
+
+                    toast.success('Dane zapisane');
                 } catch {
-                    // optional: handle rollback or toast error
+                    toast.error('Zapisanie danych się nie powiodło, zweryfikuj poprawność danych lub uderz do admina');
                 }
             },
             extraOptions: { maxRetries: 0 }

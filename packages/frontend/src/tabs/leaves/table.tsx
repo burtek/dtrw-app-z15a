@@ -1,5 +1,6 @@
 import { Button, Flex, Link, Separator, Table } from '@radix-ui/themes';
 import { memo, useCallback, useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import { DataTable } from '../../components/table';
 import { useGetCaretakersState } from '../../redux/apis/caretakers';
@@ -26,6 +27,16 @@ const Component = () => {
     }, []);
     const openNewDialog = useCallback(() => {
         setDialogId(null);
+    }, []);
+
+    const notifyDownload = useCallback(() => {
+        toast.info(
+            'Trwa generowanie pliku, proszę o chwilę cierpliwości...',
+            {
+                theme: 'light',
+                position: 'top-right'
+            }
+        );
     }, []);
 
     const renderLeave = useCallback((leave: WithId<Leave>) => {
@@ -67,8 +78,9 @@ const Component = () => {
                         <Link
                             href={`/api/pdf/${leave.id}?title=${encodeURIComponent(downloadName)}`}
                             download={downloadName}
+                            onClick={notifyDownload}
                         >
-                            Pobierz
+                            Pobierz PDF
                         </Link>
                         <Separator orientation="vertical" />
                         <Button
@@ -76,7 +88,7 @@ const Component = () => {
                             // eslint-disable-next-line react/jsx-no-bind
                             onClick={() => sendEmail(leave.id)}
                         >
-                            Wyślij
+                            Wyślij mailem do opiekuna
                         </Button>
                     </Flex>
                 </Table.Cell>

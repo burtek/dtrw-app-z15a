@@ -1,7 +1,9 @@
 import { combineSlices, configureStore } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
+import { createLogger } from 'redux-logger';
 
 import { caretakersApi } from './apis/caretakers';
+import { apiHealthApi } from './apis/health';
 import { jobsApi } from './apis/jobs';
 import { kidsApi } from './apis/kids';
 import { leavesApi } from './apis/leaves';
@@ -9,9 +11,16 @@ import { leavesApi } from './apis/leaves';
 
 export const store = configureStore({
     devTools: true,
-    reducer: combineSlices(leavesApi, caretakersApi, jobsApi, kidsApi),
+    reducer: combineSlices(leavesApi, caretakersApi, jobsApi, kidsApi, apiHealthApi),
     middleware: getDefaultMiddleware =>
-        getDefaultMiddleware().concat(leavesApi.middleware, caretakersApi.middleware, jobsApi.middleware, kidsApi.middleware)
+        getDefaultMiddleware().concat(
+            leavesApi.middleware,
+            caretakersApi.middleware,
+            jobsApi.middleware,
+            kidsApi.middleware,
+            apiHealthApi.middleware,
+            createLogger({})
+        )
 });
 
 export type RootState = ReturnType<typeof store.getState>;

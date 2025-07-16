@@ -1,5 +1,6 @@
 import { Box, Tabs } from '@radix-ui/themes';
 
+import { HealthStatus } from './components/healthCheck';
 import { useGetCaretakersQuery } from './redux/apis/caretakers';
 import { useGetJobsQuery } from './redux/apis/jobs';
 import { useGetKidsQuery } from './redux/apis/kids';
@@ -51,6 +52,7 @@ function App() {
                 <Tabs.Trigger value={Tab.CARETAKERS}>Opiekunowie/rodzice ({caretakers?.length ?? <TinySpinner />})</Tabs.Trigger>
                 <Tabs.Trigger value={Tab.KIDS}>Dzieci ({kids?.length ?? <TinySpinner />})</Tabs.Trigger>
                 <Tabs.Trigger value={Tab.JOBS}>Płatnicy ZUS ({jobs?.length ?? <TinySpinner />})</Tabs.Trigger>
+                <HealthStatus />
             </Tabs.List>
 
             <Box pt="3">

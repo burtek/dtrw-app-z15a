@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { createApi } from '@reduxjs/toolkit/query/react';
+import { toast } from 'react-toastify';
 
 import type { Kid, MaybeWithId, WithId } from '../../types';
 
@@ -21,7 +22,17 @@ export const kidsApi = createApi({
                         ...result.map(({ id }) => ({ type: TYPE, id } as const)),
                         { type: TYPE, id: 'LIST' }
                     ]
-                    : [{ type: TYPE, id: 'LIST' }])
+                    : [{ type: TYPE, id: 'LIST' }]),
+            onQueryStarted: async (arg, { queryFulfilled }) => {
+                try {
+                    await queryFulfilled;
+                } catch {
+                    toast.error(
+                        'Zapytanie do API o dzieci się nie powiodło. Odśwież stronę lub uderz do admina',
+                        { autoClose: false }
+                    );
+                }
+            }
         }),
         saveKid: builder.mutation<WithId<Kid>, MaybeWithId<Kid>>({
             query: ({ id, ...body }) => ({
@@ -46,8 +57,10 @@ export const kidsApi = createApi({
                             }
                         })
                     );
+
+                    toast.success('Dane zapisane');
                 } catch {
-                    // optional: handle rollback or toast error
+                    toast.error('Zapisanie danych się nie powiodło, zweryfikuj poprawność danych lub uderz do admina');
                 }
             },
             extraOptions: { maxRetries: 0 }
