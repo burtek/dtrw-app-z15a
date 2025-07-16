@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.3](https://github.com/burtek/dtrw-app-z15a/compare/v1.8.2...v1.8.3) (2025-07-16)
+
+
+### Bug Fixes
+
+* **ui:** status badge - keep status on disconnect ([f280c30](https://github.com/burtek/dtrw-app-z15a/commit/f280c3079233f318b4b4d7e9de19a0602b5f8b28))
+
 ### [1.8.2](https://github.com/burtek/dtrw-app-z15a/compare/v1.8.1...v1.8.2) (2025-07-16)
 
 
