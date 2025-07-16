@@ -26,7 +26,7 @@ export const HealthStatus = () => {
         if (lastStatus === QueryStatus.rejected || (data && data.status !== 'ok')) {
             return 'red';
         }
-        if (lastStatus === QueryStatus.fulfilled && data?.status === 'ok') {
+        if (lastStatus === QueryStatus.fulfilled && data?.status === 'ok' && data.version === packageJson.version) {
             return 'green';
         }
         return 'orange';
@@ -64,6 +64,7 @@ export const HealthStatus = () => {
                 Status API: {lastStatus === QueryStatus.rejected ? 'brak połączenia' : data?.status ?? 'nieznany'}
                 {'. '}
                 Wersja: {packageJson.version}
+                {data && packageJson.version !== data.status ? '. Odśwież aby zaktualizować' : null}
             </Badge>
         </Tooltip>
     );
