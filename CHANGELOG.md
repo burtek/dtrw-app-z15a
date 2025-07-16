@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.7.0...v1.8.0) (2025-07-16)
+
+
+### Features
+
+* **ui:** toasts + api status badge ([cd8d3ed](https://github.com/burtek/dtrw-app-z15a/commit/cd8d3ed5199854459741c4257b6a84134f00874b))
+
+
+### Bug Fixes
+
+* **ui/tables:** wrong headers for caretakers ([d9ced5b](https://github.com/burtek/dtrw-app-z15a/commit/d9ced5b6db166317111ba4495565c528a9f6c69a))
+
 ## [1.7.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.6.2...v1.7.0) (2025-07-16)
 
 
