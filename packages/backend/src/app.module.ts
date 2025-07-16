@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 import { AppController } from './app.controller';
 import { CaretakersModule } from './caretakers/caretakers.module';
@@ -22,7 +23,19 @@ import { PdfModule } from './pdf/pdf.module';
         KidsModule,
         LeavesModule,
         CaretakersModule,
-        PdfModule
+        PdfModule,
+        MailerModule.forRootAsync({
+            useFactory: () => ({
+                transport: {
+                    service: 'Gmail',
+                    auth: {
+                        user: process.env.EMAIL_SMTP_USER,
+                        pass: process.env.EMAIL_SMTP_PASS
+                    }
+                },
+                defaults: { from: process.env.EMAIL_FROM }
+            })
+        })
     ],
     controllers: [AppController]
 })

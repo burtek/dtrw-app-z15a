@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/member-ordering, @typescript-eslint/naming-convention */
 
 import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsString, MinLength, validateSync } from 'class-validator';
+import { IsEmail, IsEnum, IsString, MinLength, validateSync } from 'class-validator';
 
 
 enum Environment {
@@ -16,6 +16,17 @@ class EnvironmentVariables {
     @IsString()
     @MinLength(1)
     DB_FILE_NAME: string;
+
+    @IsEmail()
+    EMAIL_SMTP_USER: string;
+
+    @IsString()
+    @MinLength(1)
+    EMAIL_SMTP_PASS: string;
+
+    @IsString()
+    @MinLength(1)
+    EMAIL_FROM: string;
 }
 
 export function validate(config: Record<string, unknown>) {

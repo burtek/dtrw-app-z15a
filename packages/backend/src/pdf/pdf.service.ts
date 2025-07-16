@@ -257,6 +257,14 @@ export class PdfService {
         return Buffer.from(await doc.save());
     }
 
+    async getEmailReceiverForLeave(leaveId: number) {
+        const leave = await this.db.query.leaves.findFirst({
+            where: eq(leaves.id, leaveId),
+            with: { job: { with: { caretaker: true } } }
+        });
+        return leave?.job.caretaker.email;
+    }
+
     private fillField(form: PDFForm, fieldName: string, value: string | boolean) {
         // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
         switch (typeof value) {

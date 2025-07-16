@@ -5,7 +5,7 @@ import { DataTable } from '../../components/table';
 import { useGetCaretakersState } from '../../redux/apis/caretakers';
 import { useGetJobsState } from '../../redux/apis/jobs';
 import { useGetKidsState } from '../../redux/apis/kids';
-import { useGetLeavesState } from '../../redux/apis/leaves';
+import { useGetLeavesState, useSendEmail } from '../../redux/apis/leaves';
 import type { Leave, WithId } from '../../types';
 
 import { LeaveFormDialog } from './form';
@@ -16,6 +16,8 @@ const Component = () => {
     const { data: kids = [] } = useGetKidsState();
     const { data: jobs = [] } = useGetJobsState();
     const { data: caretakers = [] } = useGetCaretakersState();
+
+    const [sendEmail] = useSendEmail();
 
     const [dialogId, setDialogId] = useState<number | null | false>(false);
 
@@ -71,7 +73,8 @@ const Component = () => {
                         <Separator orientation="vertical" />
                         <Button
                             variant="ghost"
-                            disabled
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onClick={() => sendEmail(leave.id)}
                         >
                             Wyślij
                         </Button>

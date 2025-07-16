@@ -24,6 +24,7 @@ services:
     command: yarn start:prod
     env_file:
       - docker/backend/env
+      - .env.backend
     environment:
       NODE_ENV: production
       DB_FILE_NAME: '/db/db.db'

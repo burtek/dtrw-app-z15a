@@ -51,6 +51,13 @@ export const leavesApi = createApi({
                 }
             },
             extraOptions: { maxRetries: 0 }
+        }),
+        sendByEmail: builder.mutation<unknown, number>({
+            query: id => ({
+                url: `pdf/${id}/mail`,
+                method: 'GET'
+            }),
+            extraOptions: { maxRetries: 0 }
         })
     })
 });
@@ -60,7 +67,8 @@ export const {
         useQuery: useGetLeavesQuery,
         useQueryState: useGetLeavesState
     },
-    saveLeave: { useMutation: useSaveLeaveMutation }
+    saveLeave: { useMutation: useSaveLeaveMutation },
+    sendByEmail: { useMutation: useSendEmail }
 } = leavesApi.endpoints;
 
 export const selectLeaves = createSelector(
