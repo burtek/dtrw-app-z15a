@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.2](https://github.com/burtek/dtrw-app-z15a/compare/v1.8.1...v1.8.2) (2025-07-16)
+
+
+### Bug Fixes
+
+* **ui:** correctly update toast after mail sent ([45d2903](https://github.com/burtek/dtrw-app-z15a/commit/45d29031a516c16f5f072f1620fc5177b875f9aa))
+* **ui:** disable redux logger in prod ([5361433](https://github.com/burtek/dtrw-app-z15a/commit/53614336a267cabc9cd48267646ce532a48eed46))
+
 ### [1.8.1](https://github.com/burtek/dtrw-app-z15a/compare/v1.8.0...v1.8.1) (2025-07-16)
 
 
