@@ -64,7 +64,7 @@ export const HealthStatus = () => {
                 Status API: {lastStatus === QueryStatus.rejected ? 'brak połączenia' : data?.status ?? 'nieznany'}
                 {'. '}
                 Wersja: {packageJson.version}
-                {data && packageJson.version !== data.status ? '. Odśwież aby zaktualizować' : null}
+                {data && (packageJson.version !== data.version) ? '. Odśwież aby zaktualizować' : null}
             </Badge>
         </Tooltip>
     );

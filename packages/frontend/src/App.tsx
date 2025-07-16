@@ -41,7 +41,7 @@ function App() {
                         size="1"
                     >
                         <Strong>Disclaimer</Strong>
-                        aplikacja znajduje się w fazie BETA. Wygenerowane formularze mogą zawierać błędy.
+                        : aplikacja znajduje się w fazie BETA. Wygenerowane formularze mogą zawierać błędy.
                         {' '}
                         Użytkownik jest odpowiedzialny za sprawdzenie poprawności danych w formularzu przed jego złożeniem.
                     </Text>
