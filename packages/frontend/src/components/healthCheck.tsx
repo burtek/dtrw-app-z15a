@@ -34,7 +34,7 @@ export const HealthStatus = () => {
 
     const renderTooltipContent = () => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-        const uiSha = import.meta.env.COMMIT as string | undefined;
+        const uiSha = import.meta.env.VITE_COMMIT as string | undefined;
         return (
             <>
                 <Text

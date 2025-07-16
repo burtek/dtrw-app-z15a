@@ -31,7 +31,7 @@ jobs:
 
       - name: Build frontend and backend
         run: |
-          COMMIT=${{ github.sha }} yarn build
+          VITE_COMMIT=${{ github.sha }} yarn build
           cd packages/backend/dist
           yarn install --production --non-interactive
 
