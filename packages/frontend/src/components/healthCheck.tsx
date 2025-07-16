@@ -1,4 +1,4 @@
-import { Badge } from '@radix-ui/themes';
+import { Badge, Tooltip } from '@radix-ui/themes';
 import type { ComponentProps } from 'react';
 import { useMemo } from 'react';
 
@@ -23,14 +23,16 @@ export const HealthStatus = () => {
     return (
         <>
             <div style={{ flex: 1 }} />
-            <Badge
-                color={color}
-                mt="1"
-                mr="2"
-                size="2"
-            >
-                Status API: {isError || isPostErrorRefetch ? 'brak połączenia' : data?.status ?? 'nieznany'}
-            </Badge>
+            <Tooltip content={data ? `${data.version}, commit ${data.commit.substring(0, 7)}` : ''}>
+                <Badge
+                    color={color}
+                    mt="1"
+                    mr="2"
+                    size="2"
+                >
+                    Status API: {isError || isPostErrorRefetch ? 'brak połączenia' : data?.status ?? 'nieznany'}
+                </Badge>
+            </Tooltip>
         </>
     );
 };
