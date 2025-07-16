@@ -94,7 +94,7 @@ const Component = () => {
                 </Table.Cell>
             </Table.Row>
         );
-    }, [caretakers, jobs, kids]);
+    }, [caretakers, jobs, kids, notifyDownload, sendEmail]);
 
     return (
         <>

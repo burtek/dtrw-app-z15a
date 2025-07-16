@@ -1,4 +1,4 @@
-import { Box, Tabs } from '@radix-ui/themes';
+import { Box, Strong, Tabs, Text } from '@radix-ui/themes';
 
 import { HealthStatus } from './components/healthCheck';
 import { useGetCaretakersQuery } from './redux/apis/caretakers';
@@ -40,39 +40,60 @@ function App() {
     const { data: leaves } = useGetLeavesQuery();
 
     return (
-        <Tabs.Root defaultValue={Tab.LEAVES}>
-            <style>{`
+        <>
+            <Text
+                color="red"
+                as="div"
+                size="1"
+            >
+                <Strong>Disclaimer</Strong>
+                aplikacja znajduje się w fazie BETA. Wygenerowane formularze mogą zawierać błędy.
+                {' '}
+                Użytkownik jest odpowiedzialny za sprawdzenie poprawności danych w formularzu przed jego złożeniem.
+            </Text>
+            <Text
+                color="red"
+                as="div"
+                size="1"
+            >
+                Autor aplikacji nie ponosi odpowiedzialności za szkody ani straty wynikające ze złożenia nieprawidłowo wypełnionego wniosku.
+                {' '}
+                Aplikacja ani jej autor nie są powiązani z Zakładem Ubezpieczeń Społecznych.
+            </Text>
+            <Tabs.Root defaultValue={Tab.LEAVES}>
+                <style>{`
                 @keyframes spin {
                     to { transform: rotate(360deg); }
                 }
             `}
-            </style>
-            <Tabs.List>
-                <Tabs.Trigger value={Tab.LEAVES}>Zwolnienia ({leaves?.length ?? <TinySpinner />})</Tabs.Trigger>
-                <Tabs.Trigger value={Tab.CARETAKERS}>Opiekunowie/rodzice ({caretakers?.length ?? <TinySpinner />})</Tabs.Trigger>
-                <Tabs.Trigger value={Tab.KIDS}>Dzieci ({kids?.length ?? <TinySpinner />})</Tabs.Trigger>
-                <Tabs.Trigger value={Tab.JOBS}>Płatnicy ZUS ({jobs?.length ?? <TinySpinner />})</Tabs.Trigger>
-                <HealthStatus />
-            </Tabs.List>
+                </style>
+                <Tabs.List>
+                    <Tabs.Trigger value={Tab.LEAVES}>Zwolnienia ({leaves?.length ?? <TinySpinner />})</Tabs.Trigger>
+                    <Tabs.Trigger value={Tab.CARETAKERS}>Opiekunowie/rodzice ({caretakers?.length ?? <TinySpinner />})</Tabs.Trigger>
+                    <Tabs.Trigger value={Tab.KIDS}>Dzieci ({kids?.length ?? <TinySpinner />})</Tabs.Trigger>
+                    <Tabs.Trigger value={Tab.JOBS}>Płatnicy ZUS ({jobs?.length ?? <TinySpinner />})</Tabs.Trigger>
+                    <HealthStatus />
+                </Tabs.List>
 
-            <Box pt="3">
-                <Tabs.Content value={Tab.LEAVES}>
-                    <LeavesTable />
-                </Tabs.Content>
+                <Box pt="3">
+                    <Tabs.Content value={Tab.LEAVES}>
+                        <LeavesTable />
+                    </Tabs.Content>
 
-                <Tabs.Content value={Tab.CARETAKERS}>
-                    <CaretakersTable />
-                </Tabs.Content>
+                    <Tabs.Content value={Tab.CARETAKERS}>
+                        <CaretakersTable />
+                    </Tabs.Content>
 
-                <Tabs.Content value={Tab.KIDS}>
-                    <KidsTable />
-                </Tabs.Content>
+                    <Tabs.Content value={Tab.KIDS}>
+                        <KidsTable />
+                    </Tabs.Content>
 
-                <Tabs.Content value={Tab.JOBS}>
-                    <JobsTable />
-                </Tabs.Content>
-            </Box>
-        </Tabs.Root>
+                    <Tabs.Content value={Tab.JOBS}>
+                        <JobsTable />
+                    </Tabs.Content>
+                </Box>
+            </Tabs.Root>
+        </>
     );
 }
 App.displayName = 'App';
