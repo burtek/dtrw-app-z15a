@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://github.com/burtek/dtrw-app-z15a/compare/v1.6.0...v1.6.1) (2025-07-16)
+
+
+### Bug Fixes
+
+* **pdf:** fix PDF download ([0c0faf7](https://github.com/burtek/dtrw-app-z15a/commit/0c0faf7c8a059c76ece780a48bd85f6dbfc5db94))
+* remove z15a group check, as it's moved to reverse proxy layer ([f64ede8](https://github.com/burtek/dtrw-app-z15a/commit/f64ede89f61e1880238dcea39acd9e17e0c19935))
+* **ui:** auto-retry API calls ([6909bcd](https://github.com/burtek/dtrw-app-z15a/commit/6909bcd8a414ecda89ee9a5fa22e6c35265b63ce))
+
 ## [1.6.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.5.2...v1.6.0) (2025-07-15)
 
 
