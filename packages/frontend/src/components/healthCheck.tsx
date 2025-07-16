@@ -1,24 +1,35 @@
 import { Badge, Tooltip } from '@radix-ui/themes';
+import { QueryStatus } from '@reduxjs/toolkit/query';
 import type { ComponentProps } from 'react';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 
 import { useGetStatusQuery } from '../redux/apis/health';
 
 
-export const HealthStatus = () => {
-    const { data, isLoading, isError, isFetching } = useGetStatusQuery(undefined, { pollingInterval: 5000 });
+const useLastStatus = (status: QueryStatus) => {
+    const current = useRef<QueryStatus>(status);
 
-    const isPostErrorRefetch = (!data && isFetching && !isLoading) as boolean;
+    if ([QueryStatus.rejected, QueryStatus.fulfilled].includes(status)) {
+        current.current = status;
+    }
+
+    return current.current;
+};
+
+export const HealthStatus = () => {
+    const { status, data } = useGetStatusQuery(undefined, { pollingInterval: 5000 });
+
+    const lastStatus = useLastStatus(status);
 
     const color = useMemo<NonNullable<ComponentProps<typeof Badge>['color']>>(() => {
-        if (isError || (data && data.status !== 'ok') || isPostErrorRefetch) {
+        if (lastStatus === QueryStatus.rejected || (data && data.status !== 'ok')) {
             return 'red';
         }
-        if (data?.status === 'ok') {
+        if (lastStatus === QueryStatus.fulfilled && data?.status === 'ok') {
             return 'green';
         }
         return 'orange';
-    }, [data, isError, isPostErrorRefetch]);
+    }, [data, lastStatus]);
 
     return (
         <>
@@ -30,7 +41,7 @@ export const HealthStatus = () => {
                     mr="2"
                     size="2"
                 >
-                    Status API: {isError || isPostErrorRefetch ? 'brak połączenia' : data?.status ?? 'nieznany'}
+                    Status API: {lastStatus === QueryStatus.rejected ? 'brak połączenia' : data?.status ?? 'nieznany'}
                 </Badge>
             </Tooltip>
         </>
