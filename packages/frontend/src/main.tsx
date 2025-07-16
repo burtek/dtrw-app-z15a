@@ -14,7 +14,7 @@ const root = document.getElementById('root');
 if (root) {
     createRoot(root).render(
         <StrictMode>
-            <Theme>
+            <Theme style={{ padding: 8, boxSizing: 'border-box' }}>
                 <Provider store={store}>
                     <App />
                 </Provider>

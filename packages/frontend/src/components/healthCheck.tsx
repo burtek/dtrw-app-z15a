@@ -54,21 +54,18 @@ export const HealthStatus = () => {
     };
 
     return (
-        <>
-            <div style={{ flex: 1 }} />
-            <Tooltip content={renderTooltipContent()}>
-                <Badge
-                    color={color}
-                    mt="1"
-                    mr="2"
-                    size="2"
-                >
-                    Status API: {lastStatus === QueryStatus.rejected ? 'brak połączenia' : data?.status ?? 'nieznany'}
-                    {'. '}
-                    Wersja: {packageJson.version}
-                </Badge>
-            </Tooltip>
-        </>
+        <Tooltip content={renderTooltipContent()}>
+            <Badge
+                color={color}
+                mt="1"
+                mr="2"
+                size="2"
+            >
+                Status API: {lastStatus === QueryStatus.rejected ? 'brak połączenia' : data?.status ?? 'nieznany'}
+                {'. '}
+                Wersja: {packageJson.version}
+            </Badge>
+        </Tooltip>
     );
 };
 HealthStatus.displayName = 'HealthStatus';
