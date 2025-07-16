@@ -66,7 +66,7 @@ const Component = () => {
             <DataTable
                 isLoading={isLoading}
                 error={error}
-                headers={useMemo(() => ['ID', 'Firma', 'NIP', 'Przypisany pracownik', 'Okres', ''], [])}
+                headers={useMemo(() => ['ID', 'Imię i nazwisko', 'PESEL', 'Email', 'Aktualny płatnik/pracodawca', ''], [])}
                 data={caretakers}
                 renderDataRow={renderCaretaker}
                 onNewClick={openNewDialog}
