@@ -65,7 +65,15 @@ export const leavesApi = createApi({
             },
             extraOptions: { maxRetries: 0 }
         }),
-        sendByEmail: builder.mutation<unknown, number>({
+        sendByEmail: builder.mutation<{
+            status: string;
+            emailResult: {
+                accepted: string[];
+                rejected: string[];
+                response: string;
+                messageId: string;
+            };
+        }, number>({
             query: id => ({
                 url: `pdf/${id}/mail`,
                 method: 'GET'
@@ -77,15 +85,40 @@ export const leavesApi = createApi({
                     { autoClose: false }
                 );
                 try {
-                    await queryFulfilled;
-                    toast.success(
-                        'Mail został wysłany',
-                        { toastId, autoClose: 5000 }
-                    );
+                    const { data: { emailResult: { accepted, rejected } } } = await queryFulfilled;
+                    if (rejected.length === 0) {
+                        toast.update(
+                            toastId,
+                            {
+                                render() {
+                                    return 'Mail został wysłany';
+                                },
+                                type: 'success',
+                                autoClose: 5000
+                            }
+                        );
+                    } else {
+                        toast.update(
+                            toastId,
+                            {
+                                render() {
+                                    return `Wysyłka maila została zlecona. Sukces: ${accepted.length} odbiorców, błąd: ${rejected.length} odbiorców.`;
+                                },
+                                type: 'warning',
+                                autoClose: 5000
+                            }
+                        );
+                    }
                 } catch {
-                    toast.error(
-                        'Zapytanie do API o zwolnienia się nie powiodło. Odśwież stronę lub uderz do admina',
-                        { toastId, autoClose: 5000 }
+                    toast.update(
+                        toastId,
+                        {
+                            render() {
+                                return 'Zlecenie wysyłki maila nie powiodło się. Odśwież stronę lub uderz do admina';
+                            },
+                            type: 'error',
+                            autoClose: false
+                        }
                     );
                 }
             }

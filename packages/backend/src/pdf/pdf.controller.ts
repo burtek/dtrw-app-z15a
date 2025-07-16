@@ -1,4 +1,4 @@
-import { Controller, Param, Get, ParseIntPipe, Query, Res, BadRequestException } from '@nestjs/common';
+import { Controller, Param, Get, ParseIntPipe, Query, Res, BadRequestException, Header } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Response as AppResponse } from 'express';
 
@@ -16,7 +16,9 @@ export class PdfController {
     }
 
     @Get(':id')
-    // @UseInterceptors(PdfInterceptor)
+    @Header('Cache-Control', 'no-cache, no-store, must-revalidate')
+    @Header('Pragma', 'no-cache')
+    @Header('Expires', '0')
     async generate(
         @Param('id', ParseIntPipe) id: number,
         @Query('title') title: string | undefined,
@@ -29,6 +31,9 @@ export class PdfController {
     }
 
     @Get(':id/mail')
+    @Header('Cache-Control', 'no-cache, no-store, must-revalidate')
+    @Header('Pragma', 'no-cache')
+    @Header('Expires', '0')
     async sendMail(
         @Param('id', ParseIntPipe) id: number,
         @Query('title') title: string | undefined,
@@ -45,8 +50,13 @@ export class PdfController {
 
         const pdf = await this.pdfService.generatePdf(id, user.username, title);
 
-        // eslint-disable-next-line security-node/detect-crlf
-        console.log(await this.mailerService.sendMail({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const emailResult: {
+            accpted: string[];
+            rejected: string[];
+            response: string;
+            messageId: string;
+        } = await this.mailerService.sendMail({
             to: email,
             subject: title ?? 'Formularz Z-15A',
             text: 'Formularz w załączniku. Zdrówka dla dziecka :)',
@@ -57,8 +67,11 @@ export class PdfController {
                     contentType: 'application/pdf'
                 }
             ]
-        }));
+        });
 
-        return { status: 'ok' };
+        // eslint-disable-next-line security-node/detect-crlf
+        console.log(emailResult);
+
+        return { status: 'ok', emailResult };
     }
 }
