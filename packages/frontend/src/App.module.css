@@ -16,3 +16,11 @@
 body {
     margin: 0;
 }
+
+body > :global(.rt-DialogOverlay) {
+    z-index: 400;
+}
+
+:root {
+    --toastify-z-index: 200;
+}
