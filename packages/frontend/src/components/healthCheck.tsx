@@ -7,10 +7,10 @@ import packageJson from '../../package.json';
 import { useGetStatusQuery } from '../redux/apis/health';
 
 
-const useLastStatus = (status: QueryStatus) => {
+const useLastStatus = (status: QueryStatus, statusesToWatch: QueryStatus[]) => {
     const current = useRef<QueryStatus>(status);
 
-    if ([QueryStatus.rejected, QueryStatus.fulfilled].includes(status)) {
+    if (statusesToWatch.includes(status)) {
         current.current = status;
     }
 
@@ -20,7 +20,7 @@ const useLastStatus = (status: QueryStatus) => {
 export const HealthStatus = () => {
     const { status, data } = useGetStatusQuery(undefined, { pollingInterval: 5000 });
 
-    const lastStatus = useLastStatus(status);
+    const lastStatus = useLastStatus(status, [QueryStatus.rejected, QueryStatus.fulfilled]);
 
     const color = useMemo<NonNullable<ComponentProps<typeof Badge>['color']>>(() => {
         if (lastStatus === QueryStatus.rejected || (data && data.status !== 'ok')) {

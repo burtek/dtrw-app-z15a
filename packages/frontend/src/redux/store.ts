@@ -27,7 +27,7 @@ export const store = configureStore({
             apiHealthApi.middleware,
             createLogger({
                 predicate() {
-                    return !import.meta.env.PROD || !!window.forceLog;
+                    return (import.meta.env.DEV && !import.meta.env.TEST) || !!window.forceLog;
                 }
             })
         )
