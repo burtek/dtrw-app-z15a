@@ -40,7 +40,7 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@dtrw/eslint-config": "~5.9.0",
+    "@dtrw/eslint-config": "~5.9.2",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
@@ -49,7 +49,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.10.7",
+    "@types/node": "^24.0.0",
     "@types/nodemailer": "^6.4.17",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.26.0",
@@ -82,6 +82,6 @@
     "testEnvironment": "node"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   }
 }

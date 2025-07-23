@@ -15,7 +15,7 @@ services:
       start_interval: 5s
 
   backend:
-    image: node:22-slim
+    image: node:24-slim
     container_name: z15a_backend
     working_dir: /app
     volumes:
