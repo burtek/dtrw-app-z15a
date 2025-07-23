@@ -1,6 +1,7 @@
 import { Box, Button, DropdownMenu, Flex, Tabs } from '@radix-ui/themes';
 import type { FC } from 'react';
-import { useCallback, useState } from 'react';
+import { lazy, Suspense, useCallback, useState } from 'react';
+import { Mosaic } from 'react-loading-indicators';
 
 import styles from './App.module.css';
 import { AboutDialog } from './components/dialogs/about';
@@ -11,10 +12,24 @@ import { useGetCaretakersQuery } from './redux/apis/caretakers';
 import { useGetJobsQuery } from './redux/apis/jobs';
 import { useGetKidsQuery } from './redux/apis/kids';
 import { useGetLeavesQuery } from './redux/apis/leaves';
-import { CaretakersTable } from './tabs/caretakers/table';
-import { JobsTable } from './tabs/jobs/table';
-import { KidsTable } from './tabs/kids/table';
-import { LeavesTable } from './tabs/leaves/table';
+
+
+const CaretakersTable = lazy(async () => {
+    const { CaretakersTable: c } = await import('./tabs/caretakers/table');
+    return { default: c };
+});
+const JobsTable = lazy(async () => {
+    const { JobsTable: c } = await import('./tabs/jobs/table');
+    return { default: c };
+});
+const KidsTable = lazy(async () => {
+    const { KidsTable: c } = await import('./tabs/kids/table');
+    return { default: c };
+});
+const LeavesTable = lazy(async () => {
+    const { LeavesTable: c } = await import('./tabs/leaves/table');
+    return { default: c };
+});
 
 
 const enum Tab {
@@ -134,19 +149,27 @@ function App() {
             </Tabs.List>
             <Box pt="3">
                 <Tabs.Content value={Tab.LEAVES}>
-                    <LeavesTable />
+                    <Suspense fallback={<Mosaic />}>
+                        <LeavesTable />
+                    </Suspense>
                 </Tabs.Content>
 
                 <Tabs.Content value={Tab.CARETAKERS}>
-                    <CaretakersTable />
+                    <Suspense fallback={<Mosaic />}>
+                        <CaretakersTable />
+                    </Suspense>
                 </Tabs.Content>
 
                 <Tabs.Content value={Tab.KIDS}>
-                    <KidsTable />
+                    <Suspense fallback={<Mosaic />}>
+                        <KidsTable />
+                    </Suspense>
                 </Tabs.Content>
 
                 <Tabs.Content value={Tab.JOBS}>
-                    <JobsTable />
+                    <Suspense fallback={<Mosaic />}>
+                        <JobsTable />
+                    </Suspense>
                 </Tabs.Content>
             </Box>
 
