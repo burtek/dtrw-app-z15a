@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.9.4...v1.10.0) (2025-07-25)
+
+
+### Features
+
+* added optional bank account number DTRW-4 ([afd48fd](https://github.com/burtek/dtrw-app-z15a/commit/afd48fdede6e32fc1ff5576342fc60abffa46649))
+
 ### [1.9.4](https://github.com/burtek/dtrw-app-z15a/compare/v1.9.3...v1.9.4) (2025-07-24)
 
 ### [1.9.3](https://github.com/burtek/dtrw-app-z15a/compare/v1.9.2...v1.9.3) (2025-07-23)
