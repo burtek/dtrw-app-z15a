@@ -1,0 +1,1 @@
+ALTER TABLE `caretakers` ADD `bankAccountNumber` text;

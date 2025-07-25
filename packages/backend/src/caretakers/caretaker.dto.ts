@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsIBAN, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 import { IsPeselValid } from '../validators/pesel';
+import { IsBankAccountNumberValid } from 'src/validators/bank-acc-number';
 
 
 export class CaretakerDto {
@@ -39,6 +40,10 @@ export class CaretakerDto {
     @IsString()
     @IsOptional()
     notes: string;
+
+    @IsBankAccountNumberValid()
+    @IsOptional()
+    bankAccountNumber: string;
 
     @IsString()
     @IsOptional()

@@ -39,6 +39,9 @@ export class PdfService {
             nip: 'topmostSubform[0].Page2[0].NIP[0]',
             name: 'topmostSubform[0].Page2[0].Nazwapłatnika[0]'
         },
+        bankDetails: {
+            accountNumber: 'topmostSubform[0].Page2[0].Numerrachunku[0]'
+        },
         leaveData: { text: 'topmostSubform[0].Page2[0].Tekst1a[0]' },
         kid: {
             pesel: 'topmostSubform[0].Page2[0].PESEL[0]',
@@ -130,6 +133,7 @@ export class PdfService {
                 [PdfService.ALL_FIELDS_MAP.fillee.city]: leave.job.caretaker.city,
                 [PdfService.ALL_FIELDS_MAP.employer.nip]: leave.job.nip,
                 [PdfService.ALL_FIELDS_MAP.employer.name]: leave.job.company,
+                [PdfService.ALL_FIELDS_MAP.bankDetails.accountNumber]: leave.job.caretaker.bankAccountNumber ?? '',
                 [PdfService.ALL_FIELDS_MAP.leaveData.text]: (leave.zla ? `${leave.zla}: ` : '') + PdfService.datesToRanges(leave.daysTaken),
                 [PdfService.ALL_FIELDS_MAP.kid.pesel]: leave.kid.pesel,
                 [PdfService.ALL_FIELDS_MAP.kid.name]: leave.kid.name,

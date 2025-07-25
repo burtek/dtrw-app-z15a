@@ -14,6 +14,8 @@ export const caretakers = table('caretakers', {
     notes: text('notes'),
     email: text('email'),
 
+    bankAccountNumber: text('bankAccountNumber'),
+
     userId: text('userId').notNull().default('--unassigned--')
 });
 

@@ -52,6 +52,7 @@ export class CaretakersService {
             city: caretaker.city,
             email: caretaker.email,
             notes: caretaker.notes,
+            bankAccountNumber: caretaker.bankAccountNumber,
             userId
         };
     }

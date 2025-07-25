@@ -9,6 +9,7 @@ export interface Caretaker {
     city: string;
     notes: string;
     email: string;
+    bankAccountNumber?: string;
 }
 
 export interface Job {

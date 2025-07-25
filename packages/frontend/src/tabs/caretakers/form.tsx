@@ -82,6 +82,13 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                         />
 
                         <TextField
+                            label="Numer rachunku bankowego (nieobowiązkowy)"
+                            control={control}
+                            name="bankAccountNumber"
+                            rules={{ required: false, minLength: 26, maxLength: 26 }}
+                        />
+
+                        <TextField
                             label="E-Mail"
                             control={control}
                             name="email"
