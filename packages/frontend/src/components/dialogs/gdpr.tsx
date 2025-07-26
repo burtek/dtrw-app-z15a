@@ -7,6 +7,7 @@ const disable = (event: { preventDefault: () => void }) => {
     event.preventDefault();
 };
 
+export const GDPR_VERSION = 1;
 const Component: FC<Props> = ({ open, onClose }) => {
     const handleClose = useCallback((state: boolean) => {
         if (!state) {

@@ -6,7 +6,7 @@ import { Mosaic } from 'react-loading-indicators';
 import styles from './App.module.css';
 import { AboutDialog } from './components/dialogs/about';
 import { DisclaimerDialog } from './components/dialogs/disclaimer';
-import { GDPRDialog } from './components/dialogs/gdpr';
+import { GDPR_VERSION, GDPRDialog } from './components/dialogs/gdpr';
 import { HealthStatus } from './components/healthCheck';
 import { useGetCaretakersQuery } from './redux/apis/caretakers';
 import { useGetJobsQuery } from './redux/apis/jobs';
@@ -39,23 +39,26 @@ const enum Tab {
     CARETAKERS = 'caretakers'
 }
 
-function useDialogState(initial: boolean = false) {
+function useDialogState(initial: boolean = false, onClose?: () => void) {
     const [open, setOpen] = useState(initial);
 
     const openDialog = useCallback(() => {
         setOpen(true);
     }, []);
     const closeDialog = useCallback(() => {
+        onClose?.();
         setOpen(false);
     }, []);
 
     return { open, openDialog, closeDialog };
 }
 
+const GDPR_ACCEPTED = 'gdprAccepted';
 const DIALOGS: Array<{
     name: string;
     component: FC<{ open: boolean; onClose: () => void }>;
     defaultOpen: boolean;
+    onClose?: () => void;
 }> = [
     {
         name: 'O aplikacji',
@@ -65,7 +68,25 @@ const DIALOGS: Array<{
     {
         name: 'Polityka prywatności',
         component: GDPRDialog,
-        defaultOpen: true
+        defaultOpen: (() => {
+            const accepted = window.localStorage.getItem(GDPR_ACCEPTED);
+            if (!accepted) {
+                return true;
+            }
+            const [version, acceptedDateString] = accepted.split('/');
+            if (version !== `${GDPR_VERSION}`|| !acceptedDateString || isNaN(Date.parse(acceptedDateString))) {
+                return true;
+            }
+            const acceptedDate = new Date(acceptedDateString);
+            const now = new Date();
+            return (now.getTime() - acceptedDate.getTime()) > 31 * 24 * 60 * 60 * 1000; // 31 days
+        })(),
+        onClose: () => {
+            try {
+                window.localStorage.setItem(GDPR_ACCEPTED, `${GDPR_VERSION}/${new Date().toISOString()}`);
+            } catch (e) {
+            }
+        }
     },
     {
         name: 'Ostrzeżenie',
@@ -81,7 +102,7 @@ function App() {
     const { data: leaves } = useGetLeavesQuery();
 
     // eslint-disable-next-line react-hooks/rules-of-hooks -- safe as DIALOGS is constant
-    const dialogsControls = DIALOGS.map(dialog => useDialogState(dialog.defaultOpen));
+    const dialogsControls = DIALOGS.map(dialog => useDialogState(dialog.defaultOpen, dialog.onClose));
 
     return (
         <Tabs.Root defaultValue={Tab.LEAVES}>
