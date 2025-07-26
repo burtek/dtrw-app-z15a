@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.10.2](https://github.com/burtek/dtrw-app-z15a/compare/v1.10.1...v1.10.2) (2025-07-26)
+
+
+### Bug Fixes
+
+* **ui:** show privacy note once per session DTRW-24 #done ([3836c4f](https://github.com/burtek/dtrw-app-z15a/commit/3836c4f3b87eb43f9bba7e02f7d9a65c7de7227f))
+
 ### [1.10.1](https://github.com/burtek/dtrw-app-z15a/compare/v1.10.0...v1.10.1) (2025-07-25)
 
 
