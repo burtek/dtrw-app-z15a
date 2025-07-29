@@ -3,7 +3,7 @@ import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import type { JSX } from 'react';
 import { memo } from 'react';
-import { Mosaic } from 'react-loading-indicators';
+import Mosaic from 'react-loading-indicators/Mosaic';
 
 
 const Component = <T,>({ isLoading, error, data, renderDataRow, headers, onNewClick, newLabel }: Props<T>) => {

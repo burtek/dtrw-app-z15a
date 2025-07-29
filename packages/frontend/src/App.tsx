@@ -1,7 +1,7 @@
 import { Box, Button, DropdownMenu, Flex, Tabs } from '@radix-ui/themes';
 import type { FC } from 'react';
 import { lazy, Suspense, useCallback, useState } from 'react';
-import { Mosaic } from 'react-loading-indicators';
+import Mosaic from 'react-loading-indicators/Mosaic';
 
 import styles from './App.module.css';
 import { AboutDialog } from './components/dialogs/about';
