@@ -44,7 +44,7 @@ const Component = <T,>({ isLoading, error, data, renderDataRow, headers, onNewCl
             <tfoot>
                 <Table.Row>
                     <Table.RowHeaderCell
-                        colSpan={6}
+                        colSpan={headers.length}
                         justify="center"
                     >
                         <Button
