@@ -1,5 +1,5 @@
 import { TextField as Input } from '@radix-ui/themes';
-import { shallowEqual } from 'fast-equals';
+import { deepEqual } from 'fast-equals';
 import type { ChangeEventHandler } from 'react';
 import { memo, useCallback } from 'react';
 import type { Control, Validate } from 'react-hook-form';
@@ -50,10 +50,7 @@ Component.displayName = 'TextField';
 // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
 export const TextField = memo(
     Component,
-    (
-        { rules: prevRules, ...prevProps },
-        { rules: nextRules, ...nextProps }
-    ) => shallowEqual(prevRules, nextRules) && shallowEqual(prevProps, nextProps)
+    (prevProps, nextProps) => deepEqual(prevProps, nextProps)
 ) as typeof Component;
 
 interface Props<C extends Control> {
@@ -62,6 +59,7 @@ interface Props<C extends Control> {
     control: C;
     name: C extends Control<infer Values> ? keyof Values : string;
     rules?: {
+        pattern?: RegExp;
         required?: boolean;
         minLength?: number;
         maxLength?: number;
