@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.10.3](https://github.com/burtek/dtrw-app-z15a/compare/v1.10.2...v1.10.3) (2025-07-29)
+
+
+### Bug Fixes
+
+* **ui:** allow pattern validation in text field ([e21a67c](https://github.com/burtek/dtrw-app-z15a/commit/e21a67ca0ef6b013d012337545375abd2d34605e))
+* **ui:** select options hidden behind dialog ([a5bea53](https://github.com/burtek/dtrw-app-z15a/commit/a5bea5365137fedfd9b2d0cad4c8b2afced7c57c))
+* **ui:** table footer colspan ([b58604b](https://github.com/burtek/dtrw-app-z15a/commit/b58604b2b1a4768767dcb4d681677f86a86eeec7))
+
 ### [1.10.2](https://github.com/burtek/dtrw-app-z15a/compare/v1.10.1...v1.10.2) (2025-07-26)
 
 
