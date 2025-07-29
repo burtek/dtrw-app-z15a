@@ -1,5 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
-import { DrizzleService } from 'src/drizzle/drizzle.service';
+
+import { DrizzleService } from '../drizzle/drizzle.service';
 
 import { HealthService } from './health.service';
 
