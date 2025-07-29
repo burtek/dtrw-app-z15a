@@ -1,9 +1,9 @@
-import { BadRequestException, Inject, Injectable, ForbiddenException } from '@nestjs/common';
+import { BadRequestException, Injectable, ForbiddenException } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 
 import { jobs } from '../database/schemas/jobs';
 import { rangesCollide } from '../dateRange/dateRange';
-import { DrizzleAsyncProvider, DrizzleDb } from '../drizzle/drizzle.provider';
+import { DrizzleService } from '../drizzle/drizzle.service';
 import { IsPlainDateValidConstraint, PlainDate } from '../validators/plainDate';
 
 import { JobDto } from './job.dto';
@@ -11,10 +11,7 @@ import { JobDto } from './job.dto';
 
 @Injectable()
 export class JobsService {
-    constructor(
-        @Inject(DrizzleAsyncProvider)
-        private readonly db: DrizzleDb
-    ) {
+    constructor(private readonly databaseService: DrizzleService) {
     }
 
     async create(job: JobDto, user: string) {
@@ -23,7 +20,7 @@ export class JobsService {
             this.validateAccess(job, user)
         ]);
 
-        const [newJob] = await this.db
+        const [newJob] = await this.databaseService.db
             .insert(jobs)
             .values(this.fromDtoToSchema(job, user))
             .returning();
@@ -31,7 +28,7 @@ export class JobsService {
     }
 
     findAll(user: string) {
-        return this.db.query.jobs
+        return this.databaseService.db.query.jobs
             .findMany({ where: (t, u) => u.eq(t.userId, sql.placeholder('user')) })
             .prepare()
             .execute({ user });
@@ -43,7 +40,7 @@ export class JobsService {
             this.validateAccess(job, user)
         ]);
 
-        const [updated] = await this.db
+        const [updated] = await this.databaseService.db
             .update(jobs)
             .set(this.fromDtoToSchema(job, user))
             .where(and(eq(jobs.id, id), eq(jobs.userId, user)))
@@ -72,7 +69,7 @@ export class JobsService {
     }
 
     private async validateAccess(job: JobDto, user: string) {
-        const caretaker = await this.db.query.caretakers
+        const caretaker = await this.databaseService.db.query.caretakers
             .findFirst({ where: (t, u) => u.eq(t.id, job.caretakerId) });
 
         if (caretaker?.userId !== user) {
@@ -85,7 +82,7 @@ export class JobsService {
             [job.from, job.to] = [job.to, job.from];
         }
 
-        const allJobs = await this.db.query.jobs
+        const allJobs = await this.databaseService.db.query.jobs
             .findMany({
                 where: (t, u) => {
                     if (typeof id === 'number') {

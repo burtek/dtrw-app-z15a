@@ -13,19 +13,23 @@ const makeDb = (database: Database.Database) => drizzle(database, { schema });
 @Injectable()
 export class DrizzleService implements OnModuleDestroy {
     private readonly database: Database.Database;
-    private readonly db: ReturnType<typeof makeDb>;
+    private readonly drizzleDb: ReturnType<typeof makeDb>;
 
     constructor(configService: ConfigService) {
         const path = configService.getOrThrow<string>('DB_FILE_NAME');
         this.database = new Database(path);
-        this.db = makeDb(this.database);
+        this.drizzleDb = makeDb(this.database);
         console.log('Database open, migrating...');
-        migrate(this.db, { migrationsFolder: configService.getOrThrow<string>('DB_MIGRATIONS_FOLDER') });
+        migrate(this.drizzleDb, { migrationsFolder: configService.getOrThrow<string>('DB_MIGRATIONS_FOLDER') });
         console.log('Database migrated');
     }
 
-    getDb() {
-        return this.db;
+    get db() {
+        return this.drizzleDb;
+    }
+
+    getStatus() {
+        return this.database.open;
     }
 
     onModuleDestroy() {

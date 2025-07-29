@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/member-ordering */
-import { IsIBAN, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
+import { IsBankAccountNumberValid } from '../validators/bank-acc-number';
 import { IsPeselValid } from '../validators/pesel';
-import { IsBankAccountNumberValid } from 'src/validators/bank-acc-number';
 
 
 export class CaretakerDto {

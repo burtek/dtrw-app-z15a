@@ -1,9 +1,9 @@
-import { BadRequestException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { and, eq, ne, sql } from 'drizzle-orm';
 
 import { jobs, leaves } from '../database/schemas';
 import { rangesCollide } from '../dateRange/dateRange';
-import { DrizzleAsyncProvider, DrizzleDb } from '../drizzle/drizzle.provider';
+import { DrizzleService } from '../drizzle/drizzle.service';
 import { IsPlainDateValidConstraint, PlainDate } from '../validators/plainDate';
 
 import { LeaveDto } from './leave.dto';
@@ -11,16 +11,13 @@ import { LeaveDto } from './leave.dto';
 
 @Injectable()
 export class LeavesService {
-    constructor(
-        @Inject(DrizzleAsyncProvider)
-        private readonly db: DrizzleDb
-    ) {
+    constructor(private readonly databaseService: DrizzleService) {
     }
 
     async create(leave: LeaveDto, user: string) {
         await this.validateData(leave, user);
 
-        const [newLeave] = await this.db
+        const [newLeave] = await this.databaseService.db
             .insert(leaves)
             .values(this.fromDtoToSchema(leave, user))
             .returning();
@@ -28,7 +25,7 @@ export class LeavesService {
     }
 
     findAll(user: string) {
-        return this.db.query.leaves
+        return this.databaseService.db.query.leaves
             .findMany({ where: (t, u) => u.eq(t.userId, sql.placeholder('user')) })
             .prepare()
             .execute({ user });
@@ -37,7 +34,7 @@ export class LeavesService {
     async update(id: number, leave: LeaveDto, user: string) {
         await this.validateData(leave, user, id);
 
-        const [updated] = await this.db
+        const [updated] = await this.databaseService.db
             .update(leaves)
             .set(this.fromDtoToSchema(leave, user))
             .where(eq(leaves.id, id))
@@ -69,11 +66,11 @@ export class LeavesService {
 
     private async validateData(leave: LeaveDto, user: string, id?: number) {
         const [job, kid] = await Promise.all([
-            this.db.query.jobs.findFirst({
+            this.databaseService.db.query.jobs.findFirst({
                 where: (t, u) => u.eq(t.id, leave.jobId),
                 with: { caretaker: true }
             }),
-            this.db.query.kids.findFirst({
+            this.databaseService.db.query.kids.findFirst({
                 where: (t, u) => u.eq(t.id, leave.kidId),
                 with: {
                     mother: true,
@@ -94,7 +91,7 @@ export class LeavesService {
             [leave.from, leave.to] = [leave.to, leave.from];
         }
 
-        const caretakerLeaves = await this.db
+        const caretakerLeaves = await this.databaseService.db
             .select({
                 from: leaves.from,
                 to: leaves.to

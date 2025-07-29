@@ -1,14 +1,14 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import * as fontkit from '@pdf-lib/fontkit';
 import { eq } from 'drizzle-orm';
 import { PDFDocument, PDFForm } from 'pdf-lib';
 
 import { leaves } from '../database/schemas';
 import { rangesCollide } from '../dateRange/dateRange';
-import { DrizzleAsyncProvider, DrizzleDb } from '../drizzle/drizzle.provider';
+import { DrizzleService } from '../drizzle/drizzle.service';
 import { PlainDate } from '../validators/plainDate';
 
 
@@ -39,9 +39,7 @@ export class PdfService {
             nip: 'topmostSubform[0].Page2[0].NIP[0]',
             name: 'topmostSubform[0].Page2[0].Nazwapłatnika[0]'
         },
-        bankDetails: {
-            accountNumber: 'topmostSubform[0].Page2[0].Numerrachunku[0]'
-        },
+        bankDetails: { accountNumber: 'topmostSubform[0].Page2[0].Numerrachunku[0]' },
         leaveData: { text: 'topmostSubform[0].Page2[0].Tekst1a[0]' },
         kid: {
             pesel: 'topmostSubform[0].Page2[0].PESEL[0]',
@@ -213,10 +211,7 @@ export class PdfService {
 
     private readonly template: Buffer;
 
-    constructor(
-        @Inject(DrizzleAsyncProvider)
-        private readonly db: DrizzleDb
-    ) {
+    constructor(private readonly databaseService: DrizzleService) {
         this.template = readFileSync(
             resolve('src/assets', `Z-15A.${PdfService.CURRENT_VERSION}.pdf`)
         );
@@ -262,7 +257,7 @@ export class PdfService {
     }
 
     async getEmailReceiverForLeave(leaveId: number) {
-        const leave = await this.db.query.leaves.findFirst({
+        const leave = await this.databaseService.db.query.leaves.findFirst({
             where: eq(leaves.id, leaveId),
             with: { job: { with: { caretaker: true } } }
         });
@@ -293,7 +288,7 @@ export class PdfService {
 
     private async getLeaveAndJobs(leaveId: number, userId: string) {
         const [leave, jobs] = await Promise.all([
-            this.db.query.leaves.findFirst({
+            this.databaseService.db.query.leaves.findFirst({
                 where: eq(leaves.id, leaveId),
                 with: {
                     kid: {
@@ -305,7 +300,7 @@ export class PdfService {
                     job: { with: { caretaker: true } }
                 }
             }),
-            this.db.query.jobs.findMany({ with: { leaves: true } })
+            this.databaseService.db.query.jobs.findMany({ with: { leaves: true } })
         ]);
 
         if (leave?.userId !== userId) {

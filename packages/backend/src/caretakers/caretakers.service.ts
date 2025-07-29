@@ -1,22 +1,19 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 
 import { caretakers } from '../database/schemas/caretakers';
-import { DrizzleAsyncProvider, DrizzleDb } from '../drizzle/drizzle.provider';
+import { DrizzleService } from '../drizzle/drizzle.service';
 
 import { CaretakerDto } from './caretaker.dto';
 
 
 @Injectable()
 export class CaretakersService {
-    constructor(
-        @Inject(DrizzleAsyncProvider)
-        private readonly db: DrizzleDb
-    ) {
+    constructor(private readonly databaseService: DrizzleService) {
     }
 
     async create(caretaker: CaretakerDto, user: string) {
-        const [newCaretaker] = await this.db
+        const [newCaretaker] = await this.databaseService.db
             .insert(caretakers)
             .values(this.fromDtoToSchema(caretaker, user))
             .returning();
@@ -24,14 +21,14 @@ export class CaretakersService {
     }
 
     findAll(user: string) {
-        return this.db.query.caretakers
+        return this.databaseService.db.query.caretakers
             .findMany({ where: (t, u) => u.eq(t.userId, sql.placeholder('user')) })
             .prepare()
             .execute({ user });
     }
 
     async update(id: number, caretaker: CaretakerDto, user: string) {
-        const [updated] = await this.db
+        const [updated] = await this.databaseService.db
             .update(caretakers)
             .set(this.fromDtoToSchema(caretaker, user))
             .where(and(eq(caretakers.id, id), eq(caretakers.userId, user)))

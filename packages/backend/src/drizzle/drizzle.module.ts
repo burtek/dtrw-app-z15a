@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { DrizzleAsyncProvider, drizzleProvider } from './drizzle.provider';
+import { DrizzleService } from './drizzle.service';
 
 
 @Module({
-    providers: [...drizzleProvider],
-    exports: [DrizzleAsyncProvider]
+    providers: [DrizzleService],
+    exports: [DrizzleService]
 })
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class DrizzleModule {
