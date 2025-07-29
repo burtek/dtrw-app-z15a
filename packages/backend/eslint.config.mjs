@@ -13,11 +13,6 @@ export default config(
         languageOptions: { parserOptions: { projectService: true } },
         settings: { 'import/resolver': { typescript: true } }
     },
-    {
-        rules: {
-            'new-cap': 'off', // nestjs decorators
-            'n/no-extraneous-import': ['error', { allowModules: ['express'] }]
-        }
-    },
+    { rules: { 'new-cap': 'off' } }, // nestjs decorators
     { ignores: ['dist', 'node_modules'] }
 );

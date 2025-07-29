@@ -1,3 +1,4 @@
+/* eslint n/no-extraneous-import: ['error', { allowModules: ['express'] }] */
 import type { ExecutionContext } from '@nestjs/common';
 import { createParamDecorator } from '@nestjs/common';
 import type { Request as AppRequest } from 'express';

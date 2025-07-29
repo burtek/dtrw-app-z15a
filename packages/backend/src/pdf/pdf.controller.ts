@@ -1,3 +1,4 @@
+/* eslint n/no-extraneous-import: ['error', { allowModules: ['express'] }] */
 import { Controller, Param, Get, ParseIntPipe, Query, Res, BadRequestException, Header } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Response as AppResponse } from 'express';

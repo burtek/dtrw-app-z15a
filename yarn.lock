@@ -674,10 +674,10 @@
   resolved "https://registry.yarnpkg.com/@drizzle-team/brocli/-/brocli-0.10.2.tgz#9757c006a43daaa6f45512e6cf5fabed36fb9da7"
   integrity sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==
 
-"@dtrw/eslint-config@~5.9.2":
-  version "5.9.2"
-  resolved "https://registry.yarnpkg.com/@dtrw/eslint-config/-/eslint-config-5.9.2.tgz#40ed402641dfd92cbcb343c4505dbd065f49b168"
-  integrity sha512-GZ90/m7Q3IEDhxqYDzavEk0bK21WK4/iO0xjB3QVcHWWuFAZX4W+Ini4c+guHv2KnOb9NSGuKd/PlzlgL7pEQw==
+"@dtrw/eslint-config@~5.9.4":
+  version "5.9.4"
+  resolved "https://registry.yarnpkg.com/@dtrw/eslint-config/-/eslint-config-5.9.4.tgz#207c51c7fe517388dffe7ed572ad3505ea8f7db3"
+  integrity sha512-zTywCutILSpJt0LMgBenThdIwnvdU171HplQolZXqtYrnbfXmz9auiHJwuhW/wSdibe0PcK6t3fIXYxtgRPBAg==
   dependencies:
     "@eslint/json" "0.13.1"
     "@next/eslint-plugin-next" "~15.4.0"
