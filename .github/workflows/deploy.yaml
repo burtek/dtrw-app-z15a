@@ -99,7 +99,7 @@ jobs:
             set -e
             touch /apps/data/z15a_db/db.db
             cd /apps/${{ env.APP_NAME }}
-            docker compose down backend
+            docker compose stop backend
             docker compose run --rm backend yarn migrate
             docker compose up -d --build
             docker exec nginx-proxy-manager nginx -s reload

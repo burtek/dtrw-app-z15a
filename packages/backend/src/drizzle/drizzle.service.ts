@@ -1,0 +1,32 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import * as Database from 'better-sqlite3';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+
+import * as schema from '../database/schemas';
+
+
+const makeDb = (database: Database.Database) => drizzle(database, { schema });
+
+@Injectable()
+export class DrizzleService implements OnModuleDestroy {
+    private readonly database: Database.Database;
+    private readonly db: ReturnType<typeof makeDb>;
+
+    constructor(configService: ConfigService) {
+        const path = configService.get<string>('DB_FILE_NAME', '');
+        this.database = new Database(path);
+        this.db = makeDb(this.database);
+        console.log('Database open');
+    }
+
+    getDb() {
+        return this.db;
+    }
+
+    onModuleDestroy() {
+        this.database.close();
+        console.log('Database closed');
+    }
+}
