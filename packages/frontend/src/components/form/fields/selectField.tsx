@@ -1,6 +1,6 @@
 import { Select } from '@radix-ui/themes';
 import { shallowEqual } from 'fast-equals';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import type { Control } from 'react-hook-form';
 import { useController } from 'react-hook-form';
 
@@ -53,10 +53,13 @@ const Component = <T, C extends Control>(
         ref(null);
     }, []);
 
+    const container = useRef<HTMLLabelElement & HTMLDivElement>(null);
+
     return (
         <FieldWrapper
             label={label}
             error={error}
+            ref={container}
         >
             <Select.Root
                 onValueChange={handleChange}
@@ -72,7 +75,7 @@ const Component = <T, C extends Control>(
                     variant="soft"
                     color={error ? 'red' : undefined}
                 />
-                <Select.Content>
+                <Select.Content container={container.current}>
                     <Select.Group>
                         {items.map(renderItem)}
                     </Select.Group>
