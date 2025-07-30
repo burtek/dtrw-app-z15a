@@ -99,7 +99,7 @@ jobs:
             set -e
             touch /apps/data/z15a_db/db.db
             cd /apps/${{ env.APP_NAME }}
-            docker compose up -d --build --force-recreate --wait
+            docker compose up -d --build --wait
             docker exec nginx-proxy-manager nginx -s reload
 
       - name: Disable maintenance mode in kuma (NOT IMPLEMENTED)
