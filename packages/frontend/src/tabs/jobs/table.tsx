@@ -7,10 +7,19 @@ import { ActionsWrapper } from '../../components/data-view/actions';
 import { ExpandableCard } from '../../components/data-view/card';
 import { useGetCaretakersState } from '../../redux/apis/caretakers';
 import { useGetJobsState } from '../../redux/apis/jobs';
-import type { Job, WithId } from '../../types';
+import type { Caretaker, Job, WithId } from '../../types';
 
 import { JobFormDialog } from './form';
 
+
+const calculateData = (job: WithId<Job>, caretakers: WithId<Caretaker>[]) => {
+    const caretaker = caretakers.find(c => c.id === job.caretakerId);
+
+    return {
+        employee: `${caretaker?.name} ${caretaker?.surname}`,
+        dates: `${job.from ?? '?'} - ${job.to ?? 'nadal'}`
+    };
+};
 
 const Component = () => {
     const { data: jobs = [], error, isLoading } = useGetJobsState();
@@ -44,22 +53,22 @@ const Component = () => {
     ), []);
 
     const renderTableRow = useCallback((job: WithId<Job>) => {
-        const caretaker = caretakers.find(c => c.id === job.caretakerId);
+        const { employee, dates } = calculateData(job, caretakers);
 
         return (
             <Table.Row key={job.id}>
                 <Table.RowHeaderCell>{job.id}</Table.RowHeaderCell>
                 <Table.Cell>{job.company}</Table.Cell>
                 <Table.Cell style={{ whiteSpace: 'nowrap' }}>{job.nip}</Table.Cell>
-                <Table.Cell style={{ whiteSpace: 'nowrap' }}>{`${caretaker?.name} ${caretaker?.surname}`}</Table.Cell>
-                <Table.Cell style={{ whiteSpace: 'nowrap' }}>{`${job.from ?? '?'} - ${job.to ?? 'nadal'}`}</Table.Cell>
+                <Table.Cell style={{ whiteSpace: 'nowrap' }}>{employee}</Table.Cell>
+                <Table.Cell style={{ whiteSpace: 'nowrap' }}>{dates}</Table.Cell>
                 <Table.Cell>{actions(job)}</Table.Cell>
             </Table.Row>
         );
     }, [caretakers, actions]);
 
     const renderCard = useCallback((job: WithId<Job>) => {
-        const caretaker = caretakers.find(c => c.id === job.caretakerId);
+        const { employee, dates } = calculateData(job, caretakers);
 
         return (
             /* eslint-disable @typescript-eslint/naming-convention */
@@ -68,8 +77,8 @@ const Component = () => {
                 id={job.id}
                 summary={job.company}
                 secondary={{
-                    Pracownik: `${caretaker?.name} ${caretaker?.surname}`,
-                    Daty: `${job.from ?? '?'} - ${job.to ?? 'nadal'}`
+                    Pracownik: employee,
+                    Daty: dates
                 }}
                 details={{ NIP: job.nip }}
                 actions={actions(job)}

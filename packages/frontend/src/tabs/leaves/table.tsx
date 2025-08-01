@@ -10,7 +10,7 @@ import { useGetCaretakersState } from '../../redux/apis/caretakers';
 import { useGetJobsState } from '../../redux/apis/jobs';
 import { useGetKidsState } from '../../redux/apis/kids';
 import { useGetLeavesState, useSendEmail } from '../../redux/apis/leaves';
-import type { Leave, WithId } from '../../types';
+import type { Caretaker, Job, Kid, Leave, WithId } from '../../types';
 
 import { LeaveFormDialog } from './form';
 
@@ -23,6 +23,24 @@ const notifyDownload = () => {
             position: 'top-right'
         }
     );
+};
+
+const calculateData = (leave: WithId<Leave>, jobs: WithId<Job>[], kids: WithId<Kid>[], caretakers: WithId<Caretaker>[]) => {
+    const kid = kids.find(k => k.id === leave.kidId);
+    const job = jobs.find(j => j.id === leave.jobId);
+    const caretaker = caretakers.find(c => c.id === job?.caretakerId);
+
+    const downloadName = `${caretaker?.surname} ${caretaker?.name} - Z-15A za ${kid?.name} ${kid?.surname} za okres ${leave.from}${leave.from === leave.to ? '' : ` - ${leave.to}`}.pdf`;
+
+    const leaveDates = leave.from === leave.to ? leave.from : `${leave.from} - ${leave.to}`;
+
+    return {
+        kid: `${kid?.name} ${kid?.surname}`,
+        job,
+        caretaker: `${caretaker?.name} ${caretaker?.surname}`,
+        downloadName,
+        leaveDates: `${leaveDates} (${leave.daysTaken.length} dni)`
+    };
 };
 
 const Component = () => {
@@ -75,44 +93,32 @@ const Component = () => {
     ), [sendEmail]);
 
     const renderTableRow = useCallback((leave: WithId<Leave>) => {
-        const kid = kids.find(k => k.id === leave.kidId);
-        const job = jobs.find(j => j.id === leave.jobId);
-        const caretaker = caretakers.find(c => c.id === job?.caretakerId);
-
-        const downloadName = `${caretaker?.surname} ${caretaker?.name} - Z-15A za ${kid?.name} ${kid?.surname} za okres ${leave.from}${leave.from === leave.to ? '' : ` - ${leave.to}`}.pdf`;
-
-        const leaveDates = leave.from === leave.to ? leave.from : `${leave.from} - ${leave.to}`;
+        const { kid, caretaker, downloadName, leaveDates } = calculateData(leave, jobs, kids, caretakers);
 
         return (
             <Table.Row key={leave.id}>
                 <Table.RowHeaderCell>{leave.id}</Table.RowHeaderCell>
-                <Table.Cell>{`${kid?.name} ${kid?.surname}`}</Table.Cell>
-                <Table.Cell>{`${caretaker?.name} ${caretaker?.surname}`}</Table.Cell>
+                <Table.Cell>{kid}</Table.Cell>
+                <Table.Cell>{caretaker}</Table.Cell>
                 <Table.Cell>{leave.zla}</Table.Cell>
-                <Table.Cell>{`${leaveDates} (${leave.daysTaken.length} dni)`}</Table.Cell>
+                <Table.Cell>{leaveDates}</Table.Cell>
                 <Table.Cell>{actions(leave, downloadName)}</Table.Cell>
             </Table.Row>
         );
     }, [caretakers, jobs, kids, actions]);
 
     const renderCard = useCallback((leave: WithId<Leave>) => {
-        const kid = kids.find(k => k.id === leave.kidId);
-        const job = jobs.find(j => j.id === leave.jobId);
-        const caretaker = caretakers.find(c => c.id === job?.caretakerId);
-
-        const downloadName = `${caretaker?.surname} ${caretaker?.name} - Z-15A za ${kid?.name} ${kid?.surname} za okres ${leave.from}${leave.from === leave.to ? '' : ` - ${leave.to}`}.pdf`;
-
-        const leaveDates = leave.from === leave.to ? leave.from : `${leave.from} - ${leave.to}`;
+        const { kid, job, caretaker, downloadName, leaveDates } = calculateData(leave, jobs, kids, caretakers);
 
         return (
             /* eslint-disable @typescript-eslint/naming-convention */
             <ExpandableCard
                 key={leave.id}
                 id={leave.id}
-                summary={`${kid?.name} ${kid?.surname}`}
+                summary={kid}
                 secondary={{
-                    Opiekun: `${caretaker?.name} ${caretaker?.surname}`,
-                    Daty: `${leaveDates} (${leave.daysTaken.length} dni)`
+                    Opiekun: caretaker,
+                    Daty: leaveDates
                 }}
                 details={{
                     ...leave.zla ? { ZLA: leave.zla } : {},

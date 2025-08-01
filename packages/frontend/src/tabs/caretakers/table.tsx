@@ -7,10 +7,25 @@ import { ActionsWrapper } from '../../components/data-view/actions';
 import { ExpandableCard } from '../../components/data-view/card';
 import { useGetCaretakersState } from '../../redux/apis/caretakers';
 import { useGetJobsState } from '../../redux/apis/jobs';
-import type { Caretaker, WithId } from '../../types';
+import type { Caretaker, Job, WithId } from '../../types';
 
 import { CaretakerFormDialog } from './form';
 
+
+const calculateData = (caretaker: WithId<Caretaker>, jobs: WithId<Job>[]) => {
+    const job = jobs
+        .filter(j => j.caretakerId === caretaker.id)
+        .map(j => ({ ...j, castedFrom: j.from ?? '0000-00-00', castedTo: j.to ?? '9999-99-99' }))
+        .find(j => {
+            const [today] = new Date().toISOString().split('T');
+            return j.castedFrom <= today && today <= j.castedTo;
+        });
+
+    return {
+        caretaker: `${caretaker.name} ${caretaker.surname}`,
+        job
+    };
+};
 
 const Component = () => {
     const { data: caretakers = [], error, isLoading } = useGetCaretakersState();
@@ -44,18 +59,12 @@ const Component = () => {
     ), []);
 
     const renderTableRow = useCallback((caretaker: WithId<Caretaker>) => {
-        const job = jobs
-            .filter(j => j.caretakerId === caretaker.id)
-            .map(j => ({ ...j, castedFrom: j.from ?? '0000-00-00', castedTo: j.to ?? '9999-99-99' }))
-            .find(j => {
-                const [today] = new Date().toISOString().split('T');
-                return j.castedFrom <= today && today <= j.castedTo;
-            });
+        const { caretaker: caretakerName, job } = calculateData(caretaker, jobs);
 
         return (
             <Table.Row key={caretaker.id}>
                 <Table.RowHeaderCell>{caretaker.id}</Table.RowHeaderCell>
-                <Table.Cell style={{ whiteSpace: 'nowrap' }}>{`${caretaker.name} ${caretaker.surname}`}</Table.Cell>
+                <Table.Cell style={{ whiteSpace: 'nowrap' }}>{caretakerName}</Table.Cell>
                 <Table.Cell style={{ whiteSpace: 'nowrap' }}>{caretaker.pesel}</Table.Cell>
                 <Table.Cell style={{ whiteSpace: 'nowrap' }}>{caretaker.email}</Table.Cell>
                 <Table.Cell>{job?.company ?? 'brak'}</Table.Cell>
@@ -65,20 +74,14 @@ const Component = () => {
     }, [jobs, actions]);
 
     const renderCard = useCallback((caretaker: WithId<Caretaker>) => {
-        const job = jobs
-            .filter(j => j.caretakerId === caretaker.id)
-            .map(j => ({ ...j, castedFrom: j.from ?? '0000-00-00', castedTo: j.to ?? '9999-99-99' }))
-            .find(j => {
-                const [today] = new Date().toISOString().split('T');
-                return j.castedFrom <= today && today <= j.castedTo;
-            });
+        const { caretaker: caretakerName, job } = calculateData(caretaker, jobs);
 
         return (
         /* eslint-disable @typescript-eslint/naming-convention */
             <ExpandableCard
                 key={caretaker.id}
                 id={caretaker.id}
-                summary={`${caretaker.name} ${caretaker.surname}`}
+                summary={caretakerName}
                 secondary={{ PESEL: caretaker.pesel }}
                 details={{
                     Email: caretaker.email,
