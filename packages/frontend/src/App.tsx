@@ -107,7 +107,7 @@ function App() {
     const dialogsControls = DIALOGS.map(dialog => useDialogState(dialog.defaultOpen, dialog.onClose));
 
     return (
-        <Tabs.Root defaultValue={Tab.JOBS}>
+        <Tabs.Root defaultValue={Tab.LEAVES}>
             <Tabs.List wrap="wrap">
                 {/* eslint-disable @stylistic/jsx-one-expression-per-line */}
                 <Tabs.Trigger value={Tab.LEAVES}>Zwolnienia ({leaves?.length ?? <Spinner />})</Tabs.Trigger>
