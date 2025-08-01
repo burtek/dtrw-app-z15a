@@ -1,9 +1,9 @@
-import { Box, Button, DropdownMenu, Flex, Tabs } from '@radix-ui/themes';
+import { Box, Button, DropdownMenu, Flex, Spinner, Tabs } from '@radix-ui/themes';
 import type { FC } from 'react';
 import { lazy, Suspense, useCallback, useState } from 'react';
 import Mosaic from 'react-loading-indicators/Mosaic';
 
-import styles from './App.module.css';
+import './App.module.css';
 import { AboutDialog } from './components/dialogs/about';
 import { DisclaimerDialog } from './components/dialogs/disclaimer';
 import { GDPR_VERSION, GDPRDialog } from './components/dialogs/gdpr';
@@ -74,7 +74,7 @@ const DIALOGS: Array<{
                 return true;
             }
             const [version, acceptedDateString] = accepted.split('/');
-            if (version !== `${GDPR_VERSION}`|| !acceptedDateString || isNaN(Date.parse(acceptedDateString))) {
+            if (version !== `${GDPR_VERSION}` || !acceptedDateString || isNaN(Date.parse(acceptedDateString))) {
                 return true;
             }
             const acceptedDate = new Date(acceptedDateString);
@@ -84,7 +84,9 @@ const DIALOGS: Array<{
         onClose: () => {
             try {
                 window.localStorage.setItem(GDPR_ACCEPTED, `${GDPR_VERSION}/${new Date().toISOString()}`);
-            } catch (e) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            } catch (error) {
+                // disregard
             }
         }
     },
@@ -105,12 +107,14 @@ function App() {
     const dialogsControls = DIALOGS.map(dialog => useDialogState(dialog.defaultOpen, dialog.onClose));
 
     return (
-        <Tabs.Root defaultValue={Tab.LEAVES}>
+        <Tabs.Root defaultValue={Tab.JOBS}>
             <Tabs.List wrap="wrap">
-                <Tabs.Trigger value={Tab.LEAVES}>Zwolnienia ({leaves?.length ?? <span className={styles.spinner} />})</Tabs.Trigger>
-                <Tabs.Trigger value={Tab.CARETAKERS}>Rodzice ({caretakers?.length ?? <span className={styles.spinner} />})</Tabs.Trigger>
-                <Tabs.Trigger value={Tab.KIDS}>Dzieci ({kids?.length ?? <span className={styles.spinner} />})</Tabs.Trigger>
-                <Tabs.Trigger value={Tab.JOBS}>Płatnicy ZUS ({jobs?.length ?? <span className={styles.spinner} />})</Tabs.Trigger>
+                {/* eslint-disable @stylistic/jsx-one-expression-per-line */}
+                <Tabs.Trigger value={Tab.LEAVES}>Zwolnienia ({leaves?.length ?? <Spinner />})</Tabs.Trigger>
+                <Tabs.Trigger value={Tab.CARETAKERS}>Rodzice ({caretakers?.length ?? <Spinner />})</Tabs.Trigger>
+                <Tabs.Trigger value={Tab.KIDS}>Dzieci ({kids?.length ?? <Spinner />})</Tabs.Trigger>
+                <Tabs.Trigger value={Tab.JOBS}>Płatnicy ZUS ({jobs?.length ?? <Spinner />})</Tabs.Trigger>
+                {/* eslint-enable @stylistic/jsx-one-expression-per-line */}
                 <Flex
                     style={{ flex: 1 }}
                     direction="row"
