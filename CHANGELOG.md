@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.12.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.11.0...v1.12.0) (2025-08-01)
+
+
+### Features
+
+* **ui:** mobile view  DTRW-62 #done ([75824bd](https://github.com/burtek/dtrw-app-z15a/commit/75824bd3b282cc081948a9dbadb88bdb85a77834))
+
 ## [1.11.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.10.6...v1.11.0) (2025-08-01)
 
 
