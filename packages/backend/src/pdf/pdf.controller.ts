@@ -1,78 +1,84 @@
-/* eslint n/no-extraneous-import: ['error', { allowModules: ['express'] }] */
-import { Controller, Param, Get, ParseIntPipe, Query, Res, BadRequestException, Header } from '@nestjs/common';
-import { MailerService } from '@nestjs-modules/mailer';
-import { Response as AppResponse } from 'express';
+import type { FastifyPluginCallback } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod/v4';
 
-import { AutheliaAuthInfo, AuthUser } from '../auth/auth-user.decorator';
+import { AppError, ErrorType } from '../errors/index';
 
+import { MailerService } from './mailer.service';
 import { PdfService } from './pdf.service';
 
 
-@Controller('pdf')
-export class PdfController {
-    constructor(
-        private readonly pdfService: PdfService,
-        private readonly mailerService: MailerService
-    ) {
-    }
+export const pdfController: FastifyPluginCallback = (instance, options, done) => {
+    const pdfService = new PdfService();
+    const mailerService = new MailerService();
 
-    @Get(':id')
-    @Header('Cache-Control', 'no-cache, no-store, must-revalidate')
-    @Header('Pragma', 'no-cache')
-    @Header('Expires', '0')
-    async generate(
-        @Param('id', ParseIntPipe) id: number,
-        @Query('title') title: string | undefined,
-        @AuthUser() user: AutheliaAuthInfo,
-        @Res() response: AppResponse
-    ) {
-        const pdf = await this.pdfService.generatePdf(id, user.username, title);
-        response.setHeader('Content-Type', 'application/pdf');
-        response.end(pdf);
-    }
+    const f = instance.withTypeProvider<ZodTypeProvider>();
 
-    @Get(':id/mail')
-    @Header('Cache-Control', 'no-cache, no-store, must-revalidate')
-    @Header('Pragma', 'no-cache')
-    @Header('Expires', '0')
-    async sendMail(
-        @Param('id', ParseIntPipe) id: number,
-        @Query('title') title: string | undefined,
-        @AuthUser() user: AutheliaAuthInfo
-    ) {
-        const email = await this.pdfService.getEmailReceiverForLeave(id);
-
-        if (!email) {
-            throw new BadRequestException(
-                { ok: false },
-                'no email found'
-            );
+    f.get(
+        '/:id',
+        {
+            preHandler(request, reply, preHandlerDone) {
+                reply.header('cache-control', 'no-cache, no-store, must-revalidate');
+                reply.header('pragma', 'no-cache');
+                reply.header('expires', '0');
+                preHandlerDone();
+            },
+            schema: {
+                params: z.object({ id: z.coerce.number().positive().refine(val => Number.isInteger(val)) }),
+                querystring: z.object({ title: z.string().optional() })
+            }
+        },
+        async (request, reply) => {
+            const pdf = await pdfService.generatePdf(request.params.id, request.user.username, request.query.title);
+            reply.header('content-type', 'application/pdf');
+            reply.send(pdf);
+            await reply;
         }
+    );
 
-        const pdf = await this.pdfService.generatePdf(id, user.username, title);
+    f.get(
+        '/:id/mail',
+        {
+            preHandler(request, reply, preHandlerDone) {
+                reply.header('cache-control', 'no-cache, no-store, must-revalidate');
+                reply.header('pragma', 'no-cache');
+                reply.header('expires', '0');
+                preHandlerDone();
+            },
+            schema: {
+                params: z.object({ id: z.coerce.number().positive().refine(val => Number.isInteger(val)) }),
+                querystring: z.object({ title: z.string().optional() })
+            }
+        },
+        async request => {
+            const email = await pdfService.getEmailReceiverForLeave(request.params.id);
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const emailResult: {
-            accpted: string[];
-            rejected: string[];
-            response: string;
-            messageId: string;
-        } = await this.mailerService.sendMail({
-            to: email,
-            subject: title ?? 'Formularz Z-15A',
-            text: 'Formularz w załączniku. Zdrówka dla dziecka :)',
-            attachments: [
-                {
-                    filename: title ? (title.endsWith('.pdf') ? title : `${title}.pdf`) : 'Formularz Z-15A.pdf',
-                    content: pdf,
-                    contentType: 'application/pdf'
-                }
-            ]
-        });
+            if (!email) {
+                throw new AppError(ErrorType.BAD_REQUEST, 'no email found');
+            }
 
-        // eslint-disable-next-line security-node/detect-crlf
-        console.log(emailResult);
+            const { title } = request.query;
+            const pdf = await pdfService.generatePdf(request.params.id, request.user.username, title);
 
-        return { status: 'ok', emailResult };
-    }
-}
+            const emailResult = await mailerService.sendMail({
+                to: email,
+                subject: title ?? 'Formularz Z-15A',
+                text: 'Formularz w załączniku. Zdrówka dla dziecka :)',
+                attachments: [
+                    {
+                        filename: title ? `${title}.pdf` : 'Formularz Z-15A.pdf',
+                        content: pdf,
+                        contentType: 'application/pdf'
+                    }
+                ]
+            });
+
+            // eslint-disable-next-line security-node/detect-crlf
+            console.log(emailResult);
+
+            return { status: 'ok', emailResult };
+        }
+    );
+
+    done();
+};

@@ -1,35 +1,37 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+import type { FastifyPluginCallback } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod/v4';
 
-import { AutheliaAuthInfo, AuthUser } from '../auth/auth-user.decorator';
-
-import { LeaveDto } from './leave.dto';
+import { LeaveSchema } from './leave.schema';
 import { LeavesService } from './leaves.service';
 
 
-@Controller('leaves')
-export class LeavesController {
-    constructor(private readonly leavesService: LeavesService) {
-    }
+export const leavesController: FastifyPluginCallback = (instance, options, done) => {
+    const leavesService = new LeavesService();
 
-    @Post()
-    async create(
-        @Body() leave: LeaveDto,
-        @AuthUser() user: AutheliaAuthInfo
-    ) {
-        return await this.leavesService.create(leave, user.username);
-    }
+    const f = instance.withTypeProvider<ZodTypeProvider>();
 
-    @Get()
-    findAll(@AuthUser() user: AutheliaAuthInfo) {
-        return this.leavesService.findAll(user.username);
-    }
+    f.get(
+        '/',
+        async request => await leavesService.findAll(request.user.username)
+    );
 
-    @Post(':id')
-    async modify(
-        @Param('id', ParseIntPipe) id: number,
-        @Body() leave: LeaveDto,
-        @AuthUser() user: AutheliaAuthInfo
-    ) {
-        return await this.leavesService.update(id, leave, user.username);
-    }
-}
+    f.post(
+        '/',
+        { schema: { body: LeaveSchema } },
+        async request => await leavesService.create(request.body, request.user.username)
+    );
+
+    f.post(
+        '/:id',
+        {
+            schema: {
+                body: LeaveSchema,
+                params: z.object({ id: z.coerce.number().positive().refine(val => Number.isInteger(val)) })
+            }
+        },
+        async request => await leavesService.update(request.params.id, request.body, request.user.username)
+    );
+
+    done();
+};

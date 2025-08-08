@@ -1,20 +1,24 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
     "target": "ES2023",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "lib": ["ESNext"],
-    "sourceMap": true,
+    "baseUrl": ".",
+
+    "types": ["vitest/globals"],
+
     "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true,
+    "declaration": true,
+    "sourceMap": true,
+
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+
+    "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
-    "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true,

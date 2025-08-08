@@ -1,35 +1,37 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+import type { FastifyPluginCallback } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod/v4';
 
-import { AutheliaAuthInfo, AuthUser } from '../auth/auth-user.decorator';
-
-import { KidDto } from './kid.dto';
+import { KidSchema } from './kid.schema';
 import { KidsService } from './kids.service';
 
 
-@Controller('kids')
-export class KidsController {
-    constructor(private readonly kidsService: KidsService) {
-    }
+export const kidsController: FastifyPluginCallback = (instance, options, done) => {
+    const kidsService = new KidsService();
 
-    @Post()
-    async create(
-        @Body() kid: KidDto,
-        @AuthUser() user: AutheliaAuthInfo
-    ) {
-        return await this.kidsService.create(kid, user.username);
-    }
+    const f = instance.withTypeProvider<ZodTypeProvider>();
 
-    @Get()
-    async findAll(@AuthUser() user: AutheliaAuthInfo) {
-        return await this.kidsService.findAll(user.username);
-    }
+    f.get(
+        '/',
+        async request => await kidsService.findAll(request.user.username)
+    );
 
-    @Post(':id')
-    async modify(
-        @Param('id', ParseIntPipe) id: number,
-        @Body() kid: KidDto,
-        @AuthUser() user: AutheliaAuthInfo
-    ) {
-        return await this.kidsService.update(id, kid, user.username);
-    }
-}
+    f.post(
+        '/',
+        { schema: { body: KidSchema } },
+        async request => await kidsService.create(request.body, request.user.username)
+    );
+
+    f.post(
+        '/:id',
+        {
+            schema: {
+                body: KidSchema,
+                params: z.object({ id: z.coerce.number().positive().refine(val => Number.isInteger(val)) })
+            }
+        },
+        async request => await kidsService.update(request.params.id, request.body, request.user.username)
+    );
+
+    done();
+};

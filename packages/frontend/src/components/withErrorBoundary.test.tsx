@@ -16,6 +16,20 @@ const Parent = ({ children }: PropsWithChildren) => (
 );
 
 describe('components/withErrorBoundary', () => {
+    const noop = vitest.fn();
+
+    const spies = [
+        vitest.spyOn(console, 'warn').mockImplementation(noop),
+        vitest.spyOn(console, 'error').mockImplementation(noop),
+        vitest.spyOn(console, 'log').mockImplementation(noop)
+    ];
+
+    afterAll(() => {
+        spies.forEach(spy => {
+            spy.mockRestore();
+        });
+    });
+
     it('should render correctly', () => {
         render(
             <Parent>

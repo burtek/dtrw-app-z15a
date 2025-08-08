@@ -1,35 +1,37 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+import type { FastifyPluginCallback } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod/v4';
 
-import { AutheliaAuthInfo, AuthUser } from '../auth/auth-user.decorator';
-
-import { JobDto } from './job.dto';
+import { JobSchema } from './job.schema';
 import { JobsService } from './jobs.service';
 
 
-@Controller('jobs')
-export class JobsController {
-    constructor(private readonly jobsService: JobsService) {
-    }
+export const jobsController: FastifyPluginCallback = (instance, options, done) => {
+    const jobsService = new JobsService();
 
-    @Post()
-    async create(
-        @Body() job: JobDto,
-        @AuthUser() user: AutheliaAuthInfo
-    ) {
-        return await this.jobsService.create(job, user.username);
-    }
+    const f = instance.withTypeProvider<ZodTypeProvider>();
 
-    @Get()
-    async findAll(@AuthUser() user: AutheliaAuthInfo) {
-        return await this.jobsService.findAll(user.username);
-    }
+    f.get(
+        '/',
+        async request => await jobsService.findAll(request.user.username)
+    );
 
-    @Post(':id')
-    async modify(
-        @Param('id', ParseIntPipe) id: number,
-        @Body() job: JobDto,
-        @AuthUser() user: AutheliaAuthInfo
-    ) {
-        return await this.jobsService.update(id, job, user.username);
-    }
-}
+    f.post(
+        '/',
+        { schema: { body: JobSchema } },
+        async request => await jobsService.create(request.body, request.user.username)
+    );
+
+    f.post(
+        '/:id',
+        {
+            schema: {
+                body: JobSchema,
+                params: z.object({ id: z.coerce.number().positive().refine(val => Number.isInteger(val)) })
+            }
+        },
+        async request => await jobsService.update(request.params.id, request.body, request.user.username)
+    );
+
+    done();
+};

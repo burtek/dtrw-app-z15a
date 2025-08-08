@@ -1,23 +1,18 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { and, eq, ne, sql } from 'drizzle-orm';
 
+import { BaseRepo } from '../database/repo';
 import { jobs, leaves } from '../database/schemas';
 import { rangesCollide } from '../dateRange/dateRange';
-import { DrizzleService } from '../drizzle/drizzle.service';
-import { IsPlainDateValidConstraint, PlainDate } from '../validators/plainDate';
+import { AppError, ErrorType } from '../errors';
 
-import { LeaveDto } from './leave.dto';
+import type { Leave } from './leave.schema';
 
 
-@Injectable()
-export class LeavesService {
-    constructor(private readonly databaseService: DrizzleService) {
-    }
-
-    async create(leave: LeaveDto, user: string) {
+export class LeavesService extends BaseRepo {
+    async create(leave: Leave, user: string) {
         await this.validateData(leave, user);
 
-        const [newLeave] = await this.databaseService.db
+        const [newLeave] = await this.db
             .insert(leaves)
             .values(this.fromDtoToSchema(leave, user))
             .returning();
@@ -25,16 +20,16 @@ export class LeavesService {
     }
 
     findAll(user: string) {
-        return this.databaseService.db.query.leaves
+        return this.db.query.leaves
             .findMany({ where: (t, u) => u.eq(t.userId, sql.placeholder('user')) })
             .prepare()
             .execute({ user });
     }
 
-    async update(id: number, leave: LeaveDto, user: string) {
+    async update(id: number, leave: Leave, user: string) {
         await this.validateData(leave, user, id);
 
-        const [updated] = await this.databaseService.db
+        const [updated] = await this.db
             .update(leaves)
             .set(this.fromDtoToSchema(leave, user))
             .where(eq(leaves.id, id))
@@ -43,34 +38,27 @@ export class LeavesService {
         return updated;
     }
 
-    private assertPlainDate(input: string): PlainDate {
-        if (!new IsPlainDateValidConstraint().validate(input)) {
-            throw new TypeError('input is not a date');
-        }
-        return input;
-    }
-
-    private fromDtoToSchema(leave: LeaveDto, userId: string): typeof leaves.$inferInsert {
+    private fromDtoToSchema(leave: Leave, userId: string): typeof leaves.$inferInsert {
         return {
             zla: leave.zla,
             jobId: leave.jobId,
             kidId: leave.kidId,
-            from: this.assertPlainDate(leave.from),
-            to: this.assertPlainDate(leave.to),
-            daysTaken: leave.daysTaken.map(this.assertPlainDate),
+            from: leave.from,
+            to: leave.to,
+            daysTaken: leave.daysTaken,
             z15aNotes: leave.z15aNotes,
             notes: leave.notes,
             userId
         };
     }
 
-    private async validateData(leave: LeaveDto, user: string, id?: number) {
+    private async validateData(leave: Leave, user: string, id?: number) {
         const [job, kid] = await Promise.all([
-            this.databaseService.db.query.jobs.findFirst({
+            this.db.query.jobs.findFirst({
                 where: (t, u) => u.eq(t.id, leave.jobId),
                 with: { caretaker: true }
             }),
-            this.databaseService.db.query.kids.findFirst({
+            this.db.query.kids.findFirst({
                 where: (t, u) => u.eq(t.id, leave.kidId),
                 with: {
                     mother: true,
@@ -80,18 +68,18 @@ export class LeavesService {
         ]);
 
         if (job?.userId !== user || kid?.userId !== user) {
-            throw new ForbiddenException('Not your data');
+            throw new AppError(ErrorType.UNAUTHORIZED, 'Not your data');
         }
 
         if (![kid.motherId, kid.fatherId].includes(job.caretakerId)) {
-            throw new BadRequestException('Child is not employee\'s child');
+            throw new AppError(ErrorType.BAD_REQUEST, 'Child is not employee\'s child');
         }
 
         if (leave.from > leave.to) {
             [leave.from, leave.to] = [leave.to, leave.from];
         }
 
-        const caretakerLeaves = await this.databaseService.db
+        const caretakerLeaves = await this.db
             .select({
                 from: leaves.from,
                 to: leaves.to
@@ -106,7 +94,7 @@ export class LeavesService {
         if (caretakerLeaves.some(
             currentLeave => rangesCollide(currentLeave, leave, true)
         )) {
-            throw new Error('leaves for caretaker overlap');
+            throw new AppError(ErrorType.BAD_REQUEST, 'Leaves for caretaker overlap');
         }
     }
 }

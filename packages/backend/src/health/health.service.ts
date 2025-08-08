@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import packageJson from '../../package.json' with { type: 'json' };
+import { BaseRepo } from '../database/repo';
 
-import * as packageJson from '../../package.json';
 
+export class HealthService extends BaseRepo {
+    getDbStatus(): boolean {
+        return this.db.$client.open;
+    }
 
-@Injectable()
-export class HealthService {
     getVersion(): string {
         return packageJson.version;
     }

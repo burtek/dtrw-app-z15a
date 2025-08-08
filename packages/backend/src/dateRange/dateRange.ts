@@ -1,4 +1,4 @@
-import type { PlainDate } from '../validators/plainDate';
+import type { PlainDate } from '../schemas/plainDate';
 
 
 export interface DateRange<Required extends boolean = false> {

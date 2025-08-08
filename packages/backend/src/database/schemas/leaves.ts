@@ -1,6 +1,6 @@
 import { integer, sqliteTable as table, text } from 'drizzle-orm/sqlite-core';
 
-import type { PlainDate } from '../../validators/plainDate';
+import type { PlainDate } from '../../schemas/plainDate';
 
 import { jobs } from './jobs';
 import { kids } from './kids';

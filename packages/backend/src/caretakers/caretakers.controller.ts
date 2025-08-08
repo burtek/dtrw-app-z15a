@@ -1,35 +1,37 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe } from '@nestjs/common';
+import type { FastifyPluginCallback } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod/v4';
 
-import { AutheliaAuthInfo, AuthUser } from '../auth/auth-user.decorator';
-
-import { CaretakerDto } from './caretaker.dto';
+import { CaretakerSchema } from './caretaker.schema';
 import { CaretakersService } from './caretakers.service';
 
 
-@Controller('caretakers')
-export class CaretakersController {
-    constructor(private readonly caretakersService: CaretakersService) {
-    }
+export const caretakersController: FastifyPluginCallback = (instance, options, done) => {
+    const kidsService = new CaretakersService();
 
-    @Post()
-    async create(
-        @Body() caretaker: CaretakerDto,
-        @AuthUser() user: AutheliaAuthInfo
-    ) {
-        return await this.caretakersService.create(caretaker, user.username);
-    }
+    const f = instance.withTypeProvider<ZodTypeProvider>();
 
-    @Get()
-    async findAll(@AuthUser() user: AutheliaAuthInfo) {
-        return await this.caretakersService.findAll(user.username);
-    }
+    f.get(
+        '/',
+        async request => await kidsService.findAll(request.user.username)
+    );
 
-    @Post(':id')
-    async modify(
-        @Param('id', ParseIntPipe) id: number,
-        @Body() caretaker: CaretakerDto,
-        @AuthUser() user: AutheliaAuthInfo
-    ) {
-        return await this.caretakersService.update(id, caretaker, user.username);
-    }
-}
+    f.post(
+        '/',
+        { schema: { body: CaretakerSchema } },
+        async request => await kidsService.create(request.body, request.user.username)
+    );
+
+    f.post(
+        '/:id',
+        {
+            schema: {
+                body: CaretakerSchema,
+                params: z.object({ id: z.coerce.number().positive().refine(val => Number.isInteger(val)) })
+            }
+        },
+        async request => await kidsService.update(request.params.id, request.body, request.user.username)
+    );
+
+    done();
+};

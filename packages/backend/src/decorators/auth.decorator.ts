@@ -1,7 +1,4 @@
-/* eslint n/no-extraneous-import: ['error', { allowModules: ['express'] }] */
-import type { ExecutionContext } from '@nestjs/common';
-import { createParamDecorator } from '@nestjs/common';
-import type { Request as AppRequest } from 'express';
+import type { FastifyInstance } from 'fastify';
 
 
 export interface AutheliaAuthInfo {
@@ -9,18 +6,24 @@ export interface AutheliaAuthInfo {
     groups: string[];
 }
 
-export const AuthUser = createParamDecorator(
-    (_data: unknown, ctx: ExecutionContext): AutheliaAuthInfo => {
-        const request = ctx.switchToHttp().getRequest<AppRequest>();
+declare module 'fastify' {
+    interface FastifyRequest {
+        user: AutheliaAuthInfo;
+    }
+}
 
+export function decorateRequestUser(app: FastifyInstance) {
+    app.addHook('preHandler', (request, reply, done) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
         const username = request.headers['remote-user'] as string | undefined;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
         const groupsHeader = request.headers['remote-groups'] as string | undefined;
 
-        return {
+        request.user = {
             username: username ?? '',
             groups: groupsHeader?.split(',').map(g => g.trim()) ?? []
         };
-    }
-);
+
+        done();
+    });
+}

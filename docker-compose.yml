@@ -21,7 +21,7 @@ services:
     volumes:
       - ./backend:/app
       - /apps/data/z15a_db/:/db
-    command: yarn start:prod
+    command: node index.js
     env_file:
       - docker/backend/env
       - .env.backend
@@ -32,7 +32,7 @@ services:
       PORT: 4000
     expose:
       - 4000
-    restart: always
+    restart: on-failure:5
     healthcheck:
       test: ["CMD", "bash", "/app/scripts/healthcheck.sh"]
       interval: 30s

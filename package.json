@@ -14,13 +14,14 @@
     "@commitlint/config-conventional": "^19.8.1",
     "husky": "^9.1.7",
     "lerna": "^8.2.2",
-    "standard-version": "^9.5.0"
+    "standard-version": "^9.5.0",
+    "vitest": "^3.2.4"
   },
   "scripts": {
     "dev": "lerna run start:dev",
     "build": "lerna run build",
     "lint": "lerna run lint",
-    "test": "lerna run test",
+    "test": "vitest run",
     "prepare": "husky",
     "release": "standard-version"
   },
