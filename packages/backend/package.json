@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "1.12.1",
+  "version": "1.13.0",
   "description": "",
   "author": "",
   "private": true,
@@ -52,5 +52,7 @@
   "engines": {
     "node": ">=24.0.0"
   },
-  "externalDependencies": ["better-sqlite3"]
+  "externalDependencies": [
+    "better-sqlite3"
+  ]
 }
