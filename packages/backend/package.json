@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@pdf-lib/fontkit": "^1.1.1",
-    "better-sqlite3": "^12.2.0",
+    "better-sqlite3": "12.2.0",
     "dotenv": "^17.2.1",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.2",
@@ -51,6 +51,5 @@
   },
   "engines": {
     "node": ">=24.0.0"
-  },
-  "externalDependencies": ["better-sqlite3"]
+  }
 }

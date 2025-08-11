@@ -5,8 +5,6 @@ import { defineConfig } from 'rollup';
 import copy from 'rollup-plugin-copy';
 import typescript from 'rollup-plugin-typescript2';
 
-import packageJson from './package.json' with { type: 'json' };
-
 
 export default defineConfig({
     input: {
@@ -15,7 +13,7 @@ export default defineConfig({
     },
     output: {
         dir: 'dist',
-        format: 'esm',
+        format: 'cjs',
         sourcemap: true,
         entryFileNames: '[name].js',
         chunkFileNames: 'chunks/[name]-[hash].js',
@@ -23,7 +21,6 @@ export default defineConfig({
         preserveModules: true,
         preserveModulesRoot: '.'
     },
-    external: packageJson.externalDependencies,
     plugins: [
         resolve({
             extensions: ['.mjs', '.js', '.json', '.ts', '.node'],
@@ -43,8 +40,15 @@ export default defineConfig({
         copy({
             targets: [
                 { src: 'src/assets/*', dest: 'dist/src/assets' },
-                { src: 'scripts/*', dest: 'dist/scripts' },
-                { src: 'drizzle/*', dest: 'dist/drizzle' }
+                { src: 'drizzle/*', dest: 'dist/drizzle' },
+                {
+                    src: 'package.json',
+                    dest: 'dist',
+                    transform: contents => {
+                        const pkg = JSON.parse(contents.toString());
+                        return JSON.stringify({ ...pkg, type: 'commonjs' }, null, 2);
+                    }
+                }
             ]
         })
     ]

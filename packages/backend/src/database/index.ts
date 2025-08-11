@@ -15,7 +15,7 @@ let dbInstance: Database.Database | null = null;
 let drizzleDb: DB | null = null;
 
 export function getDb(): DB {
-    dbInstance ??= new Database(env.DB_FILE_NAME, { readonly: false });
+    dbInstance ??= new Database(env.DB_FILE_NAME, { readonly: false, nativeBinding: 'src/assets/better_sqlite3.node24-alpine.node' });
     drizzleDb ??= makeDb(dbInstance);
 
     return drizzleDb;

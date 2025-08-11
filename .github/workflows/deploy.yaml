@@ -33,9 +33,6 @@ jobs:
         run: |
           echo "COMMIT_SHA=${{ github.sha }}" >> docker/backend/env
           VITE_COMMIT=${{ github.sha }} yarn build
-          cd packages/backend/dist
-          jq --indent 2 '. as $in | { dependencies: ($in.externalDependencies // [] | map(select($in.dependencies[.] != null) | { (.) : $in.dependencies[.] }) | add // {} )}' ../package.json > package.json
-          yarn install --prod --no-lockfile
 
       - name: Put app in maintenance mode in kuma (NOT IMPLEMENTED)
         if: false

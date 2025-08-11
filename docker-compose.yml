@@ -15,7 +15,7 @@ services:
       start_interval: 5s
 
   backend:
-    image: node:24-slim
+    image: node:24-alpine
     container_name: z15a_backend
     working_dir: /app
     volumes:
@@ -34,7 +34,7 @@ services:
       - 4000
     restart: on-failure:5
     healthcheck:
-      test: ["CMD", "bash", "/app/scripts/healthcheck.sh"]
+      test: wget --no-verbose --tries=1 --spider http://localhost:4000/health || exit 1
       interval: 30s
       timeout: 5s
       retries: 2

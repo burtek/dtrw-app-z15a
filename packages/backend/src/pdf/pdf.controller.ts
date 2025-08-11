@@ -8,9 +8,11 @@ import { MailerService } from './mailer.service';
 import { PdfService } from './pdf.service';
 
 
-export const pdfController: FastifyPluginCallback = (instance, options, done) => {
+export const pdfController: FastifyPluginCallback = async (instance, options, done) => {
     const pdfService = new PdfService();
     const mailerService = new MailerService();
+
+    const $check = mailerService.checkTransporter();
 
     const f = instance.withTypeProvider<ZodTypeProvider>();
 
@@ -80,5 +82,15 @@ export const pdfController: FastifyPluginCallback = (instance, options, done) =>
         }
     );
 
-    done();
+    try {
+        await $check;
+        done();
+    } catch (error) {
+        done(
+            new Error(
+                'SMTP transport check failed',
+                { cause: error }
+            )
+        );
+    }
 };
