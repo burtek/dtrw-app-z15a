@@ -8,7 +8,7 @@ import { MailerService } from './mailer.service';
 import { PdfService } from './pdf.service';
 
 
-export const pdfController: FastifyPluginCallback = async (instance, options, done) => {
+export const pdfController: FastifyPluginCallback = async instance => {
     const pdfService = new PdfService();
     const mailerService = new MailerService();
 
@@ -82,15 +82,5 @@ export const pdfController: FastifyPluginCallback = async (instance, options, do
         }
     );
 
-    try {
-        await $check;
-        done();
-    } catch (error) {
-        done(
-            new Error(
-                'SMTP transport check failed',
-                { cause: error }
-            )
-        );
-    }
+    await $check;
 };

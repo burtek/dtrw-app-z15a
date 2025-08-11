@@ -1,4 +1,6 @@
 /* eslint-disable import-x/no-named-as-default */
+import { createRequire } from 'node:module';
+
 import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
@@ -15,7 +17,12 @@ let dbInstance: Database.Database | null = null;
 let drizzleDb: DB | null = null;
 
 export function getDb(): DB {
-    dbInstance ??= new Database(env.DB_FILE_NAME, { readonly: false, nativeBinding: 'src/assets/better_sqlite3.node24-alpine.node' });
+    const options: Database.Options = { readonly: false };
+    if (env.USE_BS3_BIN) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        options.nativeBinding = createRequire(import.meta.url)('../assets/better_sqlite3.node24-alpine.node');
+    }
+    dbInstance ??= new Database(env.DB_FILE_NAME, options);
     drizzleDb ??= makeDb(dbInstance);
 
     return drizzleDb;

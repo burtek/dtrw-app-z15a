@@ -12,7 +12,8 @@ const envSchema = z.object({
     DB_MIGRATIONS_FOLDER: z.string().nonempty(),
     EMAIL_SMTP_USER: z.email().nonempty(),
     EMAIL_SMTP_PASS: z.string().nonempty(),
-    EMAIL_FROM: z.string().nonempty()
+    EMAIL_FROM: z.string().nonempty(),
+    USE_BS3_BIN: z.coerce.boolean().optional()
 });
 /* eslint-enable @typescript-eslint/naming-convention */
 
