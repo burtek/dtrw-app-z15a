@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.13.3](https://github.com/burtek/dtrw-app-z15a/compare/v1.13.2...v1.13.3) (2025-08-12)
+
+
+### Bug Fixes
+
+* **backend:** log to file ([045b41f](https://github.com/burtek/dtrw-app-z15a/commit/045b41f47226c7a35f53e5bae3266106926cea32))
+
 ### [1.13.2](https://github.com/burtek/dtrw-app-z15a/compare/v1.13.1...v1.13.2) (2025-08-12)
 
 
