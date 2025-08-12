@@ -1,9 +1,11 @@
+import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
 import { defineConfig } from 'rollup';
 import copy from 'rollup-plugin-copy';
-import typescript from 'rollup-plugin-typescript2';
+import sourcemaps from 'rollup-plugin-sourcemaps2';
+import typescript2 from 'rollup-plugin-typescript2';
 
 
 export default defineConfig({
@@ -22,6 +24,13 @@ export default defineConfig({
         preserveModulesRoot: '.'
     },
     plugins: [
+        alias({
+            entries: [
+                // pdf-lib esm version get transpilled to cjs with breaking circular dependency tree
+                { find: 'pdf-lib', replacement: 'pdf-lib/cjs' }
+            ]
+        }),
+        sourcemaps(),
         resolve({
             extensions: ['.mjs', '.js', '.json', '.ts', '.node'],
             moduleDirectories: ['node_modules'],
@@ -33,7 +42,7 @@ export default defineConfig({
             requireReturnsDefault: 'auto'
         }),
         json(),
-        typescript({
+        typescript2({
             tsconfig: './tsconfig.build.json',
             clean: true
         }),

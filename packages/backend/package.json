@@ -22,7 +22,6 @@
     "@pdf-lib/fontkit": "^1.1.1",
     "better-sqlite3": "12.2.0",
     "dotenv": "^17.2.1",
-    "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.2",
     "drizzle-zod": "^0.8.3",
     "fastify": "^5.4.0",
@@ -34,6 +33,7 @@
   },
   "devDependencies": {
     "@dtrw/eslint-config": "~5.9.4",
+    "@rollup/plugin-alias": "^5.1.1",
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
@@ -41,10 +41,12 @@
     "@types/node": "^24.0.0",
     "@types/nodemailer": "^6.4.17",
     "@types/validator": "^13.15.2",
+    "drizzle-kit": "^0.31.4",
     "eslint": "^9.26.0",
     "nodemon": "^3.1.10",
     "rollup": "^4.46.2",
     "rollup-plugin-copy": "^3.5.0",
+    "rollup-plugin-sourcemaps2": "^0.5.3",
     "rollup-plugin-typescript2": "^0.36.0",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"
