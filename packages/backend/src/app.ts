@@ -3,6 +3,7 @@ import { fastify } from 'fastify';
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
 
 import { caretakersController } from './caretakers/caretakers.controller';
+import { env } from './config';
 import { getDb } from './database/index';
 import { decorateRequestUser } from './decorators/auth.decorator';
 import { decorateErrorHandler } from './decorators/error.decorator';
@@ -13,7 +14,22 @@ import { leavesController } from './leaves/leaves.controller';
 import { pdfController } from './pdf/pdf.controller';
 
 
+const loggerConfig: FastifyServerOptions['logger'] = {
+    test: false,
+    development: {
+        transport: {
+            target: 'pino-pretty',
+            options: {
+                translateTime: 'HH:MM:ss Z',
+                ignore: 'pid,hostname'
+            }
+        }
+    },
+    production: env.LOGS_FILE ? { file: env.LOGS_FILE } : true
+}[env.NODE_ENV];
+
 export function createApp(opts: FastifyServerOptions = {}) {
+    opts.logger ??= loggerConfig;
     const app = fastify(opts);
 
     decorateErrorHandler(app);
