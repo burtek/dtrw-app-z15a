@@ -3,7 +3,7 @@ import { env } from './config';
 import { runMigrations } from './database/index';
 
 
-const { app, shutdown } = createApp();
+const { app, shutdown } = createApp({ logger: true });
 
 runMigrations(app.log);
 

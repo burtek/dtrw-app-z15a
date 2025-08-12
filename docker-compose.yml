@@ -21,7 +21,6 @@ services:
     volumes:
       - ./backend:/app
       - /apps/data/z15a_db/:/db
-      - /apps/data/z15a_logs/:/logs
     command: node --enable-source-maps index.js
     env_file:
       - docker/backend/env
@@ -31,7 +30,6 @@ services:
       DB_FILE_NAME: '/db/db.db'
       DB_MIGRATIONS_FOLDER: '/app/drizzle'
       PORT: 4000
-      LOGS_FILE: /logs/fastify.{{date}}.log
     expose:
       - 4000
     restart: on-failure:5

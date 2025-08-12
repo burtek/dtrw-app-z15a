@@ -11,6 +11,7 @@ export const healthController: FastifyPluginCallback = (instance, options, done)
 
     f.get(
         '/',
+        { logLevel: 'silent' },
         () => ({
             status: healthService.getDbStatus() ? 'ok' : 'nieok',
             errors: [healthService.getDbStatus() ? null : 'Database closed'].filter(x => x !== null),
