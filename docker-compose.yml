@@ -31,7 +31,7 @@ services:
       DB_FILE_NAME: '/db/db.db'
       DB_MIGRATIONS_FOLDER: '/app/drizzle'
       PORT: 4000
-      LOGS_FILE: /logs/fastify.log
+      LOGS_FILE: /logs/fastify.{{date}}.log
     expose:
       - 4000
     restart: on-failure:5

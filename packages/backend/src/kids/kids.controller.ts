@@ -7,7 +7,7 @@ import { KidsService } from './kids.service';
 
 
 export const kidsController: FastifyPluginCallback = (instance, options, done) => {
-    const kidsService = new KidsService();
+    const kidsService = new KidsService(instance);
 
     const f = instance.withTypeProvider<ZodTypeProvider>();
 

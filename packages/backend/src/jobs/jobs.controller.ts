@@ -7,7 +7,7 @@ import { JobsService } from './jobs.service';
 
 
 export const jobsController: FastifyPluginCallback = (instance, options, done) => {
-    const jobsService = new JobsService();
+    const jobsService = new JobsService(instance);
 
     const f = instance.withTypeProvider<ZodTypeProvider>();
 

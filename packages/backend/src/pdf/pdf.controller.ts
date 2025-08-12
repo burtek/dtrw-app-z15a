@@ -9,7 +9,7 @@ import { PdfService } from './pdf.service';
 
 
 export const pdfController: FastifyPluginCallback = async instance => {
-    const pdfService = new PdfService();
+    const pdfService = new PdfService(instance);
     const mailerService = new MailerService();
 
     const $check = mailerService.checkTransporter();
@@ -75,8 +75,7 @@ export const pdfController: FastifyPluginCallback = async instance => {
                 ]
             });
 
-            // eslint-disable-next-line security-node/detect-crlf
-            console.log(emailResult);
+            instance.log.info(emailResult);
 
             return { status: 'ok', emailResult };
         }

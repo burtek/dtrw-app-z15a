@@ -25,7 +25,9 @@ const loggerConfig: FastifyServerOptions['logger'] = {
             }
         }
     },
-    production: env.LOGS_FILE ? { file: env.LOGS_FILE } : true
+    production: env.LOGS_FILE
+        ? { file: env.LOGS_FILE.replace('{{date}}', new Date().toISOString().substring(0, 19)) }
+        : true
 }[env.NODE_ENV];
 
 export function createApp(opts: FastifyServerOptions = {}) {
@@ -47,23 +49,23 @@ export function createApp(opts: FastifyServerOptions = {}) {
     app.register(jobsController, { prefix: '/jobs' });
     app.register(caretakersController, { prefix: '/caretakers' });
 
-    app.addHook('onClose', () => {
-        console.log('Closing database...');
-        getDb().$client.close();
-        console.log('Database closed');
+    app.addHook('onClose', instance => {
+        instance.log.info('Closing database...');
+        getDb(instance.log).$client.close();
+        instance.log.info('Database closed');
     });
 
     return {
         app,
         async shutdown(signal: string) {
-            console.log(`Received ${signal}, shutting down gracefully...`);
+            app.log.info(`Received ${signal}, shutting down gracefully...`);
             try {
                 await app.close();
-                console.log('Fastify closed. Bye!');
+                app.log.info('Fastify closed. Bye!');
                 // eslint-disable-next-line n/no-process-exit
                 process.exit(0);
             } catch (err) {
-                console.error('Error during shutdown', err);
+                app.log.error(err, 'Error during shutdown');
                 throw err;
             }
         }

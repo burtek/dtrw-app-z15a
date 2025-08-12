@@ -4,6 +4,7 @@ import { createRequire } from 'node:module';
 import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
+import type { FastifyBaseLogger } from 'fastify';
 
 import { env } from '../config';
 
@@ -18,7 +19,7 @@ export type DB = ReturnType<typeof makeDb>;
 let dbInstance: Database.Database | null = null;
 let drizzleDb: DB | null = null;
 
-export function getDb(): DB {
+export function getDb(log: FastifyBaseLogger): DB {
     if (drizzleDb) {
         return drizzleDb;
     }
@@ -37,7 +38,7 @@ export function getDb(): DB {
         if (env.NODE_ENV === 'production') {
             throw error;
         }
-        console.error(error);
+        log.error(error);
     }
 
     dbInstance = new Database(env.DB_FILE_NAME, options);
@@ -46,12 +47,12 @@ export function getDb(): DB {
     return drizzleDb;
 }
 
-export function runMigrations() {
-    const db = getDb();
+export function runMigrations(log: FastifyBaseLogger) {
+    const db = getDb(log);
 
-    console.log('Database open, migrating...');
+    log.info('Database open, migrating...');
     migrate(db, { migrationsFolder: env.DB_MIGRATIONS_FOLDER });
-    console.log('Database migrated');
+    log.info('Database migrated');
 }
 
 export function closeDb() {

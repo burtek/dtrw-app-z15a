@@ -7,7 +7,7 @@ import { LeavesService } from './leaves.service';
 
 
 export const leavesController: FastifyPluginCallback = (instance, options, done) => {
-    const leavesService = new LeavesService();
+    const leavesService = new LeavesService(instance);
 
     const f = instance.withTypeProvider<ZodTypeProvider>();
 

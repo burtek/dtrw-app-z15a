@@ -7,7 +7,7 @@ import { CaretakersService } from './caretakers.service';
 
 
 export const caretakersController: FastifyPluginCallback = (instance, options, done) => {
-    const kidsService = new CaretakersService();
+    const kidsService = new CaretakersService(instance);
 
     const f = instance.withTypeProvider<ZodTypeProvider>();
 
