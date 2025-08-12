@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.13.4](https://github.com/burtek/dtrw-app-z15a/compare/v1.13.3...v1.13.4) (2025-08-12)
+
+
+### Bug Fixes
+
+* **backend:** docker healthcheck ([865de62](https://github.com/burtek/dtrw-app-z15a/commit/865de62c4812b7a0b3d38e64b0952df389b0d495))
+
 ### [1.13.3](https://github.com/burtek/dtrw-app-z15a/compare/v1.13.2...v1.13.3) (2025-08-12)
 
 
