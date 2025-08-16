@@ -44,7 +44,7 @@ const Component: FC<Props> = ({ open, onClose }) => {
                     as="p"
                     mb="2"
                 >
-                    Aplikacja znajduje się w fazie BETA, proszę o weryfikację wypełnienia formualarzy i zgłaszanie błędów.
+                    Aplikacja znajduje się w fazie BETA, proszę o weryfikację wypełnienia formularzy i zgłaszanie błędów.
                 </Text>
 
                 <Flex

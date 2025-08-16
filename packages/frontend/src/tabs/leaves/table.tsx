@@ -39,7 +39,7 @@ const calculateData = (leave: WithId<Leave>, jobs: WithId<Job>[], kids: WithId<K
         job,
         caretaker: `${caretaker?.name} ${caretaker?.surname}`,
         downloadName,
-        leaveDates: `${leaveDates} (${leave.daysTaken.length} dni)`
+        leaveDates: `${leaveDates} (${leave.daysTaken.length} ${leave.daysTaken.length === 1 ? 'dzień' : 'dni'})`
     };
 };
 
