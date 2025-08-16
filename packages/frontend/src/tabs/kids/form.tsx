@@ -1,7 +1,7 @@
-import { Box, Button, Dialog, Flex, Select } from '@radix-ui/themes';
+import { Box, Button, Dialog, Flex, Select, Text } from '@radix-ui/themes';
 import { memo, useCallback, useMemo } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 
 import { CheckboxField } from '../../components/form/fields/checkboxField';
 import { SelectField } from '../../components/form/fields/selectField';
@@ -10,6 +10,7 @@ import { withErrorBoundary } from '../../components/withErrorBoundary';
 import { useGetCaretakersState } from '../../redux/apis/caretakers';
 import { useGetKidsState, useSaveKidMutation } from '../../redux/apis/kids';
 import type { Caretaker, Kid, WithId } from '../../types';
+import { getSex } from '../../utils/sex';
 
 
 const Component = ({ close, id }: { close: () => void; id: number | null }) => {
@@ -49,9 +50,13 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
             key={caretaker.id}
             value={caretaker.id.toString()}
         >
-            {caretaker.name} {caretaker.surname}
+            {caretaker.name}
+            {' '}
+            {caretaker.surname}
         </Select.Item>
     ), []);
+
+    const pesel = useWatch({ control, name: 'pesel' }) ?? '';
 
     return (
         <Dialog.Root
@@ -93,6 +98,8 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             name="pesel"
                             rules={{ required: true, minLength: 11, maxLength: 11 }}
                         />
+
+                        <Text size="2">{`Płeć: ${getSex(pesel, 'kid')}`}</Text>
 
                         <CheckboxField
                             label="Niepełnosprawność"

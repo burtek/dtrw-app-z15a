@@ -102,6 +102,10 @@ const Component = () => {
                 <Table.Cell>{caretaker}</Table.Cell>
                 <Table.Cell>{leave.zla}</Table.Cell>
                 <Table.Cell>{leaveDates}</Table.Cell>
+                <Table.Cell>
+                    {leave.z15aNotes ? `Uwagi Z-15A: ${leave.z15aNotes}` : null}
+                    {leave.notes ? `Uwagi: ${leave.notes}` : null}
+                </Table.Cell>
                 <Table.Cell>{actions(leave, downloadName)}</Table.Cell>
             </Table.Row>
         );
@@ -122,8 +126,10 @@ const Component = () => {
                 }}
                 details={{
                     ...leave.zla ? { ZLA: leave.zla } : {},
-                    Płatnik: job?.company ?? 'nie znaleziono'
-                }}
+                    Płatnik: job?.company ?? 'nie znaleziono',
+                    ...leave.z15aNotes ? { 'Uwagi Z-15A': leave.z15aNotes } : {},
+                    ...leave.notes ? { Uwagi: leave.notes } : {},
+                }} 
                 actions={actions(leave, downloadName)}
             />
             /* eslint-enable @typescript-eslint/naming-convention */
@@ -135,7 +141,7 @@ const Component = () => {
             <DataView
                 isLoading={isLoading}
                 error={error}
-                headers={useMemo(() => ['ID', 'Dziecko', 'Opiekun', 'ZLA', 'Okres', ''], [])}
+                headers={useMemo(() => ['ID', 'Dziecko', 'Opiekun', 'ZLA', 'Okres', 'Uwagi', ''], [])}
                 data={leaves}
                 renderTableRow={renderTableRow}
                 renderCard={renderCard}

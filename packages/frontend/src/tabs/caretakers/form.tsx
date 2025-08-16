@@ -1,12 +1,13 @@
-import { Box, Button, Dialog, Flex, Separator } from '@radix-ui/themes';
+import { Box, Button, Dialog, Flex, Separator, Text } from '@radix-ui/themes';
 import { memo, useCallback, useMemo } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 
 import { TextField } from '../../components/form/fields/textField';
 import { withErrorBoundary } from '../../components/withErrorBoundary';
 import { useGetCaretakersState, useSaveCaretakerMutation } from '../../redux/apis/caretakers';
 import type { Caretaker } from '../../types';
+import { getSex } from '../../utils/sex';
 
 
 const Component = ({ close, id }: { close: () => void; id: number | null }) => {
@@ -39,6 +40,8 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
             close();
         }
     }, [close]);
+
+    const pesel = useWatch({ control, name: 'pesel' }) ?? '';
 
     return (
         <Dialog.Root
@@ -80,6 +83,8 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             name="pesel"
                             rules={{ required: true, minLength: 11, maxLength: 11 }}
                         />
+
+                        <Text size="2">{`Płeć: ${getSex(pesel, 'label')}`}</Text>
 
                         <TextField
                             label="Numer rachunku bankowego (nieobowiązkowy)"

@@ -10,6 +10,7 @@ import { useGetKidsState } from '../../redux/apis/kids';
 import type { Caretaker, Kid, WithId } from '../../types';
 
 import { KidFormDialog } from './form';
+import { getSex } from '../../utils/sex';
 
 
 const calculateData = (kid: WithId<Kid>, caretakers: WithId<Caretaker>[]) => {
@@ -61,6 +62,7 @@ const Component = () => {
             <Table.Row key={kid.id}>
                 <Table.RowHeaderCell>{kid.id}</Table.RowHeaderCell>
                 <Table.Cell>{kidName}</Table.Cell>
+                <Table.Cell>{getSex(kid.pesel, 'kid')}</Table.Cell>
                 <Table.Cell>{kid.pesel}</Table.Cell>
                 <Table.Cell>{mother}</Table.Cell>
                 <Table.Cell>{father}</Table.Cell>
@@ -80,6 +82,7 @@ const Component = () => {
                 summary={kidName}
                 secondary={{ PESEL: kid.pesel }}
                 details={{
+                    Płeć: getSex(kid.pesel, 'kid'),
                     Matka: mother,
                     Ojciec: father
                 }}
@@ -94,7 +97,7 @@ const Component = () => {
             <DataView
                 isLoading={isLoading}
                 error={error}
-                headers={useMemo(() => ['ID', 'Imię i nazwisko', 'PESEL', 'Matka', 'Ojciec', ''], [])}
+                headers={useMemo(() => ['ID', 'Imię i nazwisko', 'Płeć', 'PESEL', 'Matka', 'Ojciec', ''], [])}
                 data={kids}
                 renderTableRow={renderTableRow}
                 renderCard={renderCard}
