@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.14.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.13.5...v1.14.0) (2025-08-16)
+
+
+### Features
+
+* **ui:** calculate sex from pesel ([7c61a89](https://github.com/burtek/dtrw-app-z15a/commit/7c61a894251db85446d0a4f9c51d76926da54ff0))
+
 ### [1.13.5](https://github.com/burtek/dtrw-app-z15a/compare/v1.13.4...v1.13.5) (2025-08-12)
 
 
