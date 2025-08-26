@@ -35,7 +35,7 @@ export const jobsApi = createApi({
             }
         }),
         saveJob: builder.mutation<WithId<Job>, MaybeWithId<Job>>({
-            query: ({ id, ...body }) => ({
+            query: ({ id, userId, ...body }) => ({
                 url: typeof id === 'number'
                     ? `jobs/${id}`
                     : 'jobs',

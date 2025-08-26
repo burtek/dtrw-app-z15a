@@ -43,4 +43,4 @@ export interface Leave {
 }
 
 export type WithId<T> = T & { id: number };
-export type MaybeWithId<T> = T & { id?: number | null };
+export type MaybeWithId<T> = T & { id?: number | null; userId?: number | null };

@@ -35,7 +35,7 @@ export const leavesApi = createApi({
             }
         }),
         saveLeave: builder.mutation<WithId<Leave>, MaybeWithId<Leave>>({
-            query: ({ id, ...body }) => ({
+            query: ({ id, userId, ...body }) => ({
                 url: typeof id === 'number'
                     ? `leaves/${id}`
                     : 'leaves',

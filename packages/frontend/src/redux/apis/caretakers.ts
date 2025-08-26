@@ -35,7 +35,7 @@ export const caretakersApi = createApi({
             }
         }),
         saveCaretaker: builder.mutation<WithId<Caretaker>, MaybeWithId<Caretaker>>({
-            query: ({ id, ...body }) => ({
+            query: ({ id, userId, ...body }) => ({
                 url: typeof id === 'number'
                     ? `caretakers/${id}`
                     : 'caretakers',

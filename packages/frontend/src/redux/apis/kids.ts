@@ -35,7 +35,7 @@ export const kidsApi = createApi({
             }
         }),
         saveKid: builder.mutation<WithId<Kid>, MaybeWithId<Kid>>({
-            query: ({ id, ...body }) => ({
+            query: ({ id, userId, ...body }) => ({
                 url: typeof id === 'number'
                     ? `kids/${id}`
                     : 'kids',
