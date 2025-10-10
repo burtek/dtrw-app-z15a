@@ -1,6 +1,7 @@
 import { Button, Link, Table } from '@radix-ui/themes';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { Fragment, memo, useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
+import { CaretDownIcon, CaretSortIcon, CaretUpIcon } from '@radix-ui/react-icons';
 
 import { CallbackButton } from '../../components/callback-button';
 import { DataView } from '../../components/data-view';
@@ -136,17 +137,66 @@ const Component = () => {
         );
     }, [caretakers, jobs, kids, actions]);
 
+    const [sort, setSort] = useState<{ column: string, dir: 'asc' | 'desc' }>({ column: 'ID', dir: 'asc' });
+
+    const sortedLeaves = useMemo(() => {
+        function sortFn(a: WithId<Leave>, b: WithId<Leave>) {
+            const dataA = calculateData(a, jobs, kids, caretakers);
+            const dataB = calculateData(b, jobs, kids, caretakers);
+            switch (sort.column) {
+                case 'Dziecko':
+                    return dataA.kid.localeCompare(dataB.kid);
+                case 'Opiekun':
+                    return dataA.caretaker.localeCompare(dataB.caretaker);
+                case 'ZLA':
+                    return (a.zla ?? '').localeCompare((b.zla ?? ''));
+                case 'Okres':
+                    return a.from.localeCompare(b.from);
+                case 'Uwagi':
+                    return (a.notes || a.z15aNotes || '').localeCompare(b.notes || b.z15aNotes || '');
+                case 'ID':
+                default:
+                    return a.id - b.id;
+            }
+        }
+
+        return [...leaves].sort((a, b) => sort.dir === 'asc' ? sortFn(a, b) : sortFn(b, a))
+    }, [sort, jobs, kids, caretakers]);
+
     return (
         <>
             <DataView
                 isLoading={isLoading}
                 error={error}
                 headers={useMemo(() => ['ID', 'Dziecko', 'Opiekun', 'ZLA', 'Okres', 'Uwagi', ''], [])}
-                data={leaves}
+                data={sortedLeaves}
                 renderTableRow={renderTableRow}
                 renderCard={renderCard}
                 onNewClick={openNewDialog}
                 newLabel="Dodaj nowe zwolnienie"
+                renderHeaderTools={header => {
+                    let icon = <CaretSortIcon />;
+                    let newSort: typeof sort = { column: header, dir: 'asc' };
+                    if (sort?.column === header) {
+                        switch (sort.dir) {
+                            case 'asc':
+                                icon = <CaretUpIcon />;
+                                newSort.dir = 'desc';
+                                break;
+                            case 'desc':
+                                icon = <CaretDownIcon />;
+                                newSort = { column: 'ID', dir: 'asc' };
+                                break;
+                        }
+                    }
+                    
+                    return (
+                        <Fragment>
+                            <div style={{ flex: 1 }} />
+                            <Button onClick={() => setSort(newSort)} size="1" variant="ghost" asChild>{icon}</Button>
+                        </Fragment>
+                    )
+                }}
             />
             {dialogId !== false && (
                 <LeaveFormDialog

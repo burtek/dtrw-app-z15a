@@ -7,7 +7,16 @@ import { memo } from 'react';
 import { DataViewPlaceholder } from './placeholder';
 
 
-const Component = <T extends { id: string | number }>({ isLoading, error, data, renderTableRow, headers, onNewClick, newLabel }: Props<T>) => {
+const Component = <T extends { id: string | number }>({
+    isLoading,
+    error,
+    data,
+    renderTableRow,
+    headers,
+    onNewClick,
+    newLabel,
+    renderHeaderTools
+}: Props<T>) => {
     const renderBody = () => {
         if (isLoading || error) {
             return (
@@ -25,9 +34,15 @@ const Component = <T extends { id: string | number }>({ isLoading, error, data, 
         <Table.Root>
             <Table.Header>
                 <Table.Row>
-                    {headers.map((header, index) =>
-                    // eslint-disable-next-line react/no-array-index-key
-                        <Table.ColumnHeaderCell key={index}>{header}</Table.ColumnHeaderCell>)}
+                    {headers.map((header, index) => (
+                        // eslint-disable-next-line react/no-array-index-key
+                        <Table.ColumnHeaderCell key={index}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                {header}
+                                {renderHeaderTools?.(header, index)}
+                            </div>
+                        </Table.ColumnHeaderCell>
+                    ))}
                 </Table.Row>
             </Table.Header>
 
@@ -70,4 +85,6 @@ export interface Props<T extends { id: string | number }> {
 
     onNewClick: () => void;
     newLabel: string;
+
+    renderHeaderTools?: (header: string, index: number) => React.ReactNode;
 }
