@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.14.2...v1.15.0) (2025-10-10)
+
+
+### Features
+
+* **ui:** sort leaves table ([282d401](https://github.com/burtek/dtrw-app-z15a/commit/282d40126f2b96c91e48cd8a1cecacbf3a18bec1))
+
 ### [1.14.2](https://github.com/burtek/dtrw-app-z15a/compare/v1.14.1...v1.14.2) (2025-08-26)
 
 
