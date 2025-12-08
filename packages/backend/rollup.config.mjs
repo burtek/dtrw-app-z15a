@@ -10,7 +10,6 @@ import typescript2 from 'rollup-plugin-typescript2';
 
 
 export default defineConfig({
-    external: ['better-sqlite3'],
     input: {
         index: 'index.ts',
         'drizzle.config': 'drizzle.config.ts'
@@ -25,6 +24,7 @@ export default defineConfig({
         preserveModules: true,
         preserveModulesRoot: '.'
     },
+    // external: ['better-sqlite3'],
     plugins: [
         cleandir('dist'),
         alias({
@@ -41,8 +41,8 @@ export default defineConfig({
             preferBuiltins: true
         }),
         commonjs({
-            include: /node_modules/
-            // requireReturnsDefault: 'auto'
+            include: /node_modules/,
+            requireReturnsDefault: 'auto'
         }),
         json(),
         typescript2({
@@ -63,7 +63,7 @@ export default defineConfig({
                 },
                 {
                     src: import.meta.resolve('better-sqlite3')
-                        .replace('/lib/index.js', '/*')
+                        .replace('/lib/index.js', '/build')
                         .replace('file://', ''),
                     dest: 'dist/node_modules/better-sqlite3'
                 }
