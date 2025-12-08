@@ -41,8 +41,8 @@ export default defineConfig({
             preferBuiltins: true
         }),
         commonjs({
-            include: /node_modules/,
-            requireReturnsDefault: 'auto'
+            include: /node_modules/
+            // requireReturnsDefault: 'auto'
         }),
         json(),
         typescript2({
