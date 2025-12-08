@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.3](https://github.com/burtek/dtrw-app-z15a/compare/v1.16.2...v1.16.3) (2025-12-08)
+
+
+### Bug Fixes
+
+* **backend:** fix scp/ssh steps ([0537413](https://github.com/burtek/dtrw-app-z15a/commit/0537413214894c022aa227a7e2fe6044f766cf1e))
+
 ### [1.16.2](https://github.com/burtek/dtrw-app-z15a/compare/v1.16.1...v1.16.2) (2025-12-08)
 
 
