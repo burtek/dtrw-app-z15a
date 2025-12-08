@@ -12,6 +12,8 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    container:
+      image: node:24-alpine
 
     steps:
       - name: Checkout code

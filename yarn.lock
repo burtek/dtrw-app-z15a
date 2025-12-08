@@ -1183,6 +1183,11 @@
     yargs "17.7.2"
     yargs-parser "21.1.1"
 
+"@mstssk/cleandir@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@mstssk/cleandir/-/cleandir-2.0.0.tgz#cc7be4f1ebca8858c070547b6e80181ae7cea7e6"
+  integrity sha512-CidYeaV4VQLIMbZlYqs0SJaZe/DyI0E4nsbFmPtCa2koKzMjZj/BThTCb+bvzcGhzp2A4Js1c4jDg6lqaqapyQ==
+
 "@mswjs/interceptors@^0.39.1":
   version "0.39.5"
   resolved "https://registry.yarnpkg.com/@mswjs/interceptors/-/interceptors-0.39.5.tgz#6f0571493bf76291a60b62234ed0add2c4bd970e"
@@ -8687,6 +8692,13 @@ rimraf@^4.4.1:
   integrity sha512-Gk8NlF062+T9CqNGn6h4tls3k6T1+/nXdOcSZVikNVtlRdYpA7wRJJMoXmuvOnLW844rPjdQ7JgXCYM6PPC/og==
   dependencies:
     glob "^9.2.0"
+
+rollup-plugin-cleandir@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-cleandir/-/rollup-plugin-cleandir-3.0.0.tgz#e3198287cfaefa2d4bde6b615db87a43461db9f7"
+  integrity sha512-+1AlxObWpWechyLVcnpjbxBiYlQg7bXF7vw5fu6P9B0B8R4meQliG7aGCnK8MvtdXzKsjeI0lJc43d0UcQj1fg==
+  dependencies:
+    "@mstssk/cleandir" "^2.0.0"
 
 rollup-plugin-copy@^3.5.0:
   version "3.5.0"

@@ -45,6 +45,7 @@
     "eslint": "^9.26.0",
     "nodemon": "^3.1.10",
     "rollup": "^4.46.2",
+    "rollup-plugin-cleandir": "^3.0.0",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-sourcemaps2": "^0.5.3",
     "rollup-plugin-typescript2": "^0.36.0",

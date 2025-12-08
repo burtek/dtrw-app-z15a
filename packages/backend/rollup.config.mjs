@@ -3,12 +3,14 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
 import { defineConfig } from 'rollup';
+import { cleandir } from 'rollup-plugin-cleandir';
 import copy from 'rollup-plugin-copy';
 import sourcemaps from 'rollup-plugin-sourcemaps2';
 import typescript2 from 'rollup-plugin-typescript2';
 
 
 export default defineConfig({
+    external: ['better-sqlite3'],
     input: {
         index: 'index.ts',
         'drizzle.config': 'drizzle.config.ts'
@@ -24,6 +26,7 @@ export default defineConfig({
         preserveModulesRoot: '.'
     },
     plugins: [
+        cleandir('dist'),
         alias({
             entries: [
                 // pdf-lib esm version get transpilled to cjs with breaking circular dependency tree
@@ -57,6 +60,12 @@ export default defineConfig({
                         const pkg = JSON.parse(contents.toString());
                         return JSON.stringify({ ...pkg, type: 'commonjs' }, null, 2);
                     }
+                },
+                {
+                    src: import.meta.resolve('better-sqlite3')
+                        .replace('/lib/index.js', '/*')
+                        .replace('file://', ''),
+                    dest: 'dist/node_modules/better-sqlite3'
                 }
             ]
         })
