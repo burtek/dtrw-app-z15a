@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.16.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.15.2...v1.16.0) (2025-12-08)
+
+
+### Features
+
+* **backend:** try removing workaround for native better-sqlite3 ([771aca4](https://github.com/burtek/dtrw-app-z15a/commit/771aca4d345697e2ab2a442e40da4ac3b5a7e625))
+
 ### [1.15.2](https://github.com/burtek/dtrw-app-z15a/compare/v1.15.1...v1.15.2) (2025-12-05)
 
 ### [1.15.1](https://github.com/burtek/dtrw-app-z15a/compare/v1.15.0...v1.15.1) (2025-12-05)
