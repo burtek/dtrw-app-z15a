@@ -49,6 +49,9 @@ jobs:
             echo "-- NOT IMPLEMENTED --"
             echo use secrets.KUMA_API_KEY, secrets.KUMA_CONTAINER and env.KUMA_APP (tag value)
 
+      - name: Add bash for next steps
+        run: apk add --no-cache bash
+
       - name: Deploy frontend
         uses: appleboy/scp-action@v1
         with:
