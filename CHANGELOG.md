@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.1](https://github.com/burtek/dtrw-app-z15a/compare/v1.16.0...v1.16.1) (2025-12-08)
+
+
+### Bug Fixes
+
+* **backend:** add bash to deploy workflow container ([630e7a0](https://github.com/burtek/dtrw-app-z15a/commit/630e7a02af79388ccd0ad850a9fafd6f32346cda))
+
 ## [1.16.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.15.2...v1.16.0) (2025-12-08)
 
 
