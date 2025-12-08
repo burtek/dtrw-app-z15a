@@ -42,7 +42,8 @@ export default defineConfig({
         }),
         commonjs({
             include: /node_modules/,
-            requireReturnsDefault: 'auto'
+            requireReturnsDefault: 'auto',
+            ignoreDynamicRequires: true
         }),
         json(),
         typescript2({
