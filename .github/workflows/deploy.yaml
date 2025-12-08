@@ -10,7 +10,7 @@ env:
   KUMA_APP: z15a
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     container:
       image: node:24-alpine
@@ -36,6 +36,24 @@ jobs:
           echo "COMMIT_SHA=${{ github.sha }}" >> docker/backend/env
           VITE_COMMIT=${{ github.sha }} yarn build
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            packages/frontend/dist
+            packages/backend/dist
+            docker
+            docker-compose.yml
+    
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+
       - name: Put app in maintenance mode in kuma (NOT IMPLEMENTED)
         if: false
         uses: appleboy/ssh-action@v1
@@ -48,9 +66,6 @@ jobs:
           script: |
             echo "-- NOT IMPLEMENTED --"
             echo use secrets.KUMA_API_KEY, secrets.KUMA_CONTAINER and env.KUMA_APP (tag value)
-
-      - name: Add bash for next steps
-        run: apk add --no-cache bash
 
       - name: Deploy frontend
         uses: appleboy/scp-action@v1
