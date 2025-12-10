@@ -1,3 +1,6 @@
+import { existsSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+
 import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
@@ -24,7 +27,7 @@ export default defineConfig({
         preserveModules: true,
         preserveModulesRoot: '.'
     },
-    external: ['better-sqlite3'],
+    external: [],
     plugins: [
         cleandir('dist'),
         alias({
@@ -62,19 +65,21 @@ export default defineConfig({
                         return JSON.stringify({ ...pkg, type: 'commonjs' }, null, 2);
                     }
                 },
-                {
-                    src: import.meta.resolve('better-sqlite3')
-                        .replace('/lib/index.js', '')
-                        .replace('file://', ''),
-                    dest: 'dist/node_modules/'
-                },
-                {
-                    src: import.meta.resolve('bindings')
-                        .replace('/bindings.js', '')
-                        .replace('file://', ''),
-                    dest: 'dist/node_modules/'
-                }
+                ...copyFilesForLibrary('better-sqlite3', ['build', 'package.json']),
+                ...copyFilesForLibrary('bindings', ['package.json'])
             ]
         })
     ]
 });
+
+function copyFilesForLibrary(library, files) {
+    let libraryPath = import.meta.resolve(library).replace('file://', '');
+    do {
+        libraryPath = dirname(libraryPath);
+    } while (!existsSync(join(libraryPath, 'package.json')));
+
+    return files.map(file => ({
+        src: join(libraryPath, file),
+        dest: join('dist', 'node_modules', file && library)
+    }));
+}
