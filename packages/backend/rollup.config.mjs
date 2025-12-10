@@ -67,6 +67,12 @@ export default defineConfig({
                         .replace('/lib/index.js', '')
                         .replace('file://', ''),
                     dest: 'dist/node_modules/'
+                },
+                {
+                    src: import.meta.resolve('bindings')
+                        .replace('/bindings.js', '')
+                        .replace('file://', ''),
+                    dest: 'dist/node_modules/'
                 }
             ]
         })
