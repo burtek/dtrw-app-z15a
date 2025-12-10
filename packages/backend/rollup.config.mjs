@@ -24,7 +24,7 @@ export default defineConfig({
         preserveModules: true,
         preserveModulesRoot: '.'
     },
-    // external: ['better-sqlite3'],
+    external: ['better-sqlite3'],
     plugins: [
         cleandir('dist'),
         alias({
@@ -64,9 +64,9 @@ export default defineConfig({
                 },
                 {
                     src: import.meta.resolve('better-sqlite3')
-                        .replace('/lib/index.js', '/build')
+                        .replace('/lib/index.js', '')
                         .replace('file://', ''),
-                    dest: 'dist/node_modules/better-sqlite3'
+                    dest: 'dist/node_modules/'
                 }
             ]
         })
