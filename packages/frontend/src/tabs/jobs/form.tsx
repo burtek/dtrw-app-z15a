@@ -32,7 +32,14 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
         if (response.data) {
             close();
         } else if ('status' in response.error) {
-            setError('company', { message: String(response.error.data) });
+            let message: string;
+            if (typeof response.error.data === 'object' && response.error.data !== null && 'message' in response.error.data && typeof response.error.data.message === 'string') {
+                // eslint-disable-next-line @typescript-eslint/prefer-destructuring
+                message = response.error.data.message;
+            } else {
+                message = JSON.stringify(response.error.data);
+            }
+            setError('company', { message });
         } else {
             setError('company', { message: String(response.error.message ?? response.error.name) });
         }
