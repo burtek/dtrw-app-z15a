@@ -1,5 +1,8 @@
 name: Deploy App to VPS
 
+permissions:
+  contents: read
+
 on:
   push:
     tags:
@@ -91,7 +94,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
-          script: docker stop z15a_backend || 'z15a_backend does not exist'
+          script: docker stop ${{ env.APP_NAME }}_backend || '${{ env.APP_NAME }}_backend does not exist'
 
       - name: Deploy backend
         uses: appleboy/scp-action@v1
@@ -117,7 +120,7 @@ jobs:
           source: "docker,docker-compose.yml"
           target: "/apps/${{ env.APP_NAME }}"
 
-      - name: Restart Docker containers and reload NPM
+      - name: Restart Docker containers
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -127,10 +130,10 @@ jobs:
           passphrase: ${{ secrets.VPS_SSH_PASSPHRASE }}
           script: |
             set -e
-            touch /apps/data/z15a_db/db.db
+            touch /apps/data/${{ env.APP_NAME }}_db/db.db
             cd /apps/${{ env.APP_NAME }}
-            docker compose up -d --build --wait
-            docker exec nginx-proxy-manager nginx -s reload
+            docker compose stop backend
+            docker compose up -d
 
       - name: Disable maintenance mode in kuma (NOT IMPLEMENTED)
         if: false
