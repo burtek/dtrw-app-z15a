@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.13](https://github.com/burtek/dtrw-app-z15a/compare/v1.16.12...v1.16.13) (2026-01-01)
+
+
+### Bug Fixes
+
+* showing error from serverside validation ([afb8b23](https://github.com/burtek/dtrw-app-z15a/commit/afb8b2381b1a3b902cc7c6da67755e0242e79cb2))
+* showing error from serverside validation ([a242856](https://github.com/burtek/dtrw-app-z15a/commit/a24285639956e66a2f2b824310fad2f4963d7d9a))
+
 ### [1.16.12](https://github.com/burtek/dtrw-app-z15a/compare/v1.16.11...v1.16.12) (2026-01-01)
 
 
