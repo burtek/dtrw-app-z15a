@@ -26,8 +26,8 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
     });
 
     const onSubmit: SubmitHandler<Partial<Job>> = async data => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
-        const response = await saveJob({ id, ...data as Job });
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion, @typescript-eslint/prefer-nullish-coalescing
+        const response = await saveJob({ id, ...data as Job, from: data.from || null, to: data.to || null });
 
         if (response.data) {
             close();
@@ -49,7 +49,9 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
             key={caretaker.id}
             value={caretaker.id.toString()}
         >
-            {caretaker.name} {caretaker.surname}
+            {caretaker.name}
+            {' '}
+            {caretaker.surname}
         </Select.Item>
     ), []);
 
