@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.16.12](https://github.com/burtek/dtrw-app-z15a/compare/v1.16.11...v1.16.12) (2026-01-01)
+
+
+### Bug Fixes
+
+* **deploy:** remove nginx-proxy-manager reference ([c21baa9](https://github.com/burtek/dtrw-app-z15a/commit/c21baa97f54d120070836e2f5319591aa3a9235c))
+
 ### [1.16.11](https://github.com/burtek/dtrw-app-z15a/compare/v1.16.10...v1.16.11) (2026-01-01)
 
 
