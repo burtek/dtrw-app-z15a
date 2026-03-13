@@ -26,7 +26,7 @@ class ErrorBoundary extends PureComponent<PropsWithChildren, { hasCaught: boolea
 }
 
 export const withErrorBoundary = <P,>(Component: ComponentType<P>): FC<P> => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
+    // eslint-disable-next-line @typescript-eslint/naming-convention, @eslint-react/component-hook-factories
     const WithErrorBoundary: FC<P> = props => (
         <ErrorBoundary>
             {/* @ts-expect-error-error WTF */}

@@ -1,17 +1,19 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 import '@testing-library/jest-dom/vitest';
 
 
 // Mock the ResizeObserver
-const ResizeObserverMock = vitest.fn((roCallback: ResizeObserverCallback) => {
-    const ro = ({
-        observe: vitest.fn(_target => {
-            roCallback([], ro);
-        }),
-        unobserve: vitest.fn(),
-        disconnect: vitest.fn()
-    } satisfies ResizeObserver);
+const ResizeObserverMock = vitest.fn(class ResizeObserverMockImpl {
+    constructor(private readonly callback: ResizeObserverCallback) {
+    }
 
-    return ro;
+    observe = vitest.fn(_target => {
+        this.callback([], this);
+    });
+
+    unobserve = vitest.fn();
+
+    disconnect = vitest.fn();
 });
 
 // Stub the global ResizeObserver

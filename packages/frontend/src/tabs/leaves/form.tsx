@@ -1,5 +1,5 @@
 import { Box, Button, Dialog, Flex, Select, Separator } from '@radix-ui/themes';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, useWatch } from 'react-hook-form';
 
@@ -27,15 +27,11 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
     const [saveLeave, { isLoading }] = useSaveLeaveMutation();
 
-    const { control, handleSubmit, setError } = useForm<Partial<FormLeave>>({
-        defaultValues: useMemo(
-            () => {
-                const leave = leaves.find(l => l.id === id);
-                return leave ? leaveTransformer.fromApi(leave) : { daysTaken: {} };
-            },
-            []
-        )
+    const [defaultValues] = useState(() => {
+        const leave = leaves.find(l => l.id === id);
+        return leave ? leaveTransformer.fromApi(leave) : { daysTaken: {} };
     });
+    const { control, handleSubmit, setError } = useForm<Partial<FormLeave>>({ defaultValues });
 
     const onSubmit: SubmitHandler<Partial<FormLeave>> = async data => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion

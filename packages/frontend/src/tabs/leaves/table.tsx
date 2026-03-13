@@ -1,7 +1,7 @@
-import { Button, Link, Table } from '@radix-ui/themes';
-import { Fragment, memo, useCallback, useMemo, useState } from 'react';
-import { toast } from 'react-toastify';
 import { CaretDownIcon, CaretSortIcon, CaretUpIcon } from '@radix-ui/react-icons';
+import { Button, Link, Table } from '@radix-ui/themes';
+import { memo, useCallback, useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import { CallbackButton } from '../../components/callback-button';
 import { DataView } from '../../components/data-view';
@@ -129,15 +129,15 @@ const Component = () => {
                     ...leave.zla ? { ZLA: leave.zla } : {},
                     Płatnik: job?.company ?? 'nie znaleziono',
                     ...leave.z15aNotes ? { 'Uwagi Z-15A': leave.z15aNotes } : {},
-                    ...leave.notes ? { Uwagi: leave.notes } : {},
-                }} 
+                    ...leave.notes ? { Uwagi: leave.notes } : {}
+                }}
                 actions={actions(leave, downloadName)}
             />
             /* eslint-enable @typescript-eslint/naming-convention */
         );
     }, [caretakers, jobs, kids, actions]);
 
-    const [sort, setSort] = useState<{ column: string, dir: 'asc' | 'desc' }>({ column: 'ID', dir: 'asc' });
+    const [sort, setSort] = useState<{ column: string; dir: 'asc' | 'desc' }>({ column: 'ID', dir: 'asc' });
 
     const sortedLeaves = useMemo(() => {
         function sortFn(a: WithId<Leave>, b: WithId<Leave>) {
@@ -149,7 +149,7 @@ const Component = () => {
                 case 'Opiekun':
                     return dataA.caretaker.localeCompare(dataB.caretaker);
                 case 'ZLA':
-                    return (a.zla ?? '').localeCompare((b.zla ?? ''));
+                    return (a.zla ?? '').localeCompare(b.zla ?? '');
                 case 'Okres':
                     return a.from.localeCompare(b.from);
                 case 'Uwagi':
@@ -160,8 +160,8 @@ const Component = () => {
             }
         }
 
-        return [...leaves].sort((a, b) => sort.dir === 'asc' ? sortFn(a, b) : sortFn(b, a))
-    }, [sort, jobs, kids, caretakers]);
+        return [...leaves].sort((a, b) => (sort.dir === 'asc' ? sortFn(a, b) : sortFn(b, a)));
+    }, [leaves, jobs, kids, caretakers, sort.column, sort.dir]);
 
     return (
         <>
@@ -177,7 +177,7 @@ const Component = () => {
                 renderHeaderTools={header => {
                     let icon = <CaretSortIcon />;
                     let newSort: typeof sort = { column: header, dir: 'asc' };
-                    if (sort?.column === header) {
+                    if (sort.column === header) {
                         switch (sort.dir) {
                             case 'asc':
                                 icon = <CaretUpIcon />;
@@ -189,13 +189,22 @@ const Component = () => {
                                 break;
                         }
                     }
-                    
+
                     return (
-                        <Fragment>
+                        <>
                             <div style={{ flex: 1 }} />
-                            <Button onClick={() => setSort(newSort)} size="1" variant="ghost" asChild>{icon}</Button>
-                        </Fragment>
-                    )
+                            <Button
+                                onClick={() => {
+                                    setSort(newSort);
+                                }}
+                                size="1"
+                                variant="ghost"
+                                asChild
+                            >
+                                {icon}
+                            </Button>
+                        </>
+                    );
                 }}
             />
             {dialogId !== false && (

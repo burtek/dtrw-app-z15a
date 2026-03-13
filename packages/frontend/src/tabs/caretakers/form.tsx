@@ -1,5 +1,5 @@
 import { Box, Button, Dialog, Flex, Separator, Text } from '@radix-ui/themes';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, useWatch } from 'react-hook-form';
 
@@ -15,12 +15,8 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
     const [saveCaretaker, { isLoading }] = useSaveCaretakerMutation();
 
-    const { control, handleSubmit, setError } = useForm<Partial<Caretaker>>({
-        defaultValues: useMemo(
-            () => caretakers.find(caretaker => caretaker.id === id),
-            []
-        )
-    });
+    const [defaultValues] = useState(() => caretakers.find(caretaker => caretaker.id === id));
+    const { control, handleSubmit, setError } = useForm<Partial<Caretaker>>({ defaultValues });
 
     const onSubmit: SubmitHandler<Partial<Caretaker>> = async data => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
