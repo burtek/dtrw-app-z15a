@@ -35,7 +35,7 @@ const Component = <T extends { id: string | number }>({
             <Table.Header>
                 <Table.Row>
                     {headers.map((header, index) => (
-                        // eslint-disable-next-line react/no-array-index-key
+                        // eslint-disable-next-line @eslint-react/no-array-index-key
                         <Table.ColumnHeaderCell key={index}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 {header}

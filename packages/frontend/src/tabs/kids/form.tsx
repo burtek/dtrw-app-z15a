@@ -1,5 +1,5 @@
 import { Box, Button, Dialog, Flex, Select, Text } from '@radix-ui/themes';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, useWatch } from 'react-hook-form';
 
@@ -19,12 +19,8 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
     const [saveKid, { isLoading }] = useSaveKidMutation();
 
-    const { control, handleSubmit, setError } = useForm<Partial<Kid>>({
-        defaultValues: useMemo(
-            () => kids.find(kid => kid.id === id),
-            []
-        )
-    });
+    const [defaultValues] = useState(() => kids.find(kid => kid.id === id));
+    const { control, handleSubmit, setError } = useForm<Partial<Kid>>({ defaultValues });
 
     const onSubmit: SubmitHandler<Partial<Kid>> = async data => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion

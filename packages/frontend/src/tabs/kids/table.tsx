@@ -8,9 +8,9 @@ import { ExpandableCard } from '../../components/data-view/card';
 import { useGetCaretakersState } from '../../redux/apis/caretakers';
 import { useGetKidsState } from '../../redux/apis/kids';
 import type { Caretaker, Kid, WithId } from '../../types';
+import { getSex } from '../../utils/sex';
 
 import { KidFormDialog } from './form';
-import { getSex } from '../../utils/sex';
 
 
 const calculateData = (kid: WithId<Kid>, caretakers: WithId<Caretaker>[]) => {

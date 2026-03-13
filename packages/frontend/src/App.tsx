@@ -48,7 +48,7 @@ function useDialogState(initial: boolean = false, onClose?: () => void) {
     const closeDialog = useCallback(() => {
         onClose?.();
         setOpen(false);
-    }, []);
+    }, [onClose]);
 
     return { open, openDialog, closeDialog };
 }
@@ -103,18 +103,16 @@ function App() {
     const { data: caretakers } = useGetCaretakersQuery();
     const { data: leaves } = useGetLeavesQuery();
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks -- safe as DIALOGS is constant
+    // eslint-disable-next-line @eslint-react/rules-of-hooks -- safe as DIALOGS is constant
     const dialogsControls = DIALOGS.map(dialog => useDialogState(dialog.defaultOpen, dialog.onClose));
 
     return (
         <Tabs.Root defaultValue={Tab.LEAVES}>
             <Tabs.List wrap="wrap">
-                {/* eslint-disable @stylistic/jsx-one-expression-per-line */}
                 <Tabs.Trigger value={Tab.LEAVES}>Zwolnienia ({leaves?.length ?? <Spinner />})</Tabs.Trigger>
                 <Tabs.Trigger value={Tab.CARETAKERS}>Rodzice ({caretakers?.length ?? <Spinner />})</Tabs.Trigger>
                 <Tabs.Trigger value={Tab.KIDS}>Dzieci ({kids?.length ?? <Spinner />})</Tabs.Trigger>
                 <Tabs.Trigger value={Tab.JOBS}>Płatnicy ZUS ({jobs?.length ?? <Spinner />})</Tabs.Trigger>
-                {/* eslint-enable @stylistic/jsx-one-expression-per-line */}
                 <Flex
                     style={{ flex: 1 }}
                     direction="row"

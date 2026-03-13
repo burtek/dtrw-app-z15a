@@ -1,6 +1,6 @@
 import { Select } from '@radix-ui/themes';
 import { shallowEqual } from 'fast-equals';
-import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffectEvent, useEffect, useRef, useState } from 'react';
 import type { Control } from 'react-hook-form';
 import { useController } from 'react-hook-form';
 
@@ -49,9 +49,10 @@ const Component = <T, C extends Control>(
         });
     }, [ref]);
 
-    useEffect(() => () => {
+    const clearRef = useEffectEvent(() => {
         ref(null);
-    }, []);
+    });
+    useEffect(() => clearRef, []);
 
     const container = useRef<HTMLLabelElement & HTMLDivElement>(null);
 
