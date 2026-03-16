@@ -54,13 +54,13 @@ const Component = <T, C extends Control>(
     });
     useEffect(() => clearRef, []);
 
-    const container = useRef<HTMLLabelElement & HTMLDivElement>(null);
+    const containerRef = useRef<HTMLLabelElement & HTMLDivElement>(null);
 
     return (
         <FieldWrapper
             label={label}
             error={error}
-            ref={container}
+            ref={containerRef}
         >
             <Select.Root
                 onValueChange={handleChange}
@@ -76,7 +76,7 @@ const Component = <T, C extends Control>(
                     variant="soft"
                     color={error ? 'red' : undefined}
                 />
-                <Select.Content container={container.current}>
+                <Select.Content container={containerRef.current}>
                     <Select.Group>
                         {items.map(renderItem)}
                     </Select.Group>

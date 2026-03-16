@@ -399,10 +399,10 @@
   resolved "https://registry.yarnpkg.com/@drizzle-team/brocli/-/brocli-0.10.2.tgz#9757c006a43daaa6f45512e6cf5fabed36fb9da7"
   integrity sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w==
 
-"@dtrw/eslint-config@~6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@dtrw/eslint-config/-/eslint-config-6.0.0.tgz#898c7bf3ff32c81c9b5c66cd77e0042ed030714a"
-  integrity sha512-KFskSdDfLMWsMuuUTfJHoCRX0RqVWNFtbJk5wO3zAFuXgOQt+RK/aR9jaZh3i0/O1+mMUithaWAFCZcDoZi4GA==
+"@dtrw/eslint-config@~6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@dtrw/eslint-config/-/eslint-config-6.0.1.tgz#a396384a4977141b1903b30f40c3afff34602cc6"
+  integrity sha512-E3cHUPqpw6dN9VPlV7/0oQTZipQzxmYbIgaX8ba0+Johh/fwbwovBQhcuwNXyxJhz0v1wSzGTLFaFqc/FsF+qQ==
   dependencies:
     "@eslint-react/eslint-plugin" "3.0.0"
     "@eslint/js" "~10.0.0"

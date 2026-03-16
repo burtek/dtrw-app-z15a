@@ -8,13 +8,13 @@ import { useGetStatusQuery } from '../redux/apis/health';
 
 
 const useLastStatus = (status: QueryStatus, statusesToWatch: QueryStatus[]) => {
-    const current = useRef<QueryStatus>(status);
+    const currentValueRef = useRef<QueryStatus>(status);
 
     if (statusesToWatch.includes(status)) {
-        current.current = status;
+        currentValueRef.current = status;
     }
 
-    return current.current;
+    return currentValueRef.current;
 };
 
 export const HealthStatus = () => {
