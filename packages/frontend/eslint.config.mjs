@@ -13,7 +13,10 @@ export default config(
         files: ['**/*.{js,jsx,ts,tsx,mts}'],
         languageOptions: {
             globals: { JSX: 'readonly' },
-            parserOptions: { projectService: true }
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname
+            }
         },
         settings: { 'import/resolver': { typescript: true } }
     },

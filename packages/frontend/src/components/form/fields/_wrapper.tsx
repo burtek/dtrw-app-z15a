@@ -1,6 +1,5 @@
 import { Flex, Text } from '@radix-ui/themes';
 import type { PropsWithChildren } from 'react';
-import { forwardRef } from 'react';
 import type { FieldError } from 'react-hook-form';
 
 
@@ -13,7 +12,7 @@ export function getErrorMessage(error: FieldError) {
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export const FieldWrapper = forwardRef<HTMLLabelElement & HTMLDivElement, PropsWithChildren<FieldWrapperProps>>(({ as: Wrapper = 'label', children, error, label, row = false }, ref) => (
+export const FieldWrapper = ({ ref, as: Wrapper = 'label', children, error, label, row = false }: PropsWithChildren<FieldWrapperProps>) => (
     <Wrapper ref={ref}>
         <Flex
             direction={row ? 'row' : 'column'}
@@ -38,10 +37,11 @@ export const FieldWrapper = forwardRef<HTMLLabelElement & HTMLDivElement, PropsW
                 : null}
         </Flex>
     </Wrapper>
-));
+);
 FieldWrapper.displayName = 'FieldWrapper';
 
 export interface FieldWrapperProps {
+    ref?: React.RefObject<HTMLLabelElement & HTMLDivElement | null>;
     error?: FieldError;
     label: string;
     as?: 'div' | 'label';

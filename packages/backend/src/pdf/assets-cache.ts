@@ -2,7 +2,7 @@ import { promises } from 'node:fs';
 
 
 export class AssetsCache<T extends string> {
-    private cache: Partial<Record<T, Promise<Buffer>>> = {};
+    private readonly cache: Partial<Record<T, Promise<Buffer>>> = {};
 
     constructor(private readonly config: Record<T, { path: string }>) {
     }

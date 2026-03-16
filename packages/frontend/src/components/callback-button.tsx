@@ -6,7 +6,7 @@ import { memo, useCallback } from 'react';
 const Component = <T extends [unknown] | unknown[]>({ data, onClick, ...props }: Props<T>) => {
     const handleClick = useCallback(() => {
         onClick(...data);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line @eslint-react/exhaustive-deps
     }, [data.length, onClick, ...data]);
 
     return (

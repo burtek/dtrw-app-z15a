@@ -1,5 +1,5 @@
 import { Button, Dialog, Flex, Select } from '@radix-ui/themes';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { useForm, useWatch } from 'react-hook-form';
 
@@ -18,12 +18,8 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
 
     const [saveJob, { isLoading }] = useSaveJobMutation();
 
-    const { control, handleSubmit, setError } = useForm<Partial<Job>>({
-        defaultValues: useMemo(
-            () => jobs.find(job => job.id === id),
-            []
-        )
-    });
+    const [defaultValues] = useState(() => jobs.find(job => job.id === id));
+    const { control, handleSubmit, setError } = useForm<Partial<Job>>({ defaultValues });
 
     const onSubmit: SubmitHandler<Partial<Job>> = async data => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion, @typescript-eslint/prefer-nullish-coalescing

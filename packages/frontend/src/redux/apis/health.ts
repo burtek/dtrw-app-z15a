@@ -10,7 +10,7 @@ export const apiHealthApi = createApi({
     baseQuery,
     tagTypes: [TYPE],
     endpoints: builder => ({
-        // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+        // eslint-disable-next-line @typescript-eslint/no-invalid-void-type -- https://github.com/typescript-eslint/typescript-eslint/issues/8113
         getStatus: builder.query<{ status: string; commit: string; version: string; nodeVersion: string }, void>({
             query: () => 'health',
             providesTags: [TYPE]
