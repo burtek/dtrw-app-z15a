@@ -38,29 +38,29 @@ The Z-15A form is used to claim a care allowance from the Polish Social Insuranc
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │                    Browser (React SPA)                           │
-│  packages/frontend  –  port 3000 (dev) / nginx (production)     │
+│  packages/frontend  –  port 3000 (dev) / nginx (production)      │
 │                                                                  │
-│  Tabs: Leaves · Caretakers · Kids · Jobs                        │
-│  Redux Toolkit + RTK Query  ──►  REST API calls (/api/*)        │
+│  Tabs: Leaves · Caretakers · Kids · Jobs                         │
+│  Redux Toolkit + RTK Query  ──►  REST API calls (/api/*)         │
 └──────────────────────┬───────────────────────────────────────────┘
                        │  HTTP  (proxied to :4000 in dev)
 ┌──────────────────────▼───────────────────────────────────────────┐
-│                  Fastify REST API                                 │
+│                  Fastify REST API                                │
 │  packages/backend  –  port 4000                                  │
 │                                                                  │
 │  Routes:                                                         │
 │    GET/POST  /kids        – child records                        │
 │    GET/POST  /leaves      – absence records                      │
-│    GET/POST  /jobs        – employer records                      │
+│    GET/POST  /jobs        – employer records                     │
 │    GET/POST  /caretakers  – guardian records                     │
 │    POST      /pdf         – generate & e-mail Z-15A PDF          │
 │    GET       /health      – liveness probe                       │
 │                                                                  │
-│  Zod validation · Drizzle ORM · pdf-lib · Nodemailer            │
+│  Zod validation · Drizzle ORM · pdf-lib · Nodemailer             │
 └──────────────────────┬───────────────────────────────────────────┘
                        │
                SQLite database
-               (better-sqlite3 + Drizzle ORM)
+       (better-sqlite3 + Drizzle ORM)
 ```
 
 In **production** both packages are built and deployed to a VPS via GitHub Actions:
