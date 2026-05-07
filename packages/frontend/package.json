@@ -33,7 +33,7 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@types/redux-logger": "^3.0.13",
-    "@vitejs/plugin-react": "^4.4.1",
+    "@vitejs/plugin-react": "^6.0.0",
     "eslint": "^10.0.0",
     "jsdom": "^26.1.0",
     "msw": "^2.10.4",
