@@ -82,7 +82,6 @@ dtrw-app-z15a/
 │   ├── backend/env    # Docker env-file template for the backend
 │   └── frontend/      # nginx config for the SPA
 ├── docker-compose.yml # Production orchestration
-├── lerna.json         # Monorepo config (Lerna + Yarn workspaces)
 ├── package.json       # Root scripts & workspace definitions
 └── CHANGELOG.md       # Auto-generated version history
 ```
@@ -112,7 +111,7 @@ Each package has its own `README.md` with package-specific details:
 | E-mail | Nodemailer |
 | Testing | Vitest, React Testing Library, MSW |
 | Linting | ESLint |
-| Monorepo tooling | Yarn Workspaces, Lerna 9 |
+| Monorepo tooling | Yarn Workspaces |
 | Runtime | Node.js ≥ 24 |
 | Containerisation | Docker, nginx |
 | CI/CD | GitHub Actions |
@@ -146,7 +145,7 @@ This starts both the frontend dev server (`http://localhost:3000`) and the backe
 
 ## Available scripts
 
-All scripts can be run from the repository root using Yarn / Lerna, which delegates to each package.
+All scripts can be run from the repository root using Yarn, which delegates to each package.
 
 | Command | Description |
 |---|---|
@@ -212,4 +211,4 @@ Three GitHub Actions workflows are defined in `.github/workflows/`:
 
 ## Versioning
 
-The project uses [Conventional Commits](https://www.conventionalcommits.org/) (enforced by Husky + commitlint) and [standard-version](https://github.com/conventional-changelog/standard-version) for automated changelog generation and semantic version bumping. Each package is versioned independently via Lerna.
+The project uses [Conventional Commits](https://www.conventionalcommits.org/) (enforced by Husky + commitlint) and [standard-version](https://github.com/conventional-changelog/standard-version) for automated changelog generation and semantic version bumping. Each package is versioned independently.
