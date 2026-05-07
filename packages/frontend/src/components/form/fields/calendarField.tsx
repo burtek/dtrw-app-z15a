@@ -31,7 +31,6 @@ export function getDateRange(from?: string, to?: string): string[] {
     return dates;
 }
 
-// eslint-disable-next-line @eslint-react/use-memo -- https://github.com/Rel1cx/eslint-react/issues/1611
 const useCalendar = (dateRange: string[]) => useMemo(() => {
     if (dateRange.length === 0 || dateRange.length > 21) {
         return [];

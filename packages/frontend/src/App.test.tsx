@@ -1,5 +1,6 @@
 import { Theme } from '@radix-ui/themes';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse, delay } from 'msw';
 import { setupServer } from 'msw/node';
 import { Provider } from 'react-redux';
@@ -39,6 +40,8 @@ describe('App.tsx', () => {
     });
 
     it('App renders with two dialogs open', async () => {
+        const user = userEvent.setup();
+
         const { container } = render(<App />, {
             wrapper({ children }) {
                 return (
@@ -59,7 +62,7 @@ describe('App.tsx', () => {
 
         expect(screen.queryAllByRole('tab')).toHaveLength(0);
 
-        screen.getAllByText('OK').forEach(element => fireEvent.click(element));
+        await Promise.all(screen.getAllByText('OK').map(element => user.click(element)));
 
         const tabs = screen.getAllByRole('tab');
 
@@ -84,7 +87,9 @@ describe('App.tsx', () => {
             label: 'Polityka prywatności',
             expected: /Ta aplikacja przechowuje tylko dane niezbędne do wygenerowania formularzy ZUS Z-15A/
         }
-    ])('should open $label dialog', ({ label, expected }) => {
+    ])('should open $label dialog', async ({ label, expected }) => {
+        const user = userEvent.setup();
+
         render(<App />, {
             wrapper({ children }) {
                 return (
@@ -97,11 +102,11 @@ describe('App.tsx', () => {
             }
         });
 
-        screen.getAllByText('OK').forEach(element => fireEvent.click(element));
+        await Promise.all(screen.getAllByText('OK').map(element => user.click(element)));
 
         expect(screen.queryByText(expected)).not.toBeInTheDocument();
 
-        fireEvent.click(screen.getByText(label));
+        await user.click(screen.getByText(label));
 
         expect(screen.getByText(expected)).toBeInTheDocument();
     });
