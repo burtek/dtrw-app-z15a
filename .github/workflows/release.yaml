@@ -33,6 +33,7 @@ jobs:
       - name: Run tests and build
         run: |
           yarn test
+          yarn lint
           yarn build
 
       - name: Bump version and generate changelog
