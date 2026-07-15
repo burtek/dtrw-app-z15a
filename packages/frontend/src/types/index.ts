@@ -42,5 +42,12 @@ export interface Leave {
     notes: string;
 }
 
+export interface ParentalLeave {
+    kidId: number;
+    caretakerId: number;
+    dateFrom: string;
+    weeksCount: number;
+}
+
 export type WithId<T> = T & { id: number };
 export type MaybeWithId<T> = T & { id?: number | null; userId?: number | null };
