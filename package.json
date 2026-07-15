@@ -17,9 +17,9 @@
     "vitest": "^4.1.0"
   },
   "scripts": {
-    "dev": "cross-env FORCE_COLOR=1 yarn workspaces foreach -A -p run start:dev",
-    "build": "cross-env FORCE_COLOR=1 yarn workspaces foreach -A -p run build",
-    "lint": "cross-env FORCE_COLOR=1 yarn workspaces foreach -A -p run lint",
+    "dev": "cross-env FORCE_COLOR=1 yarn workspaces foreach -Api -j 2 run start:dev",
+    "build": "cross-env FORCE_COLOR=1 yarn workspaces foreach -Ap run build",
+    "lint": "cross-env FORCE_COLOR=1 yarn workspaces foreach -Ap run lint",
     "test": "vitest run",
     "prepare": "husky",
     "release": "standard-version"

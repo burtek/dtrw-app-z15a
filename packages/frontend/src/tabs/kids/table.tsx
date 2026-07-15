@@ -17,15 +17,16 @@ import { KidFormDialog } from './form';
 const calculateData = (kid: WithId<Kid>, caretakers: WithId<Caretaker>[], parentalLeaves: WithId<ParentalLeave>[]) => {
     const father = caretakers.find(c => c.id === kid.fatherId);
     const mother = caretakers.find(c => c.id === kid.motherId);
-    const totalParentalLeaveWeeks = parentalLeaves
-        .filter(pl => pl.kidId === kid.id)
+    const allKidLeaves = parentalLeaves.filter(pl => pl.kidId === kid.id);
+    const totalParentalLeaveWeeks = allKidLeaves
         .reduce((sum, pl) => sum + pl.weeksCount, 0);
 
     return {
         kid: `${kid.name} ${kid.surname}`,
         mother: `${mother?.name} ${mother?.surname}`,
         father: `${father?.name} ${father?.surname}`,
-        totalParentalLeaveWeeks
+        totalParentalLeaveWeeks,
+        totalParentalLeaveParts: allKidLeaves.length
     };
 };
 
@@ -62,7 +63,7 @@ const Component = () => {
     ), []);
 
     const renderTableRow = useCallback((kid: WithId<Kid>) => {
-        const { mother, father, kid: kidName, totalParentalLeaveWeeks } = calculateData(kid, caretakers, parentalLeaves);
+        const { mother, father, kid: kidName, totalParentalLeaveWeeks, totalParentalLeaveParts } = calculateData(kid, caretakers, parentalLeaves);
 
         return (
             <Table.Row key={kid.id}>
@@ -73,13 +74,14 @@ const Component = () => {
                 <Table.Cell>{mother}</Table.Cell>
                 <Table.Cell>{father}</Table.Cell>
                 <Table.Cell>{totalParentalLeaveWeeks}</Table.Cell>
+                <Table.Cell>{totalParentalLeaveParts}</Table.Cell>
                 <Table.Cell>{actions(kid)}</Table.Cell>
             </Table.Row>
         );
     }, [caretakers, parentalLeaves, actions]);
 
     const renderCard = useCallback((kid: WithId<Kid>) => {
-        const { mother, father, kid: kidName, totalParentalLeaveWeeks } = calculateData(kid, caretakers, parentalLeaves);
+        const { mother, father, kid: kidName, totalParentalLeaveWeeks, totalParentalLeaveParts } = calculateData(kid, caretakers, parentalLeaves);
 
         return (
             /* eslint-disable @typescript-eslint/naming-convention */
@@ -92,7 +94,8 @@ const Component = () => {
                     Płeć: getSex(kid.pesel, 'kid'),
                     Matka: mother,
                     Ojciec: father,
-                    'Tygodnie urlopu rodzicielskiego': totalParentalLeaveWeeks
+                    'Tygodnie urlopu rodzicielskiego': `${totalParentalLeaveWeeks} tyg.`,
+                    'Części urlopu rodzicielskiego': `${totalParentalLeaveParts}`
                 }}
                 actions={actions(kid)}
             />
@@ -105,7 +108,7 @@ const Component = () => {
             <DataView
                 isLoading={isLoading}
                 error={error}
-                headers={useMemo(() => ['ID', 'Imię i nazwisko', 'Płeć', 'PESEL', 'Matka', 'Ojciec', 'Tygodnie urlopu', ''], [])}
+                headers={useMemo(() => ['ID', 'Imię i nazwisko', 'Płeć', 'PESEL', 'Matka', 'Ojciec', 'Tygodnie urlopu rodz.', 'Części urlopu rodz.', ''], [])}
                 data={kids}
                 renderTableRow={renderTableRow}
                 renderCard={renderCard}
