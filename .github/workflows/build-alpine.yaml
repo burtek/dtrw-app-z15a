@@ -1,0 +1,43 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        type: string
+        required: false
+
+jobs:
+  build:
+    name: Test deploy build
+    runs-on: ubuntu-latest
+    container:
+      image: node:26-alpine
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Add tar for caching
+        run: apk add --no-cache tar python3 py3-pip build-base
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "26"
+
+      - name: Install yarn and dependencies
+        run: |
+          npm i -g corepack
+          corepack enable
+          yarn install --immutable
+
+      - name: Run tests
+        run: yarn test
+
+      - name: Upload artifact
+        if: inputs.artifact-name
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: dist/
