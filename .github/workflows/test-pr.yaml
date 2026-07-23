@@ -39,3 +39,5 @@ jobs:
     
   test-deploy-build:
     uses: ./.github/workflows/build-alpine.yaml
+    permissions:
+      contents: read

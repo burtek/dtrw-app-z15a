@@ -10,6 +10,9 @@ on:
 env:
   ARTIFACT_NAME: build-output
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Test deploy build
