@@ -12,6 +12,7 @@ import { useGetCaretakersQuery } from './redux/apis/caretakers';
 import { useGetJobsQuery } from './redux/apis/jobs';
 import { useGetKidsQuery } from './redux/apis/kids';
 import { useGetLeavesQuery } from './redux/apis/leaves';
+import { useGetParentalLeavesQuery } from './redux/apis/parental-leaves';
 
 
 const CaretakersTable = lazy(async () => {
@@ -30,13 +31,18 @@ const LeavesTable = lazy(async () => {
     const { LeavesTable: c } = await import('./tabs/leaves/table');
     return { default: c };
 });
+const ParentalLeavesTable = lazy(async () => {
+    const { ParentalLeavesTable: c } = await import('./tabs/parental-leaves/table');
+    return { default: c };
+});
 
 
 const enum Tab {
     LEAVES = 'leaves',
     KIDS = 'kids',
     JOBS = 'jobs',
-    CARETAKERS = 'caretakers'
+    CARETAKERS = 'caretakers',
+    PARENTAL_LEAVES = 'parental-leaves'
 }
 
 function useDialogState(initial: boolean = false, onClose?: () => void) {
@@ -102,6 +108,7 @@ function App() {
     const { data: jobs } = useGetJobsQuery();
     const { data: caretakers } = useGetCaretakersQuery();
     const { data: leaves } = useGetLeavesQuery();
+    const { data: parentalLeaves } = useGetParentalLeavesQuery();
 
     // eslint-disable-next-line @eslint-react/rules-of-hooks -- safe as DIALOGS is constant
     const dialogsControls = DIALOGS.map(dialog => useDialogState(dialog.defaultOpen, dialog.onClose));
@@ -113,6 +120,7 @@ function App() {
                 <Tabs.Trigger value={Tab.CARETAKERS}>Rodzice ({caretakers?.length ?? <Spinner />})</Tabs.Trigger>
                 <Tabs.Trigger value={Tab.KIDS}>Dzieci ({kids?.length ?? <Spinner />})</Tabs.Trigger>
                 <Tabs.Trigger value={Tab.JOBS}>Płatnicy ZUS ({jobs?.length ?? <Spinner />})</Tabs.Trigger>
+                <Tabs.Trigger value={Tab.PARENTAL_LEAVES}>Urlopy rodzicielskie ({parentalLeaves?.length ?? <Spinner />})</Tabs.Trigger>
                 <Flex
                     style={{ flex: 1 }}
                     direction="row"
@@ -192,6 +200,12 @@ function App() {
                 <Tabs.Content value={Tab.JOBS}>
                     <Suspense fallback={<Mosaic />}>
                         <JobsTable />
+                    </Suspense>
+                </Tabs.Content>
+
+                <Tabs.Content value={Tab.PARENTAL_LEAVES}>
+                    <Suspense fallback={<Mosaic />}>
+                        <ParentalLeavesTable />
                     </Suspense>
                 </Tabs.Content>
             </Box>

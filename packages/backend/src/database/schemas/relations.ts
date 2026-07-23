@@ -4,11 +4,13 @@ import { caretakers } from './caretakers';
 import { jobs } from './jobs';
 import { kids } from './kids';
 import { leaves } from './leaves';
+import { parentalLeaves } from './parental-leaves';
 
 
 export const caretakerRelations = relations(caretakers, ({ many }) => ({
     jobs: many(jobs),
-    kids: many(kids)
+    kids: many(kids),
+    parentalLeaves: many(parentalLeaves)
 }));
 
 export const jobRelations = relations(jobs, ({ one, many }) => ({
@@ -32,6 +34,7 @@ export const leaveRelations = relations(leaves, ({ one }) => ({
 
 export const kidRelations = relations(kids, ({ one, many }) => ({
     leaves: many(leaves),
+    parentalLeaves: many(parentalLeaves),
     father: one(caretakers, {
         fields: [kids.fatherId],
         references: [caretakers.id],
@@ -41,5 +44,16 @@ export const kidRelations = relations(kids, ({ one, many }) => ({
         fields: [kids.motherId],
         references: [caretakers.id],
         relationName: 'mother'
+    })
+}));
+
+export const parentalLeaveRelations = relations(parentalLeaves, ({ one }) => ({
+    kid: one(kids, {
+        fields: [parentalLeaves.kidId],
+        references: [kids.id]
+    }),
+    caretaker: one(caretakers, {
+        fields: [parentalLeaves.caretakerId],
+        references: [caretakers.id]
     })
 }));

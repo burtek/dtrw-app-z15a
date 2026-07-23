@@ -7,6 +7,7 @@ import { apiHealthApi } from './apis/health';
 import { jobsApi } from './apis/jobs';
 import { kidsApi } from './apis/kids';
 import { leavesApi } from './apis/leaves';
+import { parentalLeavesApi } from './apis/parental-leaves';
 
 
 declare global {
@@ -17,7 +18,7 @@ declare global {
 
 export const store = configureStore({
     devTools: true,
-    reducer: combineSlices(leavesApi, caretakersApi, jobsApi, kidsApi, apiHealthApi),
+    reducer: combineSlices(leavesApi, caretakersApi, jobsApi, kidsApi, apiHealthApi, parentalLeavesApi),
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware().concat(
             leavesApi.middleware,
@@ -25,6 +26,7 @@ export const store = configureStore({
             jobsApi.middleware,
             kidsApi.middleware,
             apiHealthApi.middleware,
+            parentalLeavesApi.middleware,
             createLogger({
                 predicate() {
                     return (import.meta.env.DEV && !import.meta.env.TEST) || !!window.forceLog;

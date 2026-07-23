@@ -10,6 +10,7 @@ import { healthController } from './health/health.controller';
 import { jobsController } from './jobs/jobs.controller';
 import { kidsController } from './kids/kids.controller';
 import { leavesController } from './leaves/leaves.controller';
+import { parentalLeavesController } from './parental-leaves/parental-leaves.controller';
 import { pdfController } from './pdf/pdf.controller';
 
 
@@ -27,6 +28,7 @@ export function createApp(opts: FastifyServerOptions = {}) {
 
     app.register(kidsController, { prefix: '/kids' });
     app.register(leavesController, { prefix: '/leaves' });
+    app.register(parentalLeavesController, { prefix: '/parental-leaves' });
     app.register(pdfController, { prefix: '/pdf' });
     app.register(jobsController, { prefix: '/jobs' });
     app.register(caretakersController, { prefix: '/caretakers' });
