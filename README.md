@@ -66,7 +66,7 @@ The Z-15A form is used to claim a care allowance from the Polish Social Insuranc
 In **production** both packages are built and deployed to a VPS via GitHub Actions:
 
 - The frontend `dist/` is served by **nginx:alpine**.
-- The backend `dist/` runs inside a **node:24-alpine** container.
+- The backend `dist/` runs inside a **node:26-alpine** container.
 - Both containers share a Docker network called `apps`.
 
 ---
@@ -112,7 +112,7 @@ Each package has its own `README.md` with package-specific details:
 | Testing | Vitest, React Testing Library, MSW |
 | Linting | ESLint |
 | Monorepo tooling | Yarn Workspaces |
-| Runtime | Node.js ≥ 24 |
+| Runtime | Node.js ≥ 26.5 |
 | Containerisation | Docker, nginx |
 | CI/CD | GitHub Actions |
 
@@ -122,7 +122,7 @@ Each package has its own `README.md` with package-specific details:
 
 ### Prerequisites
 
-- **Node.js ≥ 24** (`node --version`)
+- **Node.js ≥ 26.5** (`node --version`)
 - **Yarn** (`npm install -g yarn`)
 
 ### Install dependencies

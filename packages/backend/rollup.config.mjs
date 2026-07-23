@@ -65,7 +65,7 @@ export default defineConfig({
                         return JSON.stringify({ ...pkg, type: 'commonjs' }, null, 2);
                     }
                 },
-                ...copyFilesForLibrary('better-sqlite3', ['build', 'package.json']),
+                ...copyFilesForLibrary('better-sqlite3', ['build', 'prebuilds', 'package.json']),
                 ...copyFilesForLibrary('bindings', ['package.json'])
             ]
         })

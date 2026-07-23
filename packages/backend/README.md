@@ -22,7 +22,7 @@ Fastify REST API server for the Z-15A form generator. It manages persistent reco
 |---|---|
 | **Framework** | [Fastify 5](https://fastify.dev/) |
 | **Language** | TypeScript 5 (compiled to CommonJS via Rollup) |
-| **Runtime** | Node.js ≥ 24 |
+| **Runtime** | Node.js ≥ 26.5 |
 | **Database** | SQLite via [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) + [Drizzle ORM](https://orm.drizzle.team/) |
 | **Validation** | [Zod 4](https://zod.dev/) + [fastify-type-provider-zod](https://github.com/turkerdev/fastify-type-provider-zod) |
 | **PDF generation** | [pdf-lib](https://pdf-lib.js.org/) |
