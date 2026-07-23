@@ -2,9 +2,9 @@ import { TextField as Input } from '@radix-ui/themes';
 import { shallowEqual } from 'fast-equals';
 import type { ChangeEventHandler } from 'react';
 import { memo, useCallback } from 'react';
-import type { Control, Validate } from 'react-hook-form';
 import { useController } from 'react-hook-form';
 
+import type { ControlProps, WithValidateRule } from './_typeHelpers';
 import { FieldWrapper } from './_wrapper';
 
 
@@ -14,7 +14,7 @@ function checkValueType(value: unknown): asserts value is string | undefined | n
     }
 }
 
-const Component = <C extends Control>({ label, control, name, rules }: Props<C>) => {
+const Component = <Values extends Record<string, unknown>>({ label, control, name, rules }: Props<Values>) => {
     const {
         field: { value: v, onChange, onBlur, disabled, ref },
         fieldState: { error },
@@ -62,15 +62,12 @@ export const DateField = memo(
     ) => shallowEqual(prevRules, nextRules) && shallowEqual(prevProps, nextProps)
 ) as typeof Component;
 
-interface Props<C extends Control> {
+interface Props<Values extends Record<string, unknown>> extends ControlProps<Values> {
     label: string;
 
-    control: C;
-    name: C extends Control<infer Values> ? keyof Values : string;
-    rules?: {
+    rules?: WithValidateRule<Values> & {
         required?: boolean;
         min?: string;
         max?: string;
-        validate?: C extends Control<infer Values> ? Validate<string | undefined, Values> : never;
     };
 }

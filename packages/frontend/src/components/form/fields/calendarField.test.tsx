@@ -5,11 +5,12 @@ import { useForm, useWatch } from 'react-hook-form';
 import { CalendarField } from './calendarField';
 
 
-interface Data {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+type Data = {
     dateFrom?: string;
     dateTo?: string;
-    daysTaken?: string[];
-}
+    daysTaken: Record<string, boolean>;
+};
 
 const TestFormComponent = ({
     onSubmit,
@@ -34,7 +35,7 @@ const TestFormComponent = ({
                 type="date"
                 {...register('dateTo')}
             />
-            <CalendarField
+            <CalendarField<Data>
                 label="Kalendarz"
                 control={control}
                 name="daysTaken"

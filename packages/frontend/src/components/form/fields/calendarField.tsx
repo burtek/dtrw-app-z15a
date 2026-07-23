@@ -1,8 +1,8 @@
 import { Checkbox } from '@radix-ui/themes';
 import { memo, useEffect, useMemo } from 'react';
-import type { Control, Validate } from 'react-hook-form';
 import { useController } from 'react-hook-form';
 
+import type { ControlProps, WithValidateRule } from './_typeHelpers';
 import { FieldWrapper } from './_wrapper';
 
 
@@ -59,7 +59,7 @@ function checkValueType(value: unknown): asserts value is Record<string, boolean
 }
 
 const monthFormatter = new Intl.DateTimeFormat('pl', { month: 'long' });
-const Component = <C extends Control>({ label, control, name, rules, dateFrom, dateTo }: Props<C>) => {
+const Component = <Values extends Record<string, unknown>>({ label, control, name, rules, dateFrom, dateTo }: Props<Values>) => {
     const {
         field: { value: v, onChange, disabled }, // ref unused!
         fieldState: { error },
@@ -166,18 +166,14 @@ const Component = <C extends Control>({ label, control, name, rules, dateFrom, d
 };
 Component.displayName = 'CalendarField';
 
-export const CalendarField = memo(Component);
+// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+export const CalendarField = memo(Component) as typeof Component;
 
-interface Props<C extends Control> {
+interface Props<Values extends Record<string, unknown>> extends ControlProps<Values> {
     dateFrom?: string;
     dateTo?: string;
 
     label: string;
 
-    control: C;
-    name: C extends Control<infer Values> ? keyof Values : string;
-    rules?: {
-        required?: boolean;
-        validate?: C extends Control<infer Values> ? Validate<Record<string, boolean> | undefined, Values> : never;
-    };
+    rules?: WithValidateRule<Values> & { required?: boolean };
 }

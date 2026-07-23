@@ -17,6 +17,8 @@ const Component = ({ children }: PropsWithChildren) => (
                 <Box
                     asChild
                     display={toResponsive('block', 'none')}
+                    // eslint-disable-next-line @eslint-react/no-array-index-key
+                    key={`separator-${index}`}
                 >
                     <Separator orientation="vertical" />
                 </Box>
