@@ -84,7 +84,7 @@ const Component = () => {
                 id={parentalLeave.id}
                 summary={kid}
                 secondary={{ Rodzic: caretaker, 'Data od': parentalLeave.dateFrom }}
-                details={{ 'Liczba tygodni': parentalLeave.weeksCount }}
+                details={{ 'Liczba tygodni': `${parentalLeave.weeksCount}` }}
                 actions={actions(parentalLeave)}
             />
             /* eslint-enable @typescript-eslint/naming-convention */
