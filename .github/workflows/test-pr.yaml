@@ -21,10 +21,11 @@ jobs:
         with:
           node-version: '26'
 
-      - run: corepack enable
-
-      - name: Install dependencies
-        run: yarn install --immutable
+      - name: Install yarn and dependencies
+        run: |
+          npm i -g corepack
+          corepack enable
+          yarn install --immutable
 
       - name: Run tests
         run: yarn test
