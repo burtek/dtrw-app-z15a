@@ -30,7 +30,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Add tar for caching
+      - name: Add tar for caching and python to build dependencies
         run: apk add --no-cache tar python3 py3-pip build-base
 
       - name: Set up Node.js
