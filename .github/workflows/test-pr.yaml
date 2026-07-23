@@ -38,6 +38,7 @@ jobs:
         run: yarn build
     
   test-deploy-build:
+    name: Test deploy build
     uses: ./.github/workflows/build-alpine.yaml
     permissions:
       contents: read
