@@ -2,6 +2,11 @@ name: Build
 
 on:
   workflow_call:
+    inputs:
+      ref:
+        type: string
+        description: The git ref to build
+        required: false
     outputs:
       artifact-name:
         description: The name of the artifact to upload
@@ -29,6 +34,8 @@ jobs:
 
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
 
       - name: Add tar for caching and python to build dependencies
         run: apk add --no-cache tar python3 py3-pip build-base
@@ -56,4 +63,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: dist/
+          path: |
+            packages/frontend/dist
+            packages/backend/dist
+            docker
+            docker-compose.yml
