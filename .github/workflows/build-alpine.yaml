@@ -47,6 +47,11 @@ jobs:
       - name: Run tests
         run: yarn test
 
+      - name: Build frontend and backend
+        run: |
+          echo "COMMIT_SHA=${{ github.sha }}" >> docker/backend/env
+          VITE_COMMIT=${{ github.sha }} yarn build
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
