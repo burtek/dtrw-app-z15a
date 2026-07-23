@@ -18,6 +18,11 @@ export default defineConfig({
     test: {
         globals: true,
         environment: 'jsdom',
-        setupFiles: './setup-tests.ts'
+        setupFiles: './setup-tests.ts',
+        execArgv: ['--no-webstorage']
+        // execArgv: [
+        //     '--localstorage-file',
+        //     path.resolve(os.tmpdir(), `vitest-${process.pid}.localstorage`),
+        // ],
     }
 });

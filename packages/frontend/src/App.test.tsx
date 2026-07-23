@@ -1,6 +1,6 @@
 import { Theme } from '@radix-ui/themes';
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { http, HttpResponse, delay } from 'msw';
 import { setupServer } from 'msw/node';
 import { Provider } from 'react-redux';
@@ -8,6 +8,10 @@ import { Provider } from 'react-redux';
 import App from './App';
 import { store } from './redux/store';
 
+
+vitest.mock(import('./components/data-view/use-media-query'), () => ({
+    useMediaQuery: () => true
+}))
 
 describe('App.tsx', () => {
     const handlers = [
@@ -39,6 +43,14 @@ describe('App.tsx', () => {
         server.resetHandlers();
     });
 
+    async function dismissAllDialogs(user: UserEvent) {
+        // await Promise.all(screen.getAllByText('OK').map(element => user.click(element)));
+        for (const element of screen.getAllByText('OK').reverse()) {
+            // eslint-disable-next-line no-await-in-loop
+            await user.click(element);
+        }
+    }
+
     it('App renders with two dialogs open', async () => {
         const user = userEvent.setup();
 
@@ -62,16 +74,17 @@ describe('App.tsx', () => {
 
         expect(screen.queryAllByRole('tab')).toHaveLength(0);
 
-        await Promise.all(screen.getAllByText('OK').map(element => user.click(element)));
+        await dismissAllDialogs(user);
 
         const tabs = screen.getAllByRole('tab');
 
-        expect(tabs).toHaveLength(4);
+        expect(tabs).toHaveLength(5);
 
         expect(tabs[0]).toHaveTextContent(/^Zwolnienia/);
         expect(tabs[1]).toHaveTextContent(/^Rodzice/);
         expect(tabs[2]).toHaveTextContent(/^Dzieci/);
         expect(tabs[3]).toHaveTextContent(/^Płatnicy/);
+        expect(tabs[4]).toHaveTextContent(/^Urlopy rodzicielskie/);
     });
 
     it.each([
@@ -102,7 +115,7 @@ describe('App.tsx', () => {
             }
         });
 
-        await Promise.all(screen.getAllByText('OK').map(element => user.click(element)));
+        await dismissAllDialogs(user);
 
         expect(screen.queryByText(expected)).not.toBeInTheDocument();
 
