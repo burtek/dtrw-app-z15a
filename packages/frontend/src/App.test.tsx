@@ -1,6 +1,7 @@
 import { Theme } from '@radix-ui/themes';
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent, { type UserEvent } from '@testing-library/user-event';
+import type { UserEvent } from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse, delay } from 'msw';
 import { setupServer } from 'msw/node';
 import { Provider } from 'react-redux';
@@ -9,9 +10,7 @@ import App from './App';
 import { store } from './redux/store';
 
 
-vitest.mock(import('./components/data-view/use-media-query'), () => ({
-    useMediaQuery: () => true
-}))
+vitest.mock(import('./components/data-view/use-media-query'), () => ({ useMediaQuery: () => true }));
 
 describe('App.tsx', () => {
     const handlers = [
