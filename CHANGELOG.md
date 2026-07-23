@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.18.0](https://github.com/burtek/dtrw-app-z15a/compare/v1.17.4...v1.18.0) (2026-07-23)
+
+
+### Features
+
+* add parental leave tracking tab ([#40](https://github.com/burtek/dtrw-app-z15a/issues/40)) ([1e72ab3](https://github.com/burtek/dtrw-app-z15a/commit/1e72ab30ec19f3c5650a93c8b3c81dcb1784f80f))
+
+
+### Bug Fixes
+
+* eslint error ([6e6c8bb](https://github.com/burtek/dtrw-app-z15a/commit/6e6c8bbb85ee5ec071e3f970c08a77d52c9bc819))
+
 ### [1.17.4](https://github.com/burtek/dtrw-app-z15a/compare/v1.17.3...v1.17.4) (2026-05-07)
 
 ### [1.17.3](https://github.com/burtek/dtrw-app-z15a/compare/v1.17.2...v1.17.3) (2026-05-07)
