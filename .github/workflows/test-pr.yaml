@@ -7,6 +7,7 @@ on:
 
 jobs:
   test:
+    name: Test PR
     runs-on: ubuntu-latest
 
     permissions:
@@ -35,3 +36,9 @@ jobs:
 
       - name: Run build
         run: yarn build
+    
+  test-deploy-build:
+    name: Test deploy build
+    uses: ./.github/workflows/build-alpine.yaml
+    permissions:
+      contents: read
