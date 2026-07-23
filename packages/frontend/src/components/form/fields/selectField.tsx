@@ -1,9 +1,9 @@
 import { Select } from '@radix-ui/themes';
 import { shallowEqual } from 'fast-equals';
 import { memo, useCallback, useEffectEvent, useEffect, useRef, useState } from 'react';
-import type { Control } from 'react-hook-form';
 import { useController } from 'react-hook-form';
 
+import type { ControlProps } from './_typeHelpers';
 import { FieldWrapper } from './_wrapper';
 
 
@@ -13,8 +13,8 @@ function checkValueType(value: unknown): asserts value is string | number | unde
     }
 }
 
-const Component = <T, C extends Control>(
-    { label, items, renderItem, parseIntValue, control, name, rules, placeholder }: Props<T, C>
+const Component = <T, Values extends Record<string, unknown>>(
+    { label, items, renderItem, parseIntValue, control, name, rules, placeholder }: Props<T, Values>
 ) => {
     const {
         field: { value: v, onChange, onBlur, disabled, ref },
@@ -98,7 +98,7 @@ export const SelectField = memo(
         && shallowEqual(prevProps, nextProps)
 ) as typeof Component;
 
-interface Props<T, C extends Control> {
+interface Props<T, Values extends Record<string, unknown>> extends ControlProps<Values> {
     items: Array<T> | ReadonlyArray<T>;
     renderItem: (item: T) => React.ReactElement;
     parseIntValue?: boolean;
@@ -106,7 +106,5 @@ interface Props<T, C extends Control> {
     label: string;
     placeholder: string;
 
-    control: C;
-    name: C extends Control<infer Values> ? keyof Values : string;
     rules?: { required?: boolean };
 }

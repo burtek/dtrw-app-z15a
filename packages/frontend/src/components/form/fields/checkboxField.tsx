@@ -2,9 +2,9 @@ import { Checkbox } from '@radix-ui/themes';
 import { shallowEqual } from 'fast-equals';
 import type { ComponentProps } from 'react';
 import { memo, useCallback } from 'react';
-import type { Control, Validate } from 'react-hook-form';
 import { useController } from 'react-hook-form';
 
+import type { ControlProps, WithValidateRule } from './_typeHelpers';
 import { FieldWrapper } from './_wrapper';
 
 
@@ -14,7 +14,7 @@ function checkValueType(value: unknown): asserts value is boolean | undefined {
     }
 }
 
-const Component = <C extends Control>({ label, control, name, rules }: Props<C>) => {
+const Component = <Values extends Record<string, unknown>>({ label, control, name, rules }: Props<Values>) => {
     const {
         field: { value: v, onChange, onBlur, disabled, ref },
         fieldState: { error },
@@ -58,13 +58,8 @@ export const CheckboxField = memo(
     ) => shallowEqual(prevRules, nextRules) && shallowEqual(prevProps, nextProps)
 ) as typeof Component;
 
-interface Props<C extends Control> {
+interface Props<Values extends Record<string, unknown>> extends ControlProps<Values> {
     label: string;
 
-    control: C;
-    name: C extends Control<infer Values> ? keyof Values : string;
-    rules?: {
-        required?: boolean;
-        validate?: C extends Control<infer Values> ? Validate<string | undefined, Values> : never;
-    };
+    rules?: WithValidateRule<Values> & { required?: boolean };
 }

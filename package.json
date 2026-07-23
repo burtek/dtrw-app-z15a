@@ -9,12 +9,12 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@commitlint/cli": "^20.5.0",
-    "@commitlint/config-conventional": "^20.5.0",
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
     "cross-env": "^10.1.0",
     "husky": "^9.1.7",
     "standard-version": "^9.5.0",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.10"
   },
   "scripts": {
     "dev": "cross-env FORCE_COLOR=1 yarn workspaces foreach -Api -j 2 run start:dev",

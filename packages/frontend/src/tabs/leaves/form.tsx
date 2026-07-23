@@ -163,7 +163,7 @@ const Component = ({ close, id }: { close: () => void; id: number | null }) => {
                             name="daysTaken"
                             rules={{
                                 validate(value = {}) {
-                                    return Object.keys(value).some(key => value[key]) || 'Wybierz przynajmniej jeden dzień';
+                                    return (typeof value === 'object' && Object.keys(value).some(key => value[key])) || 'Wybierz przynajmniej jeden dzień';
                                 }
                             }}
                         />
